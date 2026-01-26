@@ -2,7 +2,7 @@ import React from 'react';
 import { ProductTier } from '../types';
 import { Package, ShieldCheck, Wifi, Zap } from 'lucide-react';
 
-const products: ProductTier[] = [
+export const products: ProductTier[] = [
   {
     id: '1',
     name: 'Hobbyist',

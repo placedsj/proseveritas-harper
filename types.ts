@@ -1,42 +1,65 @@
-export type ViewState = 'dashboard' | 'products' | 'monitor' | 'roadmap' | 'strategy' | 'cofounder';
 
-export interface DailyMove {
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap';
+
+// Module 1: Scott Schedule
+export type ScottCategory = 'Denial of Parenting Time' | 'Alienation' | 'Unjustified Police Contact' | 'Failure to Consult' | 'Health/Safety Risk';
+export type ChildImpact = 'Crying' | 'Silent' | 'Regressive' | 'N/A';
+
+export interface ScottLogEntry {
   id: string;
-  text: string;
-  impact: 'high' | 'med' | 'low';
+  incidentDate: string; // ISO DateTime
+  category: ScottCategory;
+  theSay: string; // "She said..."
+  theFact: string; // "The truth is..."
+  childImpact: ChildImpact;
+  exhibitRef: string; // Link/Filename
+  statuteTag: string; // Legal clause
+}
+
+// Module 2: Alimentor Clone
+export type CustodyStatus = 'Success' | 'Denied by Mother' | 'Forfeited by Father';
+
+export interface ParentingBlock {
+  id: string;
+  scheduledStart: string; // ISO DateTime
+  scheduledEnd: string; // ISO DateTime
+  status: CustodyStatus;
+  hoursLost: number; // Auto-calc
+}
+
+// Module 3: Business/Ops
+export interface BusinessTask {
+  id: string;
+  clientOrTask: string;
+  dueDate: string;
+  dollarValue: number;
   completed: boolean;
 }
 
-export interface BusinessMetric {
-  oneTimeRevenue: number;
-  mrr: number; // Monthly Recurring Revenue (ShedCare)
-  activeInstalls: number;
-  churnRate: number;
-}
-
-export interface ProductTier {
+export interface BusinessProject {
   id: string;
-  name: string; // Hobbyist, Workshop, Studio
-  amps: 20 | 30 | 50;
-  price: number;
-  features: string[];
-  isRecurring: boolean;
+  name: string;
+  type: 'PLACED' | 'ROOFING';
+  status: 'Lead' | 'Active' | 'Invoiced' | 'Paid';
+  value: number;
+  nextAction: string;
+  dueDate?: string;
 }
 
-export interface MonitorNode {
-  id: string;
-  location: string;
-  loadPercentage: number;
-  temperature: number; // Celsius
-  status: 'online' | 'offline' | 'warning';
-  lastSeen: string;
-}
-
+// Strategy & Roadmap
 export interface StrategyNote {
   id: string;
-  category: 'copy' | 'rules' | 'partners' | 'product';
+  category: 'copy' | 'rules' | 'partners';
   content: string;
   lastUpdated: number;
+}
+
+export interface RoadmapTask {
+  id: string;
+  title: string;
+  category: 'growth' | 'tech' | 'ops' | 'legal';
+  status: 'backlog' | 'active' | 'done';
+  dueDate?: string;
 }
 
 export interface ChatMessage {
@@ -47,15 +70,9 @@ export interface ChatMessage {
   timestamp: number;
 }
 
-export interface RoadmapTask {
-  id: string;
-  title: string;
-  category: 'tech' | 'ops' | 'growth' | 'legal';
-  status: 'backlog' | 'active' | 'done';
-  dueDate?: string;
-}
+// --- New Types ---
 
-// Legacy types (kept for compatibility during transition)
+// Daily Ritual
 export interface DailyChecklist {
   sleep: boolean;
   mental: boolean;
@@ -66,6 +83,7 @@ export interface DailyChecklist {
   progressMade: boolean;
 }
 
+// Timeline
 export interface TimelineEvent {
   id: string;
   date: string;
@@ -74,6 +92,7 @@ export interface TimelineEvent {
   completed: boolean;
 }
 
+// Evidence Vault
 export interface EvidenceItem {
   id: string;
   title: string;
@@ -84,9 +103,66 @@ export interface EvidenceItem {
   dateRequested?: string;
 }
 
+// Spiral Journal
 export interface SpiralEntry {
   id: string;
   timestamp: number;
   content: string;
   aiResponse?: string;
+}
+
+// Product Lab
+export interface ProductTier {
+  id: string;
+  name: string;
+  amps: number;
+  price: number;
+  features: string[];
+  isRecurring: boolean;
+}
+
+// Power Monitor
+export interface MonitorNode {
+  id: string;
+  location: string;
+  loadPercentage: number;
+  temperature: number;
+  status: 'online' | 'offline' | 'warning';
+  lastSeen: string;
+}
+
+// Global Search
+export interface DailyMove {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+// Abuse Log & Heatmap
+export type IncidentType = 'Harassment' | 'Alienation' | 'Denied Access' | 'False Police Report' | 'Safety Risk' | 'Financial';
+
+export interface AbuseLogEntry {
+  id: string;
+  timestamp: string;
+  type: IncidentType;
+  description: string;
+  severity: number;
+  childReaction: string;
+  witnesses?: string;
+  policeReportNumber?: string;
+  evidencePhoto?: string;
+  businessCorrelation?: string;
+}
+
+// Court Timeline
+export type CaseName = 'Criminal Defense' | 'Family Law';
+export type CourtStatus = 'Pending' | 'Done';
+
+export interface CourtEvent {
+  id: string;
+  date: string;
+  caseName: CaseName;
+  judgeName: string;
+  requiredAction: string;
+  status: CourtStatus;
 }

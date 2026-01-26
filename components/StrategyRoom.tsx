@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StrategyNote } from '../types';
 import { BookOpen, Scale, Handshake, Edit3 } from 'lucide-react';
 
-const initialNotes: StrategyNote[] = [
+export const initialNotes: StrategyNote[] = [
   { id: '1', category: 'copy', content: 'Tagline: "The cord stops here."\n\nValue Props:\n1. No more extension cords across the lawn.\n2. True 30A/50A power for tools, not just lights.\n3. Safety first monitoring.', lastUpdated: Date.now() },
   { id: '2', category: 'rules', content: 'NB Electrical Practice Reality:\n- Trench depth 24" required.\n- Warning tape essential.\n- Homeowner permits allow for DIY wire pull, but final connection needs Red Seal sign-off.\n- PLACED Strategy: We provide the "pre-certified" kit, local partner handles final tie-in.', lastUpdated: Date.now() },
   { id: '3', category: 'partners', content: 'Electrician Pitch:\n"We bring you the customer with the trench dug and wire pulled. You show up, terminate 4 ends, inspect, sign, and bill $300 for 1 hour of work. Zero sales effort for you."', lastUpdated: Date.now() },
@@ -10,7 +10,15 @@ const initialNotes: StrategyNote[] = [
 
 const StrategyRoom: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'copy' | 'rules' | 'partners'>('copy');
-  const [notes, setNotes] = useState<StrategyNote[]>(initialNotes);
+  
+  const [notes, setNotes] = useState<StrategyNote[]>(() => {
+    const saved = localStorage.getItem('strategyNotes');
+    return saved ? JSON.parse(saved) : initialNotes;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('strategyNotes', JSON.stringify(notes));
+  }, [notes]);
 
   const activeNote = notes.find(n => n.category === activeTab);
 
