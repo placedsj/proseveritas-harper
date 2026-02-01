@@ -7,7 +7,8 @@ import CustodyMath from './components/CustodyMath';
 import BusinessCommand from './components/BusinessCommand';
 import StrategyRoom from './components/StrategyRoom';
 import Roadmap from './components/Roadmap';
-import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map } from 'lucide-react';
+import ProductLab from './components/ProductLab';
+import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Package } from 'lucide-react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -41,6 +42,8 @@ const App: React.FC = () => {
           <NavButton target="custody-math" icon={Calculator} label="Math" />
           <NavButton target="business" icon={Briefcase} label="Biz" />
           <NavButton target="strategy" icon={Compass} label="Plan" />
+          <NavButton target="roadmap" icon={Map} label="Roadmap" />
+          <NavButton target="products" icon={Package} label="Products" />
         </div>
         
         <div className="mt-auto pb-6">
@@ -68,6 +71,7 @@ const App: React.FC = () => {
           {view === 'business' && <BusinessCommand />}
           {view === 'strategy' && <StrategyRoom />}
           {view === 'roadmap' && <Roadmap />}
+          {view === 'products' && <ProductLab />}
         </div>
       </main>
 
@@ -77,6 +81,8 @@ const App: React.FC = () => {
         <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('custody-math')} className={`p-2 min-w-[50px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('business')} className={`p-2 min-w-[50px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('roadmap')} className={`p-2 min-w-[50px] ${view === 'roadmap' ? 'text-red-500' : 'text-slate-500'}`}><Map className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('products')} className={`p-2 min-w-[50px] ${view === 'products' ? 'text-red-500' : 'text-slate-500'}`}><Package className="w-6 h-6 mx-auto" /></button>
       </nav>
     </div>
   );
