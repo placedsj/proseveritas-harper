@@ -1,16 +1,32 @@
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+let aiClient: GoogleGenAI | null = null;
+
+const getApiKey = () => process.env.API_KEY || '';
+
+const getClient = () => {
+  const apiKey = getApiKey();
+  if (!apiKey) return null;
+  if (!aiClient) {
+    aiClient = new GoogleGenAI({ apiKey });
+  }
+  return aiClient;
+};
 
 export const getCoFounderResponse = async (userMessage: string, context: string): Promise<string> => {
+  const apiKey = getApiKey();
   if (!apiKey) {
     return "MOTION: Connect your API key to activate Co-Founder mode.";
   }
 
+  const ai = getClient();
+  if (!ai) {
+      return "CALM: Internal error initializing AI client.";
+  }
+
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-2.0-flash',
       contents: `
         You are my personal operating system and Co-Founder for "PLACED", a plug-in shed business.
         
@@ -53,10 +69,17 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
 };
 
 export const getRealityCheck = async (thought: string): Promise<string> => {
+  const apiKey = getApiKey();
   if (!apiKey) return "API Key missing. Cannot analyze.";
+
+  const ai = getClient();
+  if (!ai) {
+      return "Internal error initializing AI client.";
+  }
+
   try {
     const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: `
             You are a stoic, objective reality-checker for a man going through a high-conflict divorce and legal battle.
             He is spiraling. Your job is to:
