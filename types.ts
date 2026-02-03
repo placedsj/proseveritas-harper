@@ -1,5 +1,5 @@
 
-export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap';
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'cofounder' | 'abuse-log';
 
 // Module 1: Scott Schedule
 export type ScottCategory = 'Denial of Parenting Time' | 'Alienation' | 'Unjustified Police Contact' | 'Failure to Consult' | 'Health/Safety Risk';
