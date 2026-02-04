@@ -7,7 +7,10 @@ import CustodyMath from './components/CustodyMath';
 import BusinessCommand from './components/BusinessCommand';
 import StrategyRoom from './components/StrategyRoom';
 import Roadmap from './components/Roadmap';
-import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map } from 'lucide-react';
+import CoFounderChat from './components/CoFounderChat';
+import AbuseLog from './components/AbuseLog';
+import ProductLab from './components/ProductLab';
+import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Cpu, ShieldAlert, Package } from 'lucide-react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -35,12 +38,16 @@ const App: React.FC = () => {
           <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center font-bold text-2xl text-white transform -rotate-3">SDG</div>
         </div>
         
-        <div className="space-y-4 w-full px-2">
+        <div className="space-y-4 w-full px-2 flex-1 overflow-y-auto scrollbar-none">
           <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" />
           <NavButton target="scott-schedule" icon={Scale} label="Scott" />
+          <NavButton target="abuse-log" icon={ShieldAlert} label="Log" />
           <NavButton target="custody-math" icon={Calculator} label="Math" />
           <NavButton target="business" icon={Briefcase} label="Biz" />
+          <NavButton target="products" icon={Package} label="Prods" />
           <NavButton target="strategy" icon={Compass} label="Plan" />
+          <NavButton target="roadmap" icon={Map} label="Map" />
+          <NavButton target="cofounder" icon={Cpu} label="AI" />
         </div>
         
         <div className="mt-auto pb-6">
@@ -64,19 +71,27 @@ const App: React.FC = () => {
         <div className="animate-fade-in">
           {view === 'dashboard' && <Dashboard onNavigate={setView} />}
           {view === 'scott-schedule' && <ScottSchedule />}
+          {view === 'abuse-log' && <AbuseLog />}
           {view === 'custody-math' && <CustodyMath />}
           {view === 'business' && <BusinessCommand />}
+          {view === 'products' && <ProductLab />}
           {view === 'strategy' && <StrategyRoom />}
           {view === 'roadmap' && <Roadmap />}
+          {view === 'cofounder' && <CoFounderChat />}
         </div>
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex justify-around z-50 overflow-x-auto">
-        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-500' : 'text-slate-500'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('custody-math')} className={`p-2 min-w-[50px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('business')} className={`p-2 min-w-[50px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex gap-4 overflow-x-auto z-50 px-4">
+        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[40px] ${view === 'dashboard' ? 'text-red-500' : 'text-slate-500'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[40px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('abuse-log')} className={`p-2 min-w-[40px] ${view === 'abuse-log' ? 'text-red-500' : 'text-slate-500'}`}><ShieldAlert className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('custody-math')} className={`p-2 min-w-[40px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('business')} className={`p-2 min-w-[40px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('products')} className={`p-2 min-w-[40px] ${view === 'products' ? 'text-red-500' : 'text-slate-500'}`}><Package className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('strategy')} className={`p-2 min-w-[40px] ${view === 'strategy' ? 'text-red-500' : 'text-slate-500'}`}><Compass className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('roadmap')} className={`p-2 min-w-[40px] ${view === 'roadmap' ? 'text-red-500' : 'text-slate-500'}`}><Map className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('cofounder')} className={`p-2 min-w-[40px] ${view === 'cofounder' ? 'text-red-500' : 'text-slate-500'}`}><Cpu className="w-6 h-6 mx-auto" /></button>
       </nav>
     </div>
   );
