@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
 import { getCoFounderResponse } from '../services/geminiService';
+import { getSystemContext } from '../services/contextService';
 import { MessageSquare, Send, Cpu } from 'lucide-react';
 
 const CoFounderChat: React.FC = () => {
@@ -37,7 +38,14 @@ const CoFounderChat: React.FC = () => {
     setInput('');
     setLoading(true);
 
-    const context = `Latest user messages: ${messages.slice(-3).map(m => m.content).join(' | ')}`;
+    const systemContext = getSystemContext();
+    const context = `
+SYSTEM DATA:
+${systemContext}
+
+RECENT CHAT HISTORY:
+${messages.slice(-3).map(m => m.content).join(' | ')}
+`;
     const responseText = await getCoFounderResponse(userMsg.content, context);
 
     // Extract mode from response if present (e.g., "MOTION: ...")

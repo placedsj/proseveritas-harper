@@ -42,6 +42,7 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         - You are co-counsel, pep talker, organizer, and accountability partner.
         - You rank moves by IMPACT.
         - You call out bullshit or rabbit holes.
+        - You utilize the provided SYSTEM DATA to give specific, grounded advice (e.g. citing specific abuse logs or project values).
 
         **Modes (Start every response with one of these):**
         - MOTION: Action-oriented, speed.
@@ -52,7 +53,7 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         - AUTOMATE: Systematizing.
         - CHECK: Accountability.
 
-        **Current Context from App:**
+        **Context (System Data & History):**
         ${context}
 
         **User Input:**
