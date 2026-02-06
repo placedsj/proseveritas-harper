@@ -12,6 +12,18 @@ import AbuseLog from './components/AbuseLog';
 import ProductLab from './components/ProductLab';
 import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Cpu, ShieldAlert, Package } from 'lucide-react';
 
+const NAV_ITEMS: { target: ViewState; icon: any; label: string }[] = [
+  { target: 'dashboard', icon: LayoutDashboard, label: 'Cmd' },
+  { target: 'scott-schedule', icon: Scale, label: 'Scott' },
+  { target: 'abuse-log', icon: ShieldAlert, label: 'Log' },
+  { target: 'custody-math', icon: Calculator, label: 'Math' },
+  { target: 'business', icon: Briefcase, label: 'Biz' },
+  { target: 'products', icon: Package, label: 'Prods' },
+  { target: 'strategy', icon: Compass, label: 'Plan' },
+  { target: 'roadmap', icon: Map, label: 'Map' },
+  { target: 'cofounder', icon: Cpu, label: 'AI' },
+];
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
 
@@ -39,15 +51,9 @@ const App: React.FC = () => {
         </div>
         
         <div className="space-y-4 w-full px-2 flex-1 overflow-y-auto scrollbar-none">
-          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" />
-          <NavButton target="scott-schedule" icon={Scale} label="Scott" />
-          <NavButton target="abuse-log" icon={ShieldAlert} label="Log" />
-          <NavButton target="custody-math" icon={Calculator} label="Math" />
-          <NavButton target="business" icon={Briefcase} label="Biz" />
-          <NavButton target="products" icon={Package} label="Prods" />
-          <NavButton target="strategy" icon={Compass} label="Plan" />
-          <NavButton target="roadmap" icon={Map} label="Map" />
-          <NavButton target="cofounder" icon={Cpu} label="AI" />
+          {NAV_ITEMS.map((item) => (
+            <NavButton key={item.target} target={item.target} icon={item.icon} label={item.label} />
+          ))}
         </div>
         
         <div className="mt-auto pb-6">
@@ -83,15 +89,18 @@ const App: React.FC = () => {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex gap-4 overflow-x-auto z-50 px-4">
-        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[40px] ${view === 'dashboard' ? 'text-red-500' : 'text-slate-500'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[40px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('abuse-log')} className={`p-2 min-w-[40px] ${view === 'abuse-log' ? 'text-red-500' : 'text-slate-500'}`}><ShieldAlert className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('custody-math')} className={`p-2 min-w-[40px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('business')} className={`p-2 min-w-[40px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('products')} className={`p-2 min-w-[40px] ${view === 'products' ? 'text-red-500' : 'text-slate-500'}`}><Package className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('strategy')} className={`p-2 min-w-[40px] ${view === 'strategy' ? 'text-red-500' : 'text-slate-500'}`}><Compass className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('roadmap')} className={`p-2 min-w-[40px] ${view === 'roadmap' ? 'text-red-500' : 'text-slate-500'}`}><Map className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('cofounder')} className={`p-2 min-w-[40px] ${view === 'cofounder' ? 'text-red-500' : 'text-slate-500'}`}><Cpu className="w-6 h-6 mx-auto" /></button>
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.target}
+              onClick={() => setView(item.target)}
+              className={`p-2 min-w-[40px] ${view === item.target ? 'text-red-500' : 'text-slate-500'}`}
+            >
+              <Icon className="w-6 h-6 mx-auto" />
+            </button>
+          );
+        })}
       </nav>
     </div>
   );
