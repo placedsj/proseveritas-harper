@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BusinessProject } from '../types';
-import { Briefcase, HardHat, Zap, Clock, CheckCircle2, Plus, DollarSign } from 'lucide-react';
+import { Briefcase, HardHat, Zap, Clock, CheckCircle2, Plus, DollarSign, Trash2 } from 'lucide-react';
 
 const initialProjects: BusinessProject[] = [
   { id: '1', name: 'Smith Backyard Studio', type: 'PLACED', status: 'Active', value: 2499, nextAction: 'Install 50A Kit', dueDate: 'Jan 28' },
@@ -37,6 +37,10 @@ const BusinessCommand: React.FC = () => {
     setProjects([proj, ...projects]);
     setIsAdding(false);
     setNewProject({ name: '', type: 'PLACED', status: 'Lead', value: 0, nextAction: '' });
+  };
+
+  const deleteProject = (id: string) => {
+    setProjects(projects.filter(p => p.id !== id));
   };
 
   const totalValue = projects.reduce((sum, p) => sum + p.value, 0);
@@ -135,9 +139,17 @@ const BusinessCommand: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-right">
-              <p className="text-xl font-bold text-white">${proj.value.toLocaleString()}</p>
-              <p className="text-sm text-slate-400">{proj.nextAction}</p>
+            <div className="text-right flex items-center gap-4">
+              <div>
+                <p className="text-xl font-bold text-white">${proj.value.toLocaleString()}</p>
+                <p className="text-sm text-slate-400">{proj.nextAction}</p>
+              </div>
+              <button
+                onClick={() => deleteProject(proj.id)}
+                className="p-2 text-slate-600 hover:text-red-500 hover:bg-red-900/20 rounded transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
         ))}

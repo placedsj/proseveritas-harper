@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import ScottSchedule from './components/ScottSchedule';
@@ -10,6 +10,7 @@ import Roadmap from './components/Roadmap';
 import CoFounderChat from './components/CoFounderChat';
 import AbuseLog from './components/AbuseLog';
 import ProductLab from './components/ProductLab';
+import GlobalSearch from './components/GlobalSearch';
 import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Cpu, ShieldAlert, Package } from 'lucide-react';
 
 const NAV_ITEMS: { target: ViewState; icon: any; label: string }[] = [
@@ -26,6 +27,19 @@ const NAV_ITEMS: { target: ViewState; icon: any; label: string }[] = [
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const NavButton = ({ target, icon: Icon, label }: { target: ViewState, icon: any, label: string }) => (
     <button
@@ -43,6 +57,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row">
+      <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} onNavigate={setView} />
       
       {/* Sidebar */}
       <nav className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-24 bg-slate-900 border-r border-slate-800 py-6 items-center z-50">
