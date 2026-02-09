@@ -33,16 +33,6 @@ const initialLogs: ScottLogEntry[] = [
     childImpact: 'N/A',
     exhibitRef: 'Screenshot_20251021.png',
     statuteTag: 'Parental Alienation / Public Mischief'
-  },
-  {
-    id: 'photo-3',
-    incidentDate: '2025-01-29T15:25:00',
-    category: 'Health/Safety Risk',
-    theSay: "Emma provided drug test result (Negative-Dilute).",
-    theFact: "Specimen deliberately diluted to mask methamphetamine use. Omitted from social development report but documented by MRO.",
-    childImpact: 'N/A',
-    exhibitRef: 'MRO_Report_N11381257.pdf',
-    statuteTag: 'Substance Abuse / Concealment'
   }
 ];
 
