@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck } from 'lucide-react';
+import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (view: any) => void;
@@ -40,13 +40,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         onClick={() => onNavigate('moral-compass')}
         className="bg-gradient-to-r from-red-900/40 to-slate-900 border border-red-500/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-500 transition-all"
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 text-left">
            <div className="bg-red-500/20 p-2 rounded-lg">
                <ShieldCheck className="w-5 h-5 text-red-500" />
            </div>
            <div>
-               <h2 className="text-xs font-black text-red-500 uppercase tracking-widest text-left">Status: Pro Se Command</h2>
-               <p className="text-white text-sm font-bold italic text-left">"Counsel Withdrawn. Direct control established. Truth is the only attorney."</p>
+               <h2 className="text-xs font-black text-red-500 uppercase tracking-widest">Status: Pro Se Command</h2>
+               <p className="text-white text-sm font-bold italic">"Counsel Withdrawn. Direct control established. Truth is the only attorney."</p>
            </div>
         </div>
         <div className="flex items-center gap-2">
@@ -98,51 +98,31 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* TACTICAL ALERT */}
-      <div className="bg-amber-900/10 border border-amber-500/30 p-4 rounded-xl flex items-center gap-4">
-        <div className="bg-amber-500/20 p-2 rounded-lg">
-            <Star className="w-5 h-5 text-amber-400" />
-        </div>
-        <div className="flex-1 text-left">
-          <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Trial Target: June 15, 2026</h4>
-          <p className="text-slate-300 text-xs">Full Custody Trial finalized. Evidence locker locked for handoff.</p>
-        </div>
-      </div>
-
-      {/* TRACKERS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* TRACKERS - GRID RECALIBRATED TO 2 COLUMNS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div onClick={() => onNavigate('education-build')} className="bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-indigo-500 cursor-pointer group transition-all text-left">
           <div className="flex justify-between items-start mb-4">
-            <GraduationCap className="w-8 h-8 text-indigo-400" />
+            <GraduationCap className="w-8 h-8 text-indigo-400 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Academic</span>
           </div>
-          <h3 className="text-white font-bold">CAEC / Upgrade</h3>
-          <p className="text-xs text-slate-400 mt-1">Path to passing verified.</p>
+          <h3 className="text-white font-bold">CAEC / Upgrade Track</h3>
+          <p className="text-xs text-slate-400 mt-1">Educational readiness verified. Credits progressing.</p>
         </div>
 
         <div onClick={() => onNavigate('harper-log')} className="bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-pink-500 cursor-pointer group transition-all text-left">
           <div className="flex justify-between items-start mb-4">
-            <Heart className="w-8 h-8 text-pink-500" />
+            <Heart className="w-8 h-8 text-pink-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Safety</span>
           </div>
           <h3 className="text-white font-bold">Clinical Alert Log</h3>
-          <p className="text-xs text-slate-400 mt-1">Pattern of health logged.</p>
-        </div>
-
-        <div onClick={() => onNavigate('health-rehab')} className="bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-red-400 cursor-pointer group transition-all text-left">
-          <div className="flex justify-between items-start mb-4">
-            <Activity className="w-8 h-8 text-red-400" />
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Biological</span>
-          </div>
-          <h3 className="text-white font-bold">Sobriety Track</h3>
-          <p className="text-xs text-slate-400 mt-1">370+ Days verified.</p>
+          <p className="text-xs text-slate-400 mt-1">Pattern of health and visitation logged.</p>
         </div>
       </div>
 
       {/* EXHIBIT OVERVIEW */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-left">
          <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-            <FileText className="w-4 h-4" /> Global Exhibit Summary
+            <FileText className="w-4 h-4" /> Global Discovery Summary
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
@@ -154,8 +134,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
             </div>
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
-               <p className="text-green-400 font-bold text-xl">370</p>
-               <p className="text-[10px] text-slate-500 uppercase font-black">Sober Days</p>
+               <p className="text-indigo-400 font-bold text-xl">4</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
             </div>
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
                <p className="text-amber-500 font-bold text-xl">36</p>

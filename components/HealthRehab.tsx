@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Stethoscope, Activity, CheckCircle, ArrowRight, Brain, ShieldAlert } from 'lucide-react';
+import { Stethoscope, Activity, ArrowRight, Brain, ShieldAlert } from 'lucide-react';
 import { HealthStatus } from '../types';
 
 const HealthRehab: React.FC = () => {
@@ -27,7 +27,7 @@ const HealthRehab: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statuses.map(s => (
-          <div key={s.id} className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-red-500/30 transition-all flex flex-col h-full">
+          <div key={s.id} className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-red-500/30 transition-all flex flex-col h-full text-left">
             <div className="flex justify-between items-start mb-4">
               <h3 className="text-white font-bold text-lg leading-tight">{s.condition}</h3>
               {s.condition.includes('ADHD') ? <Brain className="w-5 h-5 text-purple-400" /> : <Stethoscope className="w-5 h-5 text-red-400" />}
@@ -55,7 +55,7 @@ const HealthRehab: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-red-900/10 border border-red-900/30 p-8 rounded-2xl relative overflow-hidden">
+      <div className="bg-red-900/10 border border-red-900/30 p-8 rounded-2xl relative overflow-hidden text-left">
          <div className="relative z-10">
            <h3 className="text-xl font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-3">
               <ShieldAlert className="w-6 h-6 text-red-500" /> System Defense Intel
