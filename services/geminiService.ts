@@ -1,32 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 
-let aiClient: GoogleGenAI | null = null;
-
-const getApiKey = () => process.env.API_KEY || '';
-
-const getClient = () => {
-  const apiKey = getApiKey();
-  if (!apiKey) return null;
-  if (!aiClient) {
-    aiClient = new GoogleGenAI({ apiKey });
-  }
-  return aiClient;
-};
+const apiKey = process.env.API_KEY || '';
+const ai = new GoogleGenAI({ apiKey });
 
 export const getCoFounderResponse = async (userMessage: string, context: string): Promise<string> => {
-  const apiKey = getApiKey();
   if (!apiKey) {
     return "MOTION: Connect your API key to activate Co-Founder mode.";
   }
 
-  const ai = getClient();
-  if (!ai) {
-      return "CALM: Internal error initializing AI client.";
-  }
-
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3-flash-preview',
       contents: `
         You are my personal operating system and Co-Founder for "PLACED", a plug-in shed business.
         
@@ -42,6 +26,7 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         - You are co-counsel, pep talker, organizer, and accountability partner.
         - You rank moves by IMPACT.
         - You call out bullshit or rabbit holes.
+        - You utilize the provided SYSTEM DATA to give specific, grounded advice (e.g. citing specific abuse logs or project values).
 
         **Modes (Start every response with one of these):**
         - MOTION: Action-oriented, speed.
@@ -52,7 +37,7 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         - AUTOMATE: Systematizing.
         - CHECK: Accountability.
 
-        **Current Context from App:**
+        **Context (System Data & History):**
         ${context}
 
         **User Input:**
@@ -69,17 +54,10 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
 };
 
 export const getRealityCheck = async (thought: string): Promise<string> => {
-  const apiKey = getApiKey();
   if (!apiKey) return "API Key missing. Cannot analyze.";
-
-  const ai = getClient();
-  if (!ai) {
-      return "Internal error initializing AI client.";
-  }
-
   try {
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3-flash-preview',
         contents: `
             You are a stoic, objective reality-checker for a man going through a high-conflict divorce and legal battle.
             He is spiraling. Your job is to:
