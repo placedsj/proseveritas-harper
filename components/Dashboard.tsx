@@ -1,37 +1,87 @@
 
 import React, { useState, useEffect } from 'react';
 import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck } from 'lucide-react';
+import { EvidenceItem, ParentingBlock, CourtEvent, MedicalRecord } from '../types';
 
 interface DashboardProps {
   onNavigate: (view: any) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
+  // Lazy initialization for synchronous data loading from localStorage
+  const [stats, setStats] = useState(() => {
+    try {
+      const evidenceItems: EvidenceItem[] = JSON.parse(localStorage.getItem('evidenceItems') || '[]');
+      const custodyBlocks: ParentingBlock[] = JSON.parse(localStorage.getItem('custodyBlocks') || '[]');
+      const medicalRecords: MedicalRecord[] = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+      const soberStart = localStorage.getItem('soberStartDate') || '2025-01-25';
+
+      const verifiedCount = evidenceItems.filter(i => i.status === 'ready').length;
+      const deniedHrs = custodyBlocks.reduce((acc, b) => acc + (b.status === 'Denied by Mother' ? b.hoursLost : 0), 0);
+      const recordsCount = medicalRecords.length;
+
+      const start = new Date(soberStart).getTime();
+      const now = new Date().getTime();
+      const sDays = Math.floor((now - start) / (1000 * 60 * 60 * 24));
+
+      return {
+        verifiedExhibits: verifiedCount,
+        deniedHours: deniedHrs,
+        soberDays: sDays,
+        medicalRecordsCount: recordsCount
+      };
+    } catch (e) {
+      console.error("Error loading dashboard stats:", e);
+      return { verifiedExhibits: 0, deniedHours: 0, soberDays: 0, medicalRecordsCount: 0 };
+    }
+  });
+
+  const [courtDates, setCourtDates] = useState(() => {
+    try {
+      const courtEvents: CourtEvent[] = JSON.parse(localStorage.getItem('courtEvents') || '[]');
+      const futureEvents = courtEvents.filter(e => new Date(e.date) >= new Date(new Date().setHours(0,0,0,0))).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      const nextCustody = futureEvents.find(e => e.caseName === 'Family Law' || e.requiredAction.toLowerCase().includes('custody')) || null;
+      const nextSentencing = futureEvents.find(e => e.caseName === 'Criminal Defense' || e.requiredAction.toLowerCase().includes('sentencing')) || null;
+
+      return { custody: nextCustody, sentencing: nextSentencing };
+    } catch (e) {
+      console.error("Error loading court dates:", e);
+      return { custody: null, sentencing: null };
+    }
+  });
+
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
 
   useEffect(() => {
-    // Primary Target: Custody Hearing March 30
-    const target = new Date('2026-03-30T09:30:00');
-    // Secondary Target: Sentencing March 3 (Judge Palmer)
-    const sentencing = new Date('2026-03-03T09:00:00');
+    // TIMERS FOR HEADERS
+    const targetDate = courtDates.custody ? new Date(`${courtDates.custody.date}T09:30:00`) : new Date('2026-03-30T09:30:00');
+    const sentencingDate = courtDates.sentencing ? new Date(`${courtDates.sentencing.date}T09:00:00`) : new Date('2026-03-03T09:00:00');
     
-    const timer = setInterval(() => {
+    const calculateTime = () => {
       const now = new Date();
-      const diff = target.getTime() - now.getTime();
-      const sDiff = sentencing.getTime() - now.getTime();
+      const diff = targetDate.getTime() - now.getTime();
+      const sDiff = sentencingDate.getTime() - now.getTime();
       
       if (diff > 0) {
         setTimeLeft({
             days: Math.floor(diff / (1000 * 60 * 60 * 24)),
             hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         });
+      } else {
+         setTimeLeft({ days: 0, hours: 0 });
       }
-      setSentencingDays(Math.floor(sDiff / (1000 * 60 * 60 * 24)));
-    }, 1000 * 60);
+
+      const sDays = Math.floor(sDiff / (1000 * 60 * 60 * 24));
+      setSentencingDays(sDays > 0 ? sDays : 0);
+    };
+
+    calculateTime(); // Run immediately
+    const timer = setInterval(calculateTime, 1000 * 60);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [courtDates]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -63,8 +113,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                    <Gavel className="w-6 h-6 text-white" />
                </div>
                <div className="text-left">
-                   <h2 className="text-xl font-black text-white uppercase tracking-widest leading-none">Custody Hearing</h2>
-                   <p className="text-indigo-300 text-xs font-semibold mt-1">March 30, 2026</p>
+                   <h2 className="text-xl font-black text-white uppercase tracking-widest leading-none">
+                     {courtDates.custody ? courtDates.custody.requiredAction : 'Custody Hearing'}
+                   </h2>
+                   <p className="text-indigo-300 text-xs font-semibold mt-1">
+                     {courtDates.custody ? `${courtDates.custody.date} (Judge ${courtDates.custody.judgeName})` : 'Date Pending'}
+                   </p>
                </div>
           </div>
           <div className="flex gap-4 text-center w-full justify-center">
@@ -85,8 +139,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                    <Scale className="w-6 h-6 text-white" />
                </div>
                <div className="text-left">
-                   <h2 className="text-xl font-black text-white uppercase tracking-widest leading-none">Sentencing</h2>
-                   <p className="text-blue-300 text-xs font-semibold mt-1">March 3, 2026 (Judge Palmer)</p>
+                   <h2 className="text-xl font-black text-white uppercase tracking-widest leading-none">
+                     {courtDates.sentencing ? courtDates.sentencing.requiredAction : 'Sentencing'}
+                   </h2>
+                   <p className="text-blue-300 text-xs font-semibold mt-1">
+                     {courtDates.sentencing ? `${courtDates.sentencing.date} (Judge ${courtDates.sentencing.judgeName})` : 'Date Pending'}
+                   </p>
                </div>
           </div>
           <div className="w-full flex justify-center">
@@ -135,7 +193,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Biological</span>
           </div>
           <h3 className="text-white font-bold">Sobriety Track</h3>
-          <p className="text-xs text-slate-400 mt-1">370+ Days verified.</p>
+          <p className="text-xs text-slate-400 mt-1">{stats.soberDays}+ Days verified.</p>
         </div>
       </div>
 
@@ -146,20 +204,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
-               <p className="text-white font-bold text-xl">87</p>
+               <p className="text-white font-bold text-xl">{stats.verifiedExhibits}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
             </div>
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
-               <p className="text-blue-400 font-bold text-xl">129</p>
-               <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
+               <p className="text-blue-400 font-bold text-xl">{stats.deniedHours}</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Hours Denied</p>
             </div>
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
-               <p className="text-green-400 font-bold text-xl">370</p>
+               <p className="text-green-400 font-bold text-xl">{stats.soberDays}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Sober Days</p>
             </div>
             <div className="p-3 bg-slate-800 rounded border border-slate-700">
-               <p className="text-amber-500 font-bold text-xl">36</p>
-               <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
+               <p className="text-amber-500 font-bold text-xl">{stats.medicalRecordsCount}</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Medical Records</p>
             </div>
          </div>
       </div>

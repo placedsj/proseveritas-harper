@@ -225,3 +225,12 @@ export interface ProcessedEvidenceItem {
   wScore: number;
   verified: boolean;
 }
+
+// System Audit
+export interface SystemAuditLog {
+  id: string;
+  date: string;
+  action: string;
+  status: 'Active' | 'Critical' | 'Flagged' | 'Verified';
+  note: string;
+}
