@@ -1,6 +1,5 @@
 
-export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'cofounder';
-export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
 
 // Module 1: Scott Schedule
 export type ScottCategory = 'Denial of Parenting Time' | 'Alienation' | 'Unjustified Police Contact' | 'Failure to Consult' | 'Health/Safety Risk';
@@ -64,41 +63,6 @@ export interface ParentingBlock {
   hoursLost: number; // Auto-calc
 }
 
-// Module 3: Business/Ops
-export interface BusinessTask {
-  id: string;
-  clientOrTask: string;
-  dueDate: string;
-  dollarValue: number;
-  completed: boolean;
-}
-
-export interface BusinessProject {
-  id: string;
-  name: string;
-  type: 'PLACED' | 'ROOFING';
-  status: 'Lead' | 'Active' | 'Invoiced' | 'Paid';
-  value: number;
-  nextAction: string;
-  dueDate?: string;
-}
-
-// Strategy & Roadmap
-export interface StrategyNote {
-  id: string;
-  category: 'copy' | 'rules' | 'partners';
-  content: string;
-  lastUpdated: number;
-}
-
-export interface RoadmapTask {
-  id: string;
-  title: string;
-  category: 'growth' | 'tech' | 'ops' | 'legal';
-  status: 'backlog' | 'active' | 'done';
-  dueDate?: string;
-}
-
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'cofounder';
@@ -144,26 +108,6 @@ export interface SpiralEntry {
   timestamp: number;
   content: string;
   aiResponse?: string;
-}
-
-// Product Lab
-export interface ProductTier {
-  id: string;
-  name: string;
-  amps: number;
-  price: number;
-  features: string[];
-  isRecurring: boolean;
-}
-
-// Power Monitor
-export interface MonitorNode {
-  id: string;
-  location: string;
-  loadPercentage: number;
-  temperature: number;
-  status: 'online' | 'offline' | 'warning';
-  lastSeen: string;
 }
 
 // Global Search
@@ -213,7 +157,7 @@ export interface MedicalRecord {
   dateAdded: string; // When it was added to the vault
 }
 
-// Evidence Processor Item (from original index.tsx)
+// Evidence Processor Item
 export interface ProcessedEvidenceItem {
   file: string;
   date: string;
@@ -225,4 +169,61 @@ export interface ProcessedEvidenceItem {
   hash: string;
   wScore: number;
   verified: boolean;
+}
+
+// Module: Product Lab
+export interface ProductTier {
+  id: string;
+  name: string;
+  amps: number;
+  price: number;
+  features: string[];
+  isRecurring: boolean;
+}
+
+// Module: Power Monitor
+export interface MonitorNode {
+  id: string;
+  location: string;
+  loadPercentage: number;
+  temperature: number;
+  status: 'online' | 'warning' | 'offline';
+  lastSeen: string;
+}
+
+// Module: Strategy Room
+export interface StrategyNote {
+  id: string;
+  category: 'copy' | 'rules' | 'partners';
+  content: string;
+  lastUpdated: number;
+}
+
+// Module: Roadmap
+export interface RoadmapTask {
+  id: string;
+  title: string;
+  category: 'growth' | 'tech' | 'ops' | 'legal';
+  status: 'backlog' | 'active' | 'done';
+  dueDate?: string;
+}
+
+// Module: Business Command
+export interface BusinessProject {
+  id: string;
+  name: string;
+  type: 'PLACED' | 'ROOFING';
+  status: 'Active' | 'Lead' | 'Invoiced' | 'Done';
+  value: number;
+  nextAction: string;
+  dueDate?: string;
+}
+
+// Module: Business Survival
+export interface BusinessTask {
+  id: string;
+  clientOrTask: string;
+  dueDate: string;
+  dollarValue: number;
+  completed: boolean;
 }

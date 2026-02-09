@@ -24,39 +24,39 @@ const MoralCompass: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-black text-white uppercase tracking-[0.2em]">The Moral Compass</h2>
-        <p className="text-amber-400 font-bold italic">"Only the truth, what God would do, and in Harper's best interest."</p>
+        <h2 className="text-3xl font-black text-slate-900 uppercase tracking-[0.2em]">The Moral Compass</h2>
+        <p className="text-amber-600 font-bold italic">"Only the truth, what God would do, and in Harper's best interest."</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {principles.map((p, i) => (
-          <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-2xl hover:border-amber-500/50 transition-all group">
+          <div key={i} className="bg-white border border-slate-200 p-6 rounded-2xl hover:border-amber-300 hover:shadow-lg transition-all group">
             <div className="mb-4 group-hover:scale-110 transition-transform">{p.icon}</div>
-            <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">{p.desc}</p>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">{p.title}</h3>
+            <p className="text-slate-500 text-sm leading-relaxed">{p.desc}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-gradient-to-br from-amber-900/20 to-slate-900 border border-amber-900/50 p-8 rounded-2xl">
+      <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 p-8 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3 mb-6">
-          <Book className="w-6 h-6 text-amber-500" />
-          <h3 className="text-xl font-bold text-white uppercase tracking-widest">Scripture for the Battle</h3>
+          <Book className="w-6 h-6 text-amber-600" />
+          <h3 className="text-xl font-bold text-slate-900 uppercase tracking-widest">Scripture for the Battle</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 italic text-slate-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 italic text-slate-700">
           <div className="space-y-2">
             <p className="text-lg">"The Lord will fight for you; you need only to be still."</p>
-            <span className="text-xs text-amber-500 uppercase font-bold">— Exodus 14:14</span>
+            <span className="text-xs text-amber-600 uppercase font-bold">— Exodus 14:14</span>
           </div>
           <div className="space-y-2">
             <p className="text-lg">"Then you will know the truth, and the truth will set you free."</p>
-            <span className="text-xs text-amber-500 uppercase font-bold">— John 8:32</span>
+            <span className="text-xs text-amber-600 uppercase font-bold">— John 8:32</span>
           </div>
         </div>
       </div>
 
       <div className="p-4 text-center">
-        <p className="text-xs text-slate-600 uppercase tracking-widest">Stay Calm. Stay Truthful. Stay Focused on Harper.</p>
+        <p className="text-xs text-slate-400 uppercase tracking-widest">Stay Calm. Stay Truthful. Stay Focused on Harper.</p>
       </div>
     </div>
   );

@@ -30,14 +30,14 @@ const GovBenefits: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <Landmark className="w-6 h-6 text-amber-500" />
             Support & Benefits Matrix
           </h2>
-          <p className="text-slate-400 text-sm">Managing New Brunswick & Federal Support Systems.</p>
+          <p className="text-slate-500 text-sm">Managing New Brunswick & Federal Support Systems.</p>
         </div>
         <div className="flex gap-2">
-           <a href="https://www.worksafenb.ca" target="_blank" rel="noreferrer" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 border border-blue-500/30 px-2 py-1 rounded bg-blue-900/10 transition-colors font-bold uppercase">
+           <a href="https://www.worksafenb.ca" target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 border border-blue-200 px-2 py-1 rounded bg-white transition-colors font-bold uppercase shadow-sm">
               WorkSafeNB Portal <ExternalLink className="w-3 h-3" />
            </a>
         </div>
@@ -45,22 +45,22 @@ const GovBenefits: React.FC = () => {
 
       <div className="grid grid-cols-1 gap-4">
         {benefits.map(benefit => (
-          <div key={benefit.id} className="bg-slate-800 p-5 rounded-xl border border-slate-700 hover:border-amber-500/30 transition-all">
+          <div key={benefit.id} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition-all">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] uppercase font-black text-slate-500 tracking-tighter">{benefit.agency}</span>
+                  <span className="text-[10px] uppercase font-black text-slate-400 tracking-tighter">{benefit.agency}</span>
                   <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                    benefit.status === 'Active' ? 'bg-green-900/30 text-green-400' :
-                    benefit.status === 'Pending' ? 'bg-amber-900/30 text-amber-400' :
-                    benefit.status === 'Rejected' ? 'bg-red-900/30 text-red-400' :
-                    'bg-slate-700 text-slate-400'
+                    benefit.status === 'Active' ? 'bg-green-50 text-green-700 border border-green-200' :
+                    benefit.status === 'Pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                    benefit.status === 'Rejected' ? 'bg-red-50 text-red-700 border border-red-200' :
+                    'bg-slate-100 text-slate-500 border border-slate-200'
                   }`}>
                     {benefit.status}
                   </div>
                 </div>
-                <h3 className="text-white font-bold text-lg">{benefit.program}</h3>
-                <p className="text-amber-500/80 text-xs font-semibold mt-1 flex items-center gap-1">
+                <h3 className="text-slate-900 font-bold text-lg">{benefit.program}</h3>
+                <p className="text-amber-600 text-xs font-semibold mt-1 flex items-center gap-1">
                    <Clock className="w-3 h-3" /> Next: {benefit.nextAction}
                 </p>
               </div>
@@ -69,7 +69,7 @@ const GovBenefits: React.FC = () => {
                 <select 
                   value={benefit.status}
                   onChange={(e) => updateStatus(benefit.id, e.target.value as any)}
-                  className="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none cursor-pointer"
+                  className="bg-slate-50 border border-slate-200 rounded px-2 py-1 text-xs text-slate-900 focus:outline-none cursor-pointer hover:border-slate-300"
                 >
                   <option value="Not Applied">Not Applied</option>
                   <option value="Pending">Pending</option>
@@ -82,18 +82,18 @@ const GovBenefits: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-blue-900/10 border border-blue-500/30 p-6 rounded-2xl">
-         <h4 className="text-blue-100 font-bold mb-4 flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-blue-400" /> Operational Context
+      <div className="bg-blue-50 border border-blue-200 p-6 rounded-2xl shadow-sm">
+         <h4 className="text-blue-900 font-bold mb-4 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-blue-600" /> Operational Context
          </h4>
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-blue-200/70">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-blue-800">
             <div className="space-y-2">
-               <p><span className="text-white font-bold uppercase">Funding Target:</span> Secure a bridge between Social Assistance and WorkSafeNB compensation to ensure legal fees and stability.</p>
-               <p><span className="text-white font-bold uppercase">WorkSafeNB:</span> Claim must be filed under "Application for Workers Compensation" for the C5-C6 spinal injury history.</p>
+               <p><span className="text-blue-900 font-bold uppercase">Funding Target:</span> Secure a bridge between Social Assistance and WorkSafeNB compensation to ensure legal fees and stability.</p>
+               <p><span className="text-blue-900 font-bold uppercase">WorkSafeNB:</span> Claim must be filed under "Application for Workers Compensation" for the C5-C6 spinal injury history.</p>
             </div>
             <div className="space-y-2">
-               <p><span className="text-white font-bold uppercase">Gentle Path:</span> Keep attendance records for all sessions. This is positive evidence for the June 15 Trial.</p>
-               <p><span className="text-white font-bold uppercase">ADHD Intake:</span> Demonstrating proactive health management is a key differentiator in custody hearings.</p>
+               <p><span className="text-blue-900 font-bold uppercase">Gentle Path:</span> Keep attendance records for all sessions. This is positive evidence for the June 15 Trial.</p>
+               <p><span className="text-blue-900 font-bold uppercase">ADHD Intake:</span> Demonstrating proactive health management is a key differentiator in custody hearings.</p>
             </div>
          </div>
       </div>
