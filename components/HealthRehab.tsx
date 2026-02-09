@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Stethoscope, Activity, CheckCircle, ArrowRight, Brain, ShieldAlert, Calendar } from 'lucide-react';
 import { Stethoscope, Activity, ArrowRight, Brain, ShieldAlert } from 'lucide-react';
 import { HealthStatus } from '../types';
 
@@ -13,6 +14,25 @@ const HealthRehab: React.FC = () => {
     ];
   });
 
+  const [soberStartDate, setSoberStartDate] = useState<string>(() => {
+    return localStorage.getItem('soberStartDate') || '2025-01-25';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('healthStatus', JSON.stringify(statuses));
+  }, [statuses]);
+
+  useEffect(() => {
+    localStorage.setItem('soberStartDate', soberStartDate);
+  }, [soberStartDate]);
+
+  const calculateSoberDays = () => {
+    const start = new Date(soberStartDate).getTime();
+    const now = new Date().getTime();
+    const diff = now - start;
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -22,6 +42,38 @@ const HealthRehab: React.FC = () => {
             Health & Rehab Protocol
           </h2>
           <p className="text-slate-400 text-sm">Proving Fitness & Capacity for Harper June Elizabeth.</p>
+        </div>
+      </div>
+
+      {/* VITAL METRICS - SOBRIETY TRACKING */}
+      <div className="bg-slate-800 p-6 rounded-xl border border-green-500/30 shadow-lg shadow-green-900/10 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+           <div className="bg-green-500/20 p-4 rounded-full">
+              <CheckCircle className="w-8 h-8 text-green-500" />
+           </div>
+           <div>
+              <h3 className="text-white font-bold text-lg uppercase tracking-widest">Sobriety Counter</h3>
+              <p className="text-slate-400 text-sm">Continuous days of proven sobriety.</p>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+           <div className="text-center">
+              <span className="block text-4xl font-black text-green-400 font-mono">{calculateSoberDays()}</span>
+              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Days Clean</span>
+           </div>
+
+           <div className="bg-slate-900 p-4 rounded-lg border border-slate-700">
+              <label className="block text-slate-500 text-[10px] uppercase font-bold mb-1 flex items-center gap-1">
+                 <Calendar className="w-3 h-3" /> Start Date
+                 <input
+                   type="date"
+                   value={soberStartDate}
+                   onChange={(e) => setSoberStartDate(e.target.value)}
+                   className="bg-transparent text-white font-bold focus:outline-none text-sm ml-2"
+                 />
+              </label>
+           </div>
         </div>
       </div>
 
