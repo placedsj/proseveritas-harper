@@ -8,6 +8,7 @@ import BusinessCommand from './components/BusinessCommand';
 import StrategyRoom from './components/StrategyRoom';
 import Roadmap from './components/Roadmap';
 import CoFounderChat from './components/CoFounderChat';
+import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Cpu } from 'lucide-react';
 import AbuseLog from './components/AbuseLog';
 import ProductLab from './components/ProductLab';
 import GlobalSearch from './components/GlobalSearch';
@@ -98,6 +99,9 @@ const App: React.FC = () => {
           <NavButton target="scott-schedule" icon={Scale} label="Scott" />
           <NavButton target="processor" icon={Map} label="Evidence" />
           <NavButton target="business" icon={Briefcase} label="Biz" />
+          <NavButton target="strategy" icon={Compass} label="Plan" />
+          <NavButton target="roadmap" icon={Map} label="Map" />
+          <NavButton target="cofounder" icon={Cpu} label="AI" />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
@@ -141,6 +145,7 @@ const App: React.FC = () => {
           {view === 'business' && <BusinessCommand />}
           {view === 'strategy' && <StrategyRoom />}
           {view === 'roadmap' && <Roadmap />}
+          {view === 'cofounder' && <CoFounderChat />}
           {view === 'medical-records' && <MedicalRecords />}
           {view === 'processor' && <EvidenceProcessor />}
         </div>
@@ -165,6 +170,11 @@ const App: React.FC = () => {
         <button onClick={() => setView('harper-log')} className={`p-2 min-w-[50px] ${view === 'harper-log' ? 'text-pink-500' : 'text-slate-500'}`}><Heart className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('system-audit')} className={`p-2 min-w-[50px] ${view === 'system-audit' ? 'text-blue-500' : 'text-slate-500'}`}><Fingerprint className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('custody-math')} className={`p-2 min-w-[50px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('business')} className={`p-2 min-w-[50px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('strategy')} className={`p-2 min-w-[50px] ${view === 'strategy' ? 'text-red-500' : 'text-slate-500'}`}><Compass className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('roadmap')} className={`p-2 min-w-[50px] ${view === 'roadmap' ? 'text-red-500' : 'text-slate-500'}`}><Map className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('cofounder')} className={`p-2 min-w-[50px] ${view === 'cofounder' ? 'text-red-500' : 'text-slate-500'}`}><Cpu className="w-6 h-6 mx-auto" /></button>
       </nav>
 
       <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={setView} />
