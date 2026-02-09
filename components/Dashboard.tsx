@@ -9,6 +9,14 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
+  const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number } | null>(null);
+  const [recentLogs, setRecentLogs] = useState<ScottLogEntry[]>([]);
+
+  useEffect(() => {
+    // Sentencing Countdown Feb 3
+    const target = new Date('2025-02-03T09:00:00'); // Assuming 9am
+
+    const calculateTimeLeft = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
 
@@ -74,6 +82,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         });
       } else {
+        setTimeLeft(null);
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000 * 60);
          setTimeLeft({ days: 0, hours: 0 });
       }
 
@@ -100,6 +114,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                <p className="text-white text-sm font-bold italic">"Counsel Withdrawn. Direct control established. Truth is the only attorney."</p>
            </div>
         </div>
+        <div className="flex gap-4 text-center">
+            {timeLeft ? (
+              <>
+                <div className="bg-black/30 p-3 rounded-lg min-w-[80px]">
+                    <span className="block text-3xl font-mono font-bold text-white">{timeLeft.days}</span>
+                    <span className="text-[10px] text-red-400 uppercase font-bold">Days</span>
+                </div>
+                <div className="bg-black/30 p-3 rounded-lg min-w-[80px]">
+                    <span className="block text-3xl font-mono font-bold text-white">{timeLeft.hours}</span>
+                    <span className="text-[10px] text-red-400 uppercase font-bold">Hours</span>
+                </div>
+              </>
+            ) : (
+              <div className="bg-green-900/30 border border-green-500/30 p-3 rounded-lg min-w-[160px] flex items-center justify-center">
+                  <span className="text-xl font-bold text-green-400 uppercase tracking-widest">COMPLETED</span>
+              </div>
+            )}
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-red-500/60 font-mono">SRL-ACTIVE</span>
           <ArrowRight className="w-4 h-4 text-red-500 opacity-50" />
