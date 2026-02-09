@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
+import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity } from 'lucide-react';
+import { ScottLogEntry } from '../types';
 import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
 
 interface DashboardProps {
@@ -114,6 +116,45 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
           <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
           <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
+        </div>
+
+        {/* Module 4 */}
+        <div
+          onClick={() => onNavigate('roadmap')}
+          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Map className="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Execution Roadmap</h3>
+            <p className="text-sm text-slate-400">Track tasks, growth, tech, and legal milestones.</p>
+        </div>
+
+        {/* Module 5 */}
+        <div
+          onClick={() => onNavigate('products')}
+          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Package className="w-8 h-8 text-purple-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Product Lab</h3>
+            <p className="text-sm text-slate-400">Manage product tiers, specs, and inventory.</p>
+        </div>
+
+        {/* Module 6 */}
+        <div
+          onClick={() => onNavigate('power-monitor')}
+          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Activity className="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Power Monitor</h3>
+            <p className="text-sm text-slate-400">Live monitoring of power load, temperature, and status.</p>
         </div>
       </div>
 
