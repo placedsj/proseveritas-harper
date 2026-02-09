@@ -1,7 +1,12 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { ParentingBlock, CustodyStatus } from '../types';
-import { Calculator, Clock, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
+import { Calculator, Clock, CheckCircle2, XCircle, AlertTriangle, Trash2 } from 'lucide-react';
+
+export const calculateHours = (start: string, end: string): number => {
+  const diff = new Date(end).getTime() - new Date(start).getTime();
+  return Number((diff / (1000 * 60 * 60)).toFixed(1));
+};
 
 const CustodyMath: React.FC = () => {
   const [blocks, setBlocks] = useState<ParentingBlock[]>(() => {
@@ -20,11 +25,6 @@ const CustodyMath: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('custodyBlocks', JSON.stringify(blocks));
   }, [blocks]);
-
-  const calculateHours = (start: string, end: string): number => {
-    const diff = new Date(end).getTime() - new Date(start).getTime();
-    return Number((diff / (1000 * 60 * 60)).toFixed(1));
-  };
 
   const addBlock = () => {
     if (!newBlock.startDate || !newBlock.startTime || !newBlock.endDate || !newBlock.endTime) return;
@@ -51,6 +51,10 @@ const CustodyMath: React.FC = () => {
     setNewBlock({ ...newBlock, startTime: '', endTime: '' });
   };
 
+  const deleteBlock = (id: string) => {
+    setBlocks(blocks.filter(b => b.id !== id));
+  };
+
   // STATISTICS
   const stats = useMemo(() => {
     const totalScheduled = blocks.reduce((acc, b) => acc + calculateHours(b.scheduledStart, b.scheduledEnd), 0);
@@ -58,8 +62,9 @@ const CustodyMath: React.FC = () => {
     const successHours = blocks.reduce((acc, b) => acc + (b.status === 'Success' ? calculateHours(b.scheduledStart, b.scheduledEnd) : 0), 0);
     
     const denialRate = totalScheduled > 0 ? ((totalDenied / totalScheduled) * 100).toFixed(1) : "0.0";
+    const successRate = totalScheduled > 0 ? ((successHours / totalScheduled) * 100).toFixed(1) : "0.0";
     
-    return { totalScheduled, totalDenied, successHours, denialRate };
+    return { totalScheduled, totalDenied, successHours, denialRate, successRate };
   }, [blocks]);
 
   return (
@@ -73,7 +78,7 @@ const CustodyMath: React.FC = () => {
         <div className="bg-slate-800 p-6 rounded-lg border border-slate-700 flex flex-col items-center">
              <h3 className="text-slate-400 text-xs uppercase font-bold tracking-widest mb-2">Success Rate</h3>
              <span className="text-3xl font-mono text-green-400">
-               {stats.totalScheduled > 0 ? ((stats.successHours / stats.totalScheduled) * 100).toFixed(1) : 0}%
+               {stats.successRate}%
              </span>
         </div>
         <div className="bg-red-900/20 p-6 rounded-lg border border-red-600 flex flex-col items-center relative overflow-hidden">
@@ -145,13 +150,21 @@ const CustodyMath: React.FC = () => {
                              </div>
                          </div>
                      </div>
-                     <div className="text-right">
-                         <div className="text-white font-mono font-bold">{duration} hrs</div>
-                         <div className={`text-[10px] uppercase tracking-wider font-bold ${
-                             block.status === 'Denied by Mother' ? 'text-red-400' : 'text-slate-500'
-                         }`}>
-                             {block.status === 'Denied by Mother' ? 'DENIED' : 'COMPLETED'}
+                     <div className="text-right flex items-center gap-4">
+                         <div>
+                            <div className="text-white font-mono font-bold">{duration} hrs</div>
+                            <div className={`text-[10px] uppercase tracking-wider font-bold ${
+                                block.status === 'Denied by Mother' ? 'text-red-400' : 'text-slate-500'
+                            }`}>
+                                {block.status === 'Denied by Mother' ? 'DENIED' : 'COMPLETED'}
+                            </div>
                          </div>
+                         <button
+                            onClick={() => deleteBlock(block.id)}
+                            className="p-2 text-slate-600 hover:text-red-500 hover:bg-red-900/20 rounded transition-all"
+                         >
+                            <Trash2 className="w-4 h-4" />
+                         </button>
                      </div>
                  </div>
              )
