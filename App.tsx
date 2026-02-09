@@ -28,6 +28,18 @@ import SystemAudit from './components/SystemAudit';
 
 import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Stethoscope, Search, Map, Star, FileText, GraduationCap, Activity, Heart, Landmark, Gavel, Database, Fingerprint } from 'lucide-react';
 
+const NAV_ITEMS: { target: ViewState, icon: any, label: string }[] = [
+  { target: 'dashboard', icon: LayoutDashboard, label: 'Cmd' },
+  { target: 'scott-schedule', icon: Scale, label: 'Scott' },
+  { target: 'abuse-log', icon: ShieldAlert, label: 'Log' },
+  { target: 'custody-math', icon: Calculator, label: 'Math' },
+  { target: 'business', icon: Briefcase, label: 'Biz' },
+  { target: 'products', icon: Package, label: 'Prods' },
+  { target: 'strategy', icon: Compass, label: 'Plan' },
+  { target: 'roadmap', icon: Map, label: 'Map' },
+  { target: 'cofounder', icon: Cpu, label: 'AI' },
+];
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -71,6 +83,10 @@ const App: React.FC = () => {
           <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center font-bold text-2xl text-white transform -rotate-3 shadow-lg shadow-red-600/20">SDG</div>
         </div>
         
+        <div className="space-y-4 w-full px-2 flex-1 overflow-y-auto scrollbar-none">
+          {NAV_ITEMS.map((item) => (
+            <NavButton key={item.target} {...item} />
+          ))}
         <div className="space-y-4 w-full px-2">
           <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" />
           <NavButton target="discovery-archive" icon={Database} label="Archive" />
@@ -131,6 +147,18 @@ const App: React.FC = () => {
       </main>
 
       {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex gap-4 overflow-x-auto z-50 px-4">
+        {NAV_ITEMS.map(({ target, icon: Icon }) => (
+          <button
+            key={target}
+            onClick={() => setView(target)}
+            className={`p-2 min-w-[40px] ${
+              view === target ? 'text-red-500' : 'text-slate-500'
+            }`}
+          >
+            <Icon className="w-6 h-6 mx-auto" />
+          </button>
+        ))}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex justify-around z-50 overflow-x-auto">
         <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-500' : 'text-slate-500'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-500' : 'text-slate-500'}`}><Database className="w-6 h-6 mx-auto" /></button>

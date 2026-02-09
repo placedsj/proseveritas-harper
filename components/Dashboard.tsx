@@ -9,6 +9,8 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
+  const [isExpired, setIsExpired] = useState(false);
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number } | null>(null);
   const [recentLogs, setRecentLogs] = useState<ScottLogEntry[]>([]);
 
@@ -81,6 +83,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             days: Math.floor(diff / (1000 * 60 * 60 * 24)),
             hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         });
+        setIsExpired(false);
+      } else {
+        setIsExpired(true);
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000 * 60);
       } else {
         setTimeLeft(null);
       }
@@ -115,6 +125,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
            </div>
         </div>
         <div className="flex gap-4 text-center">
+            {!isExpired ? (
             {timeLeft ? (
               <>
                 <div className="bg-black/30 p-3 rounded-lg min-w-[80px]">
@@ -127,6 +138,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
                 </div>
               </>
             ) : (
+               <div className="bg-black/30 p-3 rounded-lg px-6 flex items-center">
+                  <span className="text-xl font-bold text-red-500 uppercase tracking-widest">Completed</span>
+               </div>
+            )}
               <div className="bg-green-900/30 border border-green-500/30 p-3 rounded-lg min-w-[160px] flex items-center justify-center">
                   <span className="text-xl font-bold text-green-400 uppercase tracking-widest">COMPLETED</span>
               </div>
