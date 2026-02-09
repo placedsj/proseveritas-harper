@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity } from 'lucide-react';
 import { ScottLogEntry } from '../types';
+import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (view: any) => void;
@@ -9,95 +10,112 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
-  const [recentLogs, setRecentLogs] = useState<ScottLogEntry[]>([]);
+  const [sentencingDays, setSentencingDays] = useState(0);
 
   useEffect(() => {
-    // Sentencing Countdown Feb 3
-    const target = new Date('2025-02-03T09:00:00'); // Assuming 9am
+    const target = new Date('2026-03-30T09:30:00');
+    const sentencing = new Date('2026-03-03T09:00:00');
+    
     const timer = setInterval(() => {
       const now = new Date();
       const diff = target.getTime() - now.getTime();
+      const sDiff = sentencing.getTime() - now.getTime();
+      
       if (diff > 0) {
         setTimeLeft({
             days: Math.floor(diff / (1000 * 60 * 60 * 24)),
             hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         });
       }
+      setSentencingDays(Math.floor(sDiff / (1000 * 60 * 60 * 24)));
     }, 1000 * 60);
-
-    // Load recent Scott Logs
-    const savedLogs = localStorage.getItem('scottLogs');
-    if (savedLogs) {
-        setRecentLogs(JSON.parse(savedLogs).slice(0, 3));
-    }
 
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* RED ALERT SECTION */}
-      <div className="bg-gradient-to-r from-red-900 to-slate-900 border border-red-700 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between shadow-lg shadow-red-900/20">
-        <div className="flex items-center gap-4 mb-4 md:mb-0">
-             <div className="bg-red-600 p-3 rounded-full animate-pulse">
-                 <Timer className="w-6 h-6 text-white" />
-             </div>
-             <div>
-                 <h2 className="text-2xl font-black text-white uppercase tracking-widest">Sentencing Hearing</h2>
-                 <p className="text-red-300 text-sm font-semibold">Feb 3, 2025 - R v Schulz</p>
-             </div>
+      {/* MISSION DIRECTIVE SECTION */}
+      <div 
+        onClick={() => onNavigate('moral-compass')}
+        className="bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
+      >
+        <div className="flex items-center gap-4 text-left">
+           <div className="bg-red-50 p-2 rounded-lg border border-red-100 group-hover:bg-red-100 transition-colors">
+               <ShieldCheck className="w-5 h-5 text-red-600" />
+           </div>
+           <div>
+               <h2 className="text-xs font-black text-red-600 uppercase tracking-widest">Status: Pro Se Command</h2>
+               <p className="text-slate-700 text-sm font-bold italic">"Counsel Withdrawn. Direct control established. Truth is the only attorney."</p>
+           </div>
         </div>
-        <div className="flex gap-4 text-center">
-            <div className="bg-black/30 p-3 rounded-lg min-w-[80px]">
-                <span className="block text-3xl font-mono font-bold text-white">{timeLeft.days}</span>
-                <span className="text-[10px] text-red-400 uppercase font-bold">Days</span>
-            </div>
-            <div className="bg-black/30 p-3 rounded-lg min-w-[80px]">
-                <span className="block text-3xl font-mono font-bold text-white">{timeLeft.hours}</span>
-                <span className="text-[10px] text-red-400 uppercase font-bold">Hours</span>
-            </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-red-500/80 font-mono">SRL-ACTIVE</span>
+          <ArrowRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
 
-      {/* QUICK LAUNCH GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Module 1 */}
-        <div 
-          onClick={() => onNavigate('scott-schedule')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-red-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Scale className="w-8 h-8 text-red-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Scott Schedule</h3>
-            <p className="text-sm text-slate-400">Log Abuse & "The Fact" vs "The Say". Export CSV for Counsel.</p>
+      {/* DUAL ALERT SECTION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white border border-indigo-200 rounded-xl p-6 flex flex-col items-center justify-between shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center gap-4 w-full mb-4">
+               <div className="bg-indigo-50 p-3 rounded-full border border-indigo-100">
+                   <Gavel className="w-6 h-6 text-indigo-600" />
+               </div>
+               <div className="text-left">
+                   <h2 className="text-xl font-black text-slate-900 uppercase tracking-widest leading-none">Custody Hearing</h2>
+                   <p className="text-indigo-600 text-xs font-bold mt-1">March 30, 2026</p>
+               </div>
+          </div>
+          <div className="flex gap-4 text-center w-full justify-center">
+              <div className="bg-slate-50 p-3 rounded-lg min-w-[80px] border border-slate-200">
+                  <span className="block text-3xl font-mono font-bold text-slate-900">{timeLeft.days}</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold">Days</span>
+              </div>
+              <div className="bg-slate-50 p-3 rounded-lg min-w-[80px] border border-slate-200">
+                  <span className="block text-3xl font-mono font-bold text-slate-900">{timeLeft.hours}</span>
+                  <span className="text-[10px] text-slate-500 uppercase font-bold">Hours</span>
+              </div>
+          </div>
         </div>
 
-        {/* Module 2 */}
-        <div 
-          onClick={() => onNavigate('custody-math')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-blue-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Calculator className="w-8 h-8 text-blue-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Custody Math</h3>
-            <p className="text-sm text-slate-400">Track parenting blocks. Calculate non-compliance percentage automatically.</p>
+        <div className="bg-white border border-blue-200 rounded-xl p-6 flex flex-col items-center justify-between shadow-sm hover:shadow-md transition-all">
+          <div className="flex items-center gap-4 w-full mb-4">
+               <div className="bg-blue-50 p-3 rounded-full border border-blue-100">
+                   <Scale className="w-6 h-6 text-blue-600" />
+               </div>
+               <div className="text-left">
+                   <h2 className="text-xl font-black text-slate-900 uppercase tracking-widest leading-none">Sentencing</h2>
+                   <p className="text-blue-600 text-xs font-bold mt-1">March 3, 2026 (Judge Palmer)</p>
+               </div>
+          </div>
+          <div className="w-full flex justify-center">
+              <div className="bg-slate-50 p-3 rounded-lg min-w-[170px] text-center border border-slate-200">
+                  <span className="block text-3xl font-mono font-bold text-slate-900">{sentencingDays} DAYS</span>
+                  <span className="text-[10px] text-blue-500 uppercase font-bold tracking-tighter">Back with Acquittal Judge</span>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TRACKERS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div onClick={() => onNavigate('education-build')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
+          <div className="flex justify-between items-start mb-4">
+            <GraduationCap className="w-8 h-8 text-indigo-500 group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Academic</span>
+          </div>
+          <h3 className="text-slate-900 font-bold">CAEC / Upgrade Track</h3>
+          <p className="text-xs text-slate-500 mt-1">Educational readiness verified. Credits progressing.</p>
         </div>
 
-        {/* Module 3 */}
-        <div 
-          onClick={() => onNavigate('business')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-green-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Briefcase className="w-8 h-8 text-green-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Ops & Business</h3>
-            <p className="text-sm text-slate-400">Shed leads, revenue tracking, and business survival tasks.</p>
+        <div onClick={() => onNavigate('harper-log')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
+          <div className="flex justify-between items-start mb-4">
+            <Heart className="w-8 h-8 text-pink-500 group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Safety</span>
+          </div>
+          <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
+          <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
         </div>
 
         {/* Module 4 */}
@@ -140,24 +158,28 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* RECENT ACTIVITY */}
-      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-         <div className="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
-            <AlertTriangle className="w-5 h-5 text-orange-500" />
-            <h3 className="font-bold text-white">Recent Evidence Logs</h3>
-         </div>
-         <div className="space-y-3">
-            {recentLogs.length > 0 ? recentLogs.map(log => (
-                <div key={log.id} className="bg-slate-900/50 p-3 rounded border-l-2 border-red-500 flex justify-between items-center">
-                    <div>
-                        <p className="text-red-400 text-xs font-bold uppercase">{log.category}</p>
-                        <p className="text-slate-300 text-sm truncate max-w-md">"{log.theSay}"</p>
-                    </div>
-                    <span className="text-slate-500 text-xs">{new Date(log.incidentDate).toLocaleDateString()}</span>
-                </div>
-            )) : (
-                <p className="text-slate-500 text-sm italic">No recent incidents logged.</p>
-            )}
+      {/* EXHIBIT OVERVIEW */}
+      <div className="bg-white border border-slate-200 rounded-xl p-6 text-left shadow-sm">
+         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <FileText className="w-4 h-4" /> Global Discovery Summary
+         </h3>
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 bg-slate-50 rounded border border-slate-200">
+               <p className="text-slate-900 font-bold text-xl">87</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded border border-slate-200">
+               <p className="text-blue-600 font-bold text-xl">129</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded border border-slate-200">
+               <p className="text-indigo-600 font-bold text-xl">4</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded border border-slate-200">
+               <p className="text-amber-600 font-bold text-xl">36</p>
+               <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
+            </div>
          </div>
       </div>
     </div>
