@@ -1,5 +1,6 @@
 
 export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'cofounder';
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
 
 // Module 1: Scott Schedule
 export type ScottCategory = 'Denial of Parenting Time' | 'Alienation' | 'Unjustified Police Contact' | 'Failure to Consult' | 'Health/Safety Risk';
@@ -14,6 +15,42 @@ export interface ScottLogEntry {
   childImpact: ChildImpact;
   exhibitRef: string; // Link/Filename
   statuteTag: string; // Legal clause
+}
+
+// Module: Harper Log (Positive Evidence)
+export interface HarperLogEntry {
+  id: string;
+  timestamp: string;
+  activity: string;
+  mood: 'Happy' | 'Tired' | 'Fussy' | 'Calm';
+  feedingNotes?: string;
+  milestones?: string;
+}
+
+// Module: Education Build
+export type CAECSubject = 'Math' | 'Reading' | 'Writing' | 'Social Studies' | 'Science';
+export interface CAECProgress {
+  subject: CAECSubject;
+  status: 'Not Started' | 'In Prep' | 'Ready to Write' | 'Passed';
+  score?: number;
+}
+
+// Module: Health & Rehab
+export interface HealthStatus {
+  id: string;
+  condition: string; // "ADHD", "C5-C6 Spine", "Mental Health"
+  status: string; // "Monitoring", "In Physio", "Medicated"
+  nextStep: string;
+  lastReview: string;
+}
+
+// Module: Gov Benefits
+export interface GovBenefit {
+  id: string;
+  agency: 'Social Development' | 'WorkingNB' | 'WorkSafeNB' | 'CRA' | 'Service Canada';
+  program: string;
+  status: 'Not Applied' | 'Pending' | 'Active' | 'Rejected';
+  nextAction: string;
 }
 
 // Module 2: Alimentor Clone
@@ -69,8 +106,6 @@ export interface ChatMessage {
   content: string;
   timestamp: number;
 }
-
-// --- New Types ---
 
 // Daily Ritual
 export interface DailyChecklist {
@@ -165,4 +200,29 @@ export interface CourtEvent {
   judgeName: string;
   requiredAction: string;
   status: CourtStatus;
+}
+
+// Medical Records
+export interface MedicalRecord {
+  id: string;
+  title: string;
+  source: string; // e.g., "SJRH", "Doctor's Office"
+  dateOfRecord: string; // ISO date of the document itself
+  ocrText: string;
+  status: 'reviewed' | 'needs_review' | 'flagged';
+  dateAdded: string; // When it was added to the vault
+}
+
+// Evidence Processor Item (from original index.tsx)
+export interface ProcessedEvidenceItem {
+  file: string;
+  date: string;
+  sender: string;
+  rec: string;
+  text: string;
+  cat: string;
+  prio: number;
+  hash: string;
+  wScore: number;
+  verified: boolean;
 }
