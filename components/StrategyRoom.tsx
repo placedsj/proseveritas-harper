@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StrategyNote } from '../types';
 import { BookOpen, Scale, Handshake, Edit3 } from 'lucide-react';
 
@@ -16,9 +16,28 @@ const StrategyRoom: React.FC = () => {
     return saved ? JSON.parse(saved) : initialNotes;
   });
 
+  const notesRef = useRef(notes);
+
+  // Keep ref in sync for unmount saving
   useEffect(() => {
-    localStorage.setItem('strategyNotes', JSON.stringify(notes));
+    notesRef.current = notes;
   }, [notes]);
+
+  // Debounce writes to localStorage (1000ms)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      localStorage.setItem('strategyNotes', JSON.stringify(notes));
+    }, 1000);
+
+    return () => clearTimeout(handler);
+  }, [notes]);
+
+  // Save on unmount to prevent data loss if navigating away before debounce
+  useEffect(() => {
+    return () => {
+      localStorage.setItem('strategyNotes', JSON.stringify(notesRef.current));
+    };
+  }, []);
 
   const activeNote = notes.find(n => n.category === activeTab);
 
