@@ -9,7 +9,6 @@ import StrategyRoom from './components/StrategyRoom';
 import Roadmap from './components/Roadmap';
 import ProductLab from './components/ProductLab';
 import PowerMonitor from './components/PowerMonitor';
-import { LayoutDashboard, Scale, Calculator, Briefcase, Compass, Map, Package, Activity } from 'lucide-react';
 import { MedicalRecords } from './components/MedicalRecords';
 import EvidenceProcessor from './components/EvidenceProcessor';
 import { GlobalSearch } from './components/GlobalSearch';
@@ -24,7 +23,7 @@ import DadBuildPlan from './components/DadBuildPlan';
 import DiscoveryArchive from './components/DiscoveryArchive';
 import SystemAudit from './components/SystemAudit';
 
-import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
+import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -73,6 +72,7 @@ const App: React.FC = () => {
           <NavButton target="products" icon={Package} label="Lab" />
           <NavButton target="power-monitor" icon={Activity} label="Pwr" />
           <NavButton target="processor" icon={Map} label="Evidence" />
+          <NavButton target="medical-records" icon={Stethoscope} label="Med" />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
@@ -124,15 +124,6 @@ const App: React.FC = () => {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 p-2 flex justify-around z-50 overflow-x-auto">
-        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-500' : 'text-slate-500'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-500' : 'text-slate-500'}`}><Scale className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('custody-math')} className={`p-2 min-w-[50px] ${view === 'custody-math' ? 'text-red-500' : 'text-slate-500'}`}><Calculator className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('business')} className={`p-2 min-w-[50px] ${view === 'business' ? 'text-red-500' : 'text-slate-500'}`}><Briefcase className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('strategy')} className={`p-2 min-w-[50px] ${view === 'strategy' ? 'text-red-500' : 'text-slate-500'}`}><Compass className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('roadmap')} className={`p-2 min-w-[50px] ${view === 'roadmap' ? 'text-red-500' : 'text-slate-500'}`}><Map className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('products')} className={`p-2 min-w-[50px] ${view === 'products' ? 'text-red-500' : 'text-slate-500'}`}><Package className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('power-monitor')} className={`p-2 min-w-[50px] ${view === 'power-monitor' ? 'text-red-500' : 'text-slate-500'}`}><Activity className="w-6 h-6 mx-auto" /></button>
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 overflow-x-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-600' : 'text-slate-400'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
         <button onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-600' : 'text-slate-400'}`}><Database className="w-6 h-6 mx-auto" /></button>
