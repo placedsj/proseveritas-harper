@@ -1,29 +1,29 @@
-
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
-import ScottSchedule from './components/ScottSchedule';
-import CustodyMath from './components/CustodyMath';
-import BusinessCommand from './components/BusinessCommand';
-import StrategyRoom from './components/StrategyRoom';
-import Roadmap from './components/Roadmap';
-import ProductLab from './components/ProductLab';
-import PowerMonitor from './components/PowerMonitor';
-import { MedicalRecords } from './components/MedicalRecords';
-import EvidenceProcessor from './components/EvidenceProcessor';
 import { GlobalSearch } from './components/GlobalSearch';
-import MoralCompass from './components/MoralCompass';
-import ParentingPlan from './components/ParentingPlan';
-import EducationBuild from './components/EducationBuild';
-import HealthRehab from './components/HealthRehab';
-import HarperLog from './components/HarperLog';
-import GovBenefits from './components/GovBenefits';
-import LegalSRL from './components/LegalSRL';
-import DadBuildPlan from './components/DadBuildPlan';
-import DiscoveryArchive from './components/DiscoveryArchive';
-import SystemAudit from './components/SystemAudit';
-
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
+
+// Lazy load heavy route components
+const ScottSchedule = lazy(() => import('./components/ScottSchedule'));
+const CustodyMath = lazy(() => import('./components/CustodyMath'));
+const BusinessCommand = lazy(() => import('./components/BusinessCommand'));
+const StrategyRoom = lazy(() => import('./components/StrategyRoom'));
+const Roadmap = lazy(() => import('./components/Roadmap'));
+const ProductLab = lazy(() => import('./components/ProductLab'));
+const PowerMonitor = lazy(() => import('./components/PowerMonitor'));
+const MedicalRecords = lazy(() => import('./components/MedicalRecords'));
+const EvidenceProcessor = lazy(() => import('./components/EvidenceProcessor'));
+const MoralCompass = lazy(() => import('./components/MoralCompass'));
+const ParentingPlan = lazy(() => import('./components/ParentingPlan'));
+const EducationBuild = lazy(() => import('./components/EducationBuild'));
+const HealthRehab = lazy(() => import('./components/HealthRehab'));
+const HarperLog = lazy(() => import('./components/HarperLog'));
+const GovBenefits = lazy(() => import('./components/GovBenefits'));
+const LegalSRL = lazy(() => import('./components/LegalSRL'));
+const DadBuildPlan = lazy(() => import('./components/DadBuildPlan'));
+const DiscoveryArchive = lazy(() => import('./components/DiscoveryArchive'));
+const SystemAudit = lazy(() => import('./components/SystemAudit'));
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -100,26 +100,35 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 md:ml-24 max-w-6xl mx-auto w-full mb-20 md:mb-0">
         <div className="animate-fade-in">
-          {view === 'dashboard' && <Dashboard onNavigate={setView} />}
-          {view === 'discovery-archive' && <DiscoveryArchive />}
-          {view === 'system-audit' && <SystemAudit />}
-          {view === 'moral-compass' && <MoralCompass />}
-          {view === 'parenting-plan' && <ParentingPlan />}
-          {view === 'harper-log' && <HarperLog />}
-          {view === 'education-build' && <EducationBuild />}
-          {view === 'health-rehab' && <HealthRehab />}
-          {view === 'gov-benefits' && <GovBenefits />}
-          {view === 'legal-srl' && <LegalSRL />}
-          {view === 'build-plan' && <DadBuildPlan />}
-          {view === 'scott-schedule' && <ScottSchedule />}
-          {view === 'custody-math' && <CustodyMath />}
-          {view === 'business' && <BusinessCommand />}
-          {view === 'strategy' && <StrategyRoom />}
-          {view === 'roadmap' && <Roadmap />}
-          {view === 'products' && <ProductLab />}
-          {view === 'power-monitor' && <PowerMonitor />}
-          {view === 'medical-records' && <MedicalRecords />}
-          {view === 'processor' && <EvidenceProcessor />}
+          {view === 'dashboard' ? (
+            <Dashboard onNavigate={setView} />
+          ) : (
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-[50vh] w-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+              </div>
+            }>
+              {view === 'discovery-archive' && <DiscoveryArchive />}
+              {view === 'system-audit' && <SystemAudit />}
+              {view === 'moral-compass' && <MoralCompass />}
+              {view === 'parenting-plan' && <ParentingPlan />}
+              {view === 'harper-log' && <HarperLog />}
+              {view === 'education-build' && <EducationBuild />}
+              {view === 'health-rehab' && <HealthRehab />}
+              {view === 'gov-benefits' && <GovBenefits />}
+              {view === 'legal-srl' && <LegalSRL />}
+              {view === 'build-plan' && <DadBuildPlan />}
+              {view === 'scott-schedule' && <ScottSchedule />}
+              {view === 'custody-math' && <CustodyMath />}
+              {view === 'business' && <BusinessCommand />}
+              {view === 'strategy' && <StrategyRoom />}
+              {view === 'roadmap' && <Roadmap />}
+              {view === 'products' && <ProductLab />}
+              {view === 'power-monitor' && <PowerMonitor />}
+              {view === 'medical-records' && <MedicalRecords />}
+              {view === 'processor' && <EvidenceProcessor />}
+            </Suspense>
+          )}
         </div>
       </main>
 
