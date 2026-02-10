@@ -17,7 +17,13 @@ const StrategyRoom: React.FC = () => {
   });
 
   useEffect(() => {
-    localStorage.setItem('strategyNotes', JSON.stringify(notes));
+    const handler = setTimeout(() => {
+      localStorage.setItem('strategyNotes', JSON.stringify(notes));
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
   }, [notes]);
 
   const activeNote = notes.find(n => n.category === activeTab);
