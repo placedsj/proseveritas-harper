@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Sun, Moon, CheckCircle, Circle, Volume2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Sun, Moon } from 'lucide-react';
 import { DailyChecklist } from '../types';
 import { speak } from '../services/audioService';
+import DailyRitualItem from './DailyRitualItem';
 
 interface DailyRitualProps {
   audioEnabled: boolean;
@@ -25,43 +26,14 @@ const DailyRitual: React.FC<DailyRitualProps> = ({ audioEnabled }) => {
     localStorage.setItem('dailyChecklist', JSON.stringify(checklist));
   }, [checklist]);
 
-  const toggle = (key: keyof DailyChecklist) => {
+  const toggle = useCallback((key: keyof DailyChecklist) => {
     setChecklist(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+  }, []);
 
-  const handleSpeak = (e: React.MouseEvent, text: string) => {
+  const handleSpeak = useCallback((e: React.MouseEvent, text: string) => {
     e.stopPropagation();
     speak(text);
-  };
-
-  const Item = ({ label, id, warning }: { label: string, id: keyof DailyChecklist, warning?: string }) => (
-    <div 
-      onClick={() => toggle(id)}
-      className={`relative flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-colors group ${
-        checklist[id] ? 'bg-green-900/20 border border-green-800' : 'bg-slate-800 border border-slate-700 hover:bg-slate-750'
-      }`}
-    >
-      <div className={`mt-1 ${checklist[id] ? 'text-green-500' : 'text-slate-500'}`}>
-        {checklist[id] ? <CheckCircle className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
-      </div>
-      <div className="flex-1 pr-8">
-        <p className={`font-medium ${checklist[id] ? 'text-green-100' : 'text-slate-200'}`}>{label}</p>
-        {warning && !checklist[id] && (
-          <p className="text-xs text-amber-500 mt-1 uppercase font-bold tracking-wide">{warning}</p>
-        )}
-      </div>
-      
-      {audioEnabled && (
-        <button 
-          onClick={(e) => handleSpeak(e, warning ? `${label}. Warning: ${warning}` : label)}
-          className="absolute right-3 top-3 p-2 text-slate-500 hover:text-blue-400 opacity-50 group-hover:opacity-100 transition-all"
-          title="Play Reminder"
-        >
-          <Volume2 className="w-4 h-4" />
-        </button>
-      )}
-    </div>
-  );
+  }, []);
 
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
@@ -71,10 +43,40 @@ const DailyRitual: React.FC<DailyRitualProps> = ({ audioEnabled }) => {
           <h2 className="text-xl font-bold uppercase tracking-wider">Morning Protocol</h2>
         </div>
         <div className="space-y-3">
-          <Item id="sleep" label="Did you get 5+ hours sleep?" warning="If NO, adjust intensity today." />
-          <Item id="mental" label="Mental Check: Are you spiraling?" warning="If YES, call recovery or church FIRST." />
-          <Item id="food" label="Eat something. Protein. Now." />
-          <Item id="readReality" label="Read 'The Reality Check' & Daily Task." />
+          <DailyRitualItem
+            id="sleep"
+            label="Did you get 5+ hours sleep?"
+            warning="If NO, adjust intensity today."
+            checked={checklist.sleep}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
+          <DailyRitualItem
+            id="mental"
+            label="Mental Check: Are you spiraling?"
+            warning="If YES, call recovery or church FIRST."
+            checked={checklist.mental}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
+          <DailyRitualItem
+            id="food"
+            label="Eat something. Protein. Now."
+            checked={checklist.food}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
+          <DailyRitualItem
+            id="readReality"
+            label="Read 'The Reality Check' & Daily Task."
+            checked={checklist.readReality}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
         </div>
       </div>
 
@@ -84,9 +86,31 @@ const DailyRitual: React.FC<DailyRitualProps> = ({ audioEnabled }) => {
           <h2 className="text-xl font-bold uppercase tracking-wider">Evening Protocol</h2>
         </div>
         <div className="space-y-3">
-          <Item id="noContact" label="Did I avoid talking to cops/ex/social media?" warning="Silence is safety." />
-          <Item id="progressMade" label="Did I make ONE court-related step forward?" />
-          <Item id="oneTask" label="Sleep 6+ hours. Non-negotiable." />
+          <DailyRitualItem
+            id="noContact"
+            label="Did I avoid talking to cops/ex/social media?"
+            warning="Silence is safety."
+            checked={checklist.noContact}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
+          <DailyRitualItem
+            id="progressMade"
+            label="Did I make ONE court-related step forward?"
+            checked={checklist.progressMade}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
+          <DailyRitualItem
+            id="oneTask"
+            label="Sleep 6+ hours. Non-negotiable."
+            checked={checklist.oneTask}
+            onToggle={toggle}
+            audioEnabled={audioEnabled}
+            onSpeak={handleSpeak}
+          />
         </div>
       </div>
       
