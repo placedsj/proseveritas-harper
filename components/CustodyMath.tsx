@@ -53,13 +53,29 @@ const CustodyMath: React.FC = () => {
 
   // STATISTICS
   const stats = useMemo(() => {
-    const totalScheduled = blocks.reduce((acc, b) => acc + calculateHours(b.scheduledStart, b.scheduledEnd), 0);
-    const totalDenied = blocks.reduce((acc, b) => acc + (b.status === 'Denied by Mother' ? calculateHours(b.scheduledStart, b.scheduledEnd) : 0), 0);
-    const successHours = blocks.reduce((acc, b) => acc + (b.status === 'Success' ? calculateHours(b.scheduledStart, b.scheduledEnd) : 0), 0);
+    const { totalScheduled, totalDenied, successHours } = blocks.reduce(
+      (acc, b) => {
+        const hours = calculateHours(b.scheduledStart, b.scheduledEnd);
+        acc.totalScheduled += hours;
+        if (b.status === 'Denied by Mother') {
+          acc.totalDenied += hours;
+        } else if (b.status === 'Success') {
+          acc.successHours += hours;
+        }
+        return acc;
+      },
+      { totalScheduled: 0, totalDenied: 0, successHours: 0 }
+    );
+
+    // Fix floating point precision issues after summation
+    const result = {
+      totalScheduled: Number(totalScheduled.toFixed(1)),
+      totalDenied: Number(totalDenied.toFixed(1)),
+      successHours: Number(successHours.toFixed(1)),
+      denialRate: totalScheduled > 0 ? ((totalDenied / totalScheduled) * 100).toFixed(1) : "0.0"
+    };
     
-    const denialRate = totalScheduled > 0 ? ((totalDenied / totalScheduled) * 100).toFixed(1) : "0.0";
-    
-    return { totalScheduled, totalDenied, successHours, denialRate };
+    return result;
   }, [blocks]);
 
   return (
