@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AbuseLogEntry, IncidentType } from '../types';
-import { ShieldAlert, Save, Plus, FileText, Users, AlertTriangle, Camera } from 'lucide-react';
+import { ShieldAlert, Save, Plus, FileText, Users, AlertTriangle, Camera, X } from 'lucide-react';
+import { saveFile, getFile } from '../services/blobStorage';
 
 const incidentTypes: IncidentType[] = [
   'Harassment', 
@@ -15,6 +16,71 @@ interface AbuseLogProps {
   forceAddMode?: boolean;
 }
 
+const EvidenceAttachment: React.FC<{ evidencePhoto: string }> = ({ evidencePhoto }) => {
+  const [fileData, setFileData] = useState<{ url: string, name: string, type: string } | null>(null);
+  const [isLegacy, setIsLegacy] = useState(false);
+
+  useEffect(() => {
+    if (evidencePhoto === 'File attached locally') {
+      setIsLegacy(true);
+      return;
+    }
+
+    let active = true;
+    getFile(evidencePhoto)
+      .then(file => {
+        if (!active) return;
+        if (file) {
+          const url = URL.createObjectURL(file.blob);
+          setFileData({ url, name: file.name, type: file.type });
+        } else {
+          setIsLegacy(true);
+        }
+      })
+      .catch(err => {
+        console.error("Error loading evidence:", err);
+        // Treat as legacy or error state if needed, for now just log
+        if (active) setIsLegacy(true);
+      });
+
+    return () => {
+      active = false;
+      if (fileData) URL.revokeObjectURL(fileData.url);
+    };
+  }, [evidencePhoto]);
+
+  if (isLegacy) {
+    return (
+      <div className="flex items-center gap-1">
+        <FileText className="w-4 h-4 text-green-500" />
+        <span className="text-slate-200">Evidence Attached</span>
+      </div>
+    );
+  }
+
+  if (!fileData) return <span className="text-xs text-slate-500">Loading evidence...</span>;
+
+  if (fileData.type.startsWith('image/')) {
+    return (
+      <div className="mt-2 block w-full">
+        <img src={fileData.url} alt="Evidence" className="max-w-full md:max-w-xs rounded border border-slate-600 shadow-sm" />
+        <div className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+          <Camera className="w-3 h-3" /> {fileData.name}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2">
+      <a href={fileData.url} download={fileData.name} className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
+        <FileText className="w-4 h-4" />
+        {fileData.name} (Download)
+      </a>
+    </div>
+  );
+};
+
 const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
   const [logs, setLogs] = useState<AbuseLogEntry[]>(() => {
     const saved = localStorage.getItem('abuseLogs');
@@ -22,6 +88,9 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
   });
 
   const [isAdding, setIsAdding] = useState(forceAddMode);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Form State
   const [newLog, setNewLog] = useState<Partial<AbuseLogEntry>>({
@@ -42,33 +111,53 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
     localStorage.setItem('abuseLogs', JSON.stringify(logs));
   }, [logs]);
 
-  const handleSave = () => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSave = async () => {
     if (!newLog.description) return;
+    setIsSaving(true);
 
-    const entry: AbuseLogEntry = {
-      id: Date.now().toString(),
-      timestamp: newLog.timestamp || new Date().toISOString(),
-      type: newLog.type as IncidentType,
-      description: newLog.description,
-      severity: newLog.severity || 5,
-      childReaction: newLog.childReaction || 'Normal',
-      witnesses: newLog.witnesses || '',
-      policeReportNumber: newLog.policeReportNumber || '',
-      evidencePhoto: 'File attached locally' // Simulation
-    };
+    try {
+      let evidencePhotoId = '';
+      if (selectedFile) {
+        evidencePhotoId = await saveFile(selectedFile);
+      }
 
-    setLogs([entry, ...logs]);
-    setIsAdding(false);
-    // Reset form
-    setNewLog({
-      timestamp: new Date().toISOString().slice(0, 16),
-      type: 'Harassment',
-      description: '',
-      severity: 5,
-      childReaction: 'Normal',
-      witnesses: '',
-      policeReportNumber: ''
-    });
+      const entry: AbuseLogEntry = {
+        id: Date.now().toString(),
+        timestamp: newLog.timestamp || new Date().toISOString(),
+        type: newLog.type as IncidentType,
+        description: newLog.description,
+        severity: newLog.severity || 5,
+        childReaction: newLog.childReaction || 'Normal',
+        witnesses: newLog.witnesses || '',
+        policeReportNumber: newLog.policeReportNumber || '',
+        evidencePhoto: evidencePhotoId || undefined
+      };
+
+      setLogs([entry, ...logs]);
+      setIsAdding(false);
+      // Reset form
+      setNewLog({
+        timestamp: new Date().toISOString().slice(0, 16),
+        type: 'Harassment',
+        description: '',
+        severity: 5,
+        childReaction: 'Normal',
+        witnesses: '',
+        policeReportNumber: ''
+      });
+      setSelectedFile(null);
+    } catch (error) {
+      console.error("Failed to save log:", error);
+      alert("Failed to save evidence file. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getSeverityLabel = (sev?: number) => {
@@ -180,19 +269,51 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
 
           <div className="mb-6">
             <label className="block text-slate-400 text-xs uppercase font-bold mb-1">Evidence Photo/File</label>
-            <div className="w-full bg-slate-900 border border-slate-700 border-dashed rounded p-4 text-center text-slate-500 hover:text-white cursor-pointer hover:border-red-500 transition-colors">
-              <Camera className="w-6 h-6 mx-auto mb-2" />
-              <span>Click to attach photo or audio file (Simulated)</span>
-            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className="hidden"
+              accept="image/*,audio/*,video/*,application/pdf"
+            />
+            {!selectedFile ? (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full bg-slate-900 border border-slate-700 border-dashed rounded p-4 text-center text-slate-500 hover:text-white cursor-pointer hover:border-red-500 transition-colors"
+              >
+                <Camera className="w-6 h-6 mx-auto mb-2" />
+                <span>Click to attach photo or audio file</span>
+              </div>
+            ) : (
+              <div className="w-full bg-slate-800 border border-green-500/50 rounded p-4 flex justify-between items-center">
+                <div className="flex items-center gap-2 text-green-400">
+                  <FileText className="w-5 h-5" />
+                  <span className="font-bold">{selectedFile.name}</span>
+                  <span className="text-xs text-slate-500">({(selectedFile.size / 1024).toFixed(1)} KB)</span>
+                </div>
+                <button
+                  onClick={() => setSelectedFile(null)}
+                  className="text-slate-400 hover:text-red-400 p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
 
           <button 
             onClick={handleSave}
-            disabled={!newLog.description}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded font-bold shadow-lg transition-transform active:scale-95 flex justify-center items-center gap-2 uppercase tracking-widest"
+            disabled={!newLog.description || isSaving}
+            className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white py-3 rounded font-bold shadow-lg transition-transform active:scale-95 flex justify-center items-center gap-2 uppercase tracking-widest"
           >
-            <Save className="w-5 h-5" />
-            SAVE EVIDENCE
+            {isSaving ? (
+              <span className="animate-pulse">Saving...</span>
+            ) : (
+              <>
+                <Save className="w-5 h-5" />
+                SAVE EVIDENCE
+              </>
+            )}
           </button>
         </div>
       )}
@@ -228,13 +349,13 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
                    Wit: <span className="text-slate-200">{log.witnesses}</span>
                 </div>
               )}
-              {log.evidencePhoto && (
-                <div className="flex items-center gap-1">
-                  <FileText className="w-4 h-4 text-green-500" />
-                  <span className="text-slate-200">Evidence Attached</span>
-                </div>
-              )}
             </div>
+
+            {log.evidencePhoto && (
+              <div className="mt-3 border-t border-slate-700/50 pt-2">
+                <EvidenceAttachment evidencePhoto={log.evidencePhoto} />
+              </div>
+            )}
           </div>
         ))}
         {logs.length === 0 && !isAdding && (
