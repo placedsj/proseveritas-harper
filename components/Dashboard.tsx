@@ -1,18 +1,23 @@
-
 import React, { useState, useEffect } from 'react';
-import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity } from 'lucide-react';
-import { ScottLogEntry } from '../types';
-import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
+import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity, Star, FileText, GraduationCap, Heart, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
+import { ViewState } from '../types';
 
 interface DashboardProps {
-  onNavigate: (view: any) => void;
+  onNavigate: (view: ViewState) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
+  const [stats, setStats] = useState({
+    verifiedExhibits: 0,
+    deniedDays: 0,
+    auditTargets: 0,
+    sjrhPages: 0
+  });
 
   useEffect(() => {
+    // Timer Logic
     const target = new Date('2026-03-30T09:30:00');
     const sentencing = new Date('2026-03-03T09:00:00');
     
@@ -29,6 +34,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       }
       setSentencingDays(Math.floor(sDiff / (1000 * 60 * 60 * 24)));
     }, 1000 * 60);
+
+    // Stats Logic
+    const evidence = JSON.parse(localStorage.getItem('evidence') || '[]');
+    const scottLogs = JSON.parse(localStorage.getItem('scottLogs') || '[]');
+    const systemAuditLogs = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
+    const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+
+    setStats({
+      verifiedExhibits: evidence.filter((e: any) => e.verified).length,
+      deniedDays: scottLogs.filter((l: any) => l.category === 'Denial of Parenting Time').length,
+      auditTargets: systemAuditLogs.length,
+      sjrhPages: medicalRecords.reduce((acc: number, r: any) => acc + (r.pageCount || 0), 0)
+    });
 
     return () => clearInterval(timer);
   }, []);
@@ -165,19 +183,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-slate-900 font-bold text-xl">87</p>
+               <p className="text-slate-900 font-bold text-xl">{stats.verifiedExhibits}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-blue-600 font-bold text-xl">129</p>
+               <p className="text-blue-600 font-bold text-xl">{stats.deniedDays}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-indigo-600 font-bold text-xl">4</p>
+               <p className="text-indigo-600 font-bold text-xl">{stats.auditTargets}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-amber-600 font-bold text-xl">36</p>
+               <p className="text-amber-600 font-bold text-xl">{stats.sjrhPages}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
             </div>
          </div>

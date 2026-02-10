@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Stethoscope, Activity, ArrowRight, Brain, ShieldAlert } from 'lucide-react';
+import { Stethoscope, Activity, ArrowRight, Brain, ShieldAlert, Plus, Trash2, Save, X } from 'lucide-react';
 import { HealthStatus } from '../types';
 
 const HealthRehab: React.FC = () => {
@@ -13,6 +12,43 @@ const HealthRehab: React.FC = () => {
     ];
   });
 
+  const [isAdding, setIsAdding] = useState(false);
+  const [newStatus, setNewStatus] = useState<Partial<HealthStatus>>({
+    condition: '',
+    status: '',
+    nextStep: '',
+    lastReview: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  });
+
+  useEffect(() => {
+    localStorage.setItem('healthStatus', JSON.stringify(statuses));
+  }, [statuses]);
+
+  const handleSave = () => {
+    if (!newStatus.condition || !newStatus.status) return;
+
+    const entry: HealthStatus = {
+      id: Date.now().toString(),
+      condition: newStatus.condition,
+      status: newStatus.status,
+      nextStep: newStatus.nextStep || '',
+      lastReview: newStatus.lastReview || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    };
+
+    setStatuses([...statuses, entry]);
+    setIsAdding(false);
+    setNewStatus({
+      condition: '',
+      status: '',
+      nextStep: '',
+      lastReview: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    });
+  };
+
+  const handleDelete = (id: string) => {
+    setStatuses(statuses.filter(s => s.id !== id));
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -23,12 +59,69 @@ const HealthRehab: React.FC = () => {
           </h2>
           <p className="text-slate-500 text-sm">Proving Fitness & Capacity for Harper June Elizabeth.</p>
         </div>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded flex items-center gap-2 font-bold shadow-md hover:shadow-lg transition-all"
+        >
+          {isAdding ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {isAdding ? "Cancel" : "Add Protocol"}
+        </button>
       </div>
+
+      {isAdding && (
+        <div className="bg-white p-6 rounded-xl border border-red-200 shadow-md text-left">
+          <h3 className="font-bold text-slate-900 mb-4 uppercase text-sm">New Health Protocol</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Condition</label>
+              <input
+                type="text"
+                value={newStatus.condition}
+                onChange={e => setNewStatus({...newStatus, condition: e.target.value})}
+                className="w-full p-2 border border-slate-300 rounded text-sm focus:border-red-500 focus:outline-none"
+                placeholder="e.g. Physical Therapy"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Status</label>
+              <input
+                type="text"
+                value={newStatus.status}
+                onChange={e => setNewStatus({...newStatus, status: e.target.value})}
+                className="w-full p-2 border border-slate-300 rounded text-sm focus:border-red-500 focus:outline-none"
+                placeholder="e.g. Active"
+              />
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-xs font-bold text-slate-500 mb-1 uppercase">Next Step</label>
+            <input
+              type="text"
+              value={newStatus.nextStep}
+              onChange={e => setNewStatus({...newStatus, nextStep: e.target.value})}
+              className="w-full p-2 border border-slate-300 rounded text-sm focus:border-red-500 focus:outline-none"
+              placeholder="e.g. Schedule appointment"
+            />
+          </div>
+          <button
+            onClick={handleSave}
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded font-bold text-sm flex justify-center items-center gap-2"
+          >
+            <Save className="w-4 h-4" /> Save Protocol
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statuses.map(s => (
-          <div key={s.id} className="bg-white p-6 rounded-xl border border-slate-200 hover:border-red-300 hover:shadow-md transition-all flex flex-col h-full text-left group">
-            <div className="flex justify-between items-start mb-4">
+          <div key={s.id} className="bg-white p-6 rounded-xl border border-slate-200 hover:border-red-300 hover:shadow-md transition-all flex flex-col h-full text-left group relative">
+            <button
+              onClick={() => handleDelete(s.id)}
+              className="absolute top-2 right-2 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <div className="flex justify-between items-start mb-4 pr-6">
               <h3 className="text-slate-900 font-bold text-lg leading-tight">{s.condition}</h3>
               {s.condition.includes('ADHD') ? <Brain className="w-5 h-5 text-purple-500" /> : <Stethoscope className="w-5 h-5 text-red-500" />}
             </div>
@@ -47,9 +140,6 @@ const HealthRehab: React.FC = () => {
 
             <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
                <span className="text-[10px] text-slate-400">Updated: {s.lastReview}</span>
-               <button className="text-red-500 hover:text-red-700 transition-colors">
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-               </button>
             </div>
           </div>
         ))}
