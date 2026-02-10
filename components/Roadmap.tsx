@@ -10,49 +10,25 @@ const initialTasks: RoadmapTask[] = [
   { id: '5', title: 'Launch Landing Page v1', category: 'growth', status: 'done', dueDate: 'Jan 20' },
 ];
 
-const Roadmap: React.FC = () => {
-  const [tasks, setTasks] = useState<RoadmapTask[]>(() => {
-    const saved = localStorage.getItem('roadmapTasks');
-    return saved ? JSON.parse(saved) : initialTasks;
-  });
+const getCategoryColor = (cat: RoadmapTask['category']) => {
+  switch(cat) {
+    case 'tech': return 'text-cyan-400 bg-cyan-900/20 border-cyan-500/30';
+    case 'ops': return 'text-amber-400 bg-amber-900/20 border-amber-500/30';
+    case 'growth': return 'text-green-400 bg-green-900/20 border-green-500/30';
+    case 'legal': return 'text-red-400 bg-red-900/20 border-red-500/30';
+  }
+};
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [newTask, setNewTask] = useState<{ title: string; category: RoadmapTask['category'] }>({
-    title: '',
-    category: 'growth'
-  });
+type ColumnProps = {
+  title: string;
+  status: RoadmapTask['status'];
+  icon: any;
+  tasks: RoadmapTask[];
+  moveTask: (id: string, newStatus: RoadmapTask['status']) => void;
+};
 
-  useEffect(() => {
-    localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
-  }, [tasks]);
-
-  const addTask = () => {
-    if (!newTask.title.trim()) return;
-    const task: RoadmapTask = {
-      id: Date.now().toString(),
-      title: newTask.title,
-      category: newTask.category,
-      status: 'backlog'
-    };
-    setTasks([...tasks, task]);
-    setNewTask({ title: '', category: 'growth' });
-    setIsAdding(false);
-  };
-
-  const moveTask = (id: string, newStatus: RoadmapTask['status']) => {
-    setTasks(tasks.map(t => t.id === id ? { ...t, status: newStatus } : t));
-  };
-
-  const getCategoryColor = (cat: RoadmapTask['category']) => {
-    switch(cat) {
-      case 'tech': return 'text-cyan-400 bg-cyan-900/20 border-cyan-500/30';
-      case 'ops': return 'text-amber-400 bg-amber-900/20 border-amber-500/30';
-      case 'growth': return 'text-green-400 bg-green-900/20 border-green-500/30';
-      case 'legal': return 'text-red-400 bg-red-900/20 border-red-500/30';
-    }
-  };
-
-  const Column = ({ title, status, icon: Icon }: { title: string, status: RoadmapTask['status'], icon: any }) => (
+const Column = ({ title, status, icon: Icon, tasks, moveTask }: ColumnProps) => {
+  return (
     <div className="bg-slate-900/50 rounded-lg p-4 flex flex-col h-full border border-slate-800">
       <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
         <Icon className="w-5 h-5 text-slate-400" />
@@ -112,6 +88,40 @@ const Roadmap: React.FC = () => {
       </div>
     </div>
   );
+};
+
+const Roadmap: React.FC = () => {
+  const [tasks, setTasks] = useState<RoadmapTask[]>(() => {
+    const saved = localStorage.getItem('roadmapTasks');
+    return saved ? JSON.parse(saved) : initialTasks;
+  });
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [newTask, setNewTask] = useState<{ title: string; category: RoadmapTask['category'] }>({
+    title: '',
+    category: 'growth'
+  });
+
+  useEffect(() => {
+    localStorage.setItem('roadmapTasks', JSON.stringify(tasks));
+  }, [tasks]);
+
+  const addTask = () => {
+    if (!newTask.title.trim()) return;
+    const task: RoadmapTask = {
+      id: Date.now().toString(),
+      title: newTask.title,
+      category: newTask.category,
+      status: 'backlog'
+    };
+    setTasks([...tasks, task]);
+    setNewTask({ title: '', category: 'growth' });
+    setIsAdding(false);
+  };
+
+  const moveTask = (id: string, newStatus: RoadmapTask['status']) => {
+    setTasks(tasks.map(t => t.id === id ? { ...t, status: newStatus } : t));
+  };
 
   return (
     <div className="h-[calc(100vh-100px)] flex flex-col">
@@ -165,9 +175,9 @@ const Roadmap: React.FC = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
-        <Column title="Strategy / Backlog" status="backlog" icon={Clock} />
-        <Column title="Active Motion" status="active" icon={PlayCircle} />
-        <Column title="Shipped / Done" status="done" icon={CheckCircle2} />
+        <Column title="Strategy / Backlog" status="backlog" icon={Clock} tasks={tasks} moveTask={moveTask} />
+        <Column title="Active Motion" status="active" icon={PlayCircle} tasks={tasks} moveTask={moveTask} />
+        <Column title="Shipped / Done" status="done" icon={CheckCircle2} tasks={tasks} moveTask={moveTask} />
       </div>
     </div>
   );
