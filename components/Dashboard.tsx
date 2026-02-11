@@ -54,9 +54,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* MISSION DIRECTIVE SECTION */}
-      <div 
+      <button
         onClick={() => onNavigate('moral-compass')}
-        className="bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
+        className="w-full bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group text-left"
       >
         <div className="flex items-center gap-4 text-left">
            <div className="bg-red-50 p-2 rounded-lg border border-red-100 group-hover:bg-red-100 transition-colors">
@@ -71,7 +71,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <span className="text-[10px] text-red-500/80 font-mono">SRL-ACTIVE</span>
           <ArrowRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
         </div>
-      </div>
+      </button>
 
       {/* DUAL ALERT SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -118,28 +118,28 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* TRACKERS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div onClick={() => onNavigate('education-build')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button onClick={() => onNavigate('education-build')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
           <div className="flex justify-between items-start mb-4">
             <GraduationCap className="w-8 h-8 text-indigo-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Academic</span>
           </div>
           <h3 className="text-slate-900 font-bold">CAEC / Upgrade Track</h3>
           <p className="text-xs text-slate-500 mt-1">Educational readiness verified. Credits progressing.</p>
-        </div>
+        </button>
 
-        <div onClick={() => onNavigate('harper-log')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button onClick={() => onNavigate('harper-log')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
           <div className="flex justify-between items-start mb-4">
             <Heart className="w-8 h-8 text-pink-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Safety</span>
           </div>
           <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
           <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
-        </div>
+        </button>
 
         {/* Module 4 */}
-        <div
+        <button
           onClick={() => onNavigate('roadmap')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all"
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all text-left"
         >
             <div className="flex justify-between items-start mb-4">
                 <Map className="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform" />
@@ -147,12 +147,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </div>
             <h3 className="text-xl font-bold text-white mb-1">Execution Roadmap</h3>
             <p className="text-sm text-slate-400">Track tasks, growth, tech, and legal milestones.</p>
-        </div>
+        </button>
 
         {/* Module 5 */}
-        <div
+        <button
           onClick={() => onNavigate('products')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all"
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all text-left"
         >
             <div className="flex justify-between items-start mb-4">
                 <Package className="w-8 h-8 text-purple-500 group-hover:scale-110 transition-transform" />
@@ -160,12 +160,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </div>
             <h3 className="text-xl font-bold text-white mb-1">Product Lab</h3>
             <p className="text-sm text-slate-400">Manage product tiers, specs, and inventory.</p>
-        </div>
+        </button>
 
         {/* Module 6 */}
-        <div
+        <button
           onClick={() => onNavigate('power-monitor')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all"
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all text-left"
         >
             <div className="flex justify-between items-start mb-4">
                 <Activity className="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" />
@@ -173,7 +173,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </div>
             <h3 className="text-xl font-bold text-white mb-1">Power Monitor</h3>
             <p className="text-sm text-slate-400">Live monitoring of power load, temperature, and status.</p>
-        </div>
+        </button>
       </div>
 
       {/* EXHIBIT OVERVIEW */}
