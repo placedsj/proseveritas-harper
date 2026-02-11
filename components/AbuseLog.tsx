@@ -80,7 +80,7 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
           <ShieldAlert className="w-6 h-6 text-red-500" />
           Abuse & Harassment Log
         </h2>

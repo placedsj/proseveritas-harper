@@ -202,4 +202,4 @@ const MedicalRecords: React.FC = () => {
   );
 };
 
-export { MedicalRecords };
+export default MedicalRecords;
