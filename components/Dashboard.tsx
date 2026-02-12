@@ -1,23 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
-import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity, Star, FileText, GraduationCap, Heart, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
-import { ViewState } from '../types';
+import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
 
 interface DashboardProps {
-  onNavigate: (view: ViewState) => void;
+  onNavigate: (view: any) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
-  const [stats, setStats] = useState({
-    verifiedExhibits: 0,
-    deniedDays: 0,
-    auditTargets: 0,
-    sjrhPages: 0
-  });
 
   useEffect(() => {
-    // Timer Logic
     const target = new Date('2026-03-30T09:30:00');
     const sentencing = new Date('2026-03-03T09:00:00');
     
@@ -34,19 +27,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       }
       setSentencingDays(Math.floor(sDiff / (1000 * 60 * 60 * 24)));
     }, 1000 * 60);
-
-    // Stats Logic
-    const evidence = JSON.parse(localStorage.getItem('evidence') || '[]');
-    const scottLogs = JSON.parse(localStorage.getItem('scottLogs') || '[]');
-    const systemAuditLogs = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
-    const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
-
-    setStats({
-      verifiedExhibits: evidence.filter((e: any) => e.verified).length,
-      deniedDays: scottLogs.filter((l: any) => l.category === 'Denial of Parenting Time').length,
-      auditTargets: systemAuditLogs.length,
-      sjrhPages: medicalRecords.reduce((acc: number, r: any) => acc + (r.pageCount || 0), 0)
-    });
 
     return () => clearInterval(timer);
   }, []);
@@ -135,45 +115,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
           <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
         </div>
-
-        {/* Module 4 */}
-        <div
-          onClick={() => onNavigate('roadmap')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Map className="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Execution Roadmap</h3>
-            <p className="text-sm text-slate-400">Track tasks, growth, tech, and legal milestones.</p>
-        </div>
-
-        {/* Module 5 */}
-        <div
-          onClick={() => onNavigate('products')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Package className="w-8 h-8 text-purple-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Product Lab</h3>
-            <p className="text-sm text-slate-400">Manage product tiers, specs, and inventory.</p>
-        </div>
-
-        {/* Module 6 */}
-        <div
-          onClick={() => onNavigate('power-monitor')}
-          className="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all"
-        >
-            <div className="flex justify-between items-start mb-4">
-                <Activity className="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" />
-                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-1">Power Monitor</h3>
-            <p className="text-sm text-slate-400">Live monitoring of power load, temperature, and status.</p>
-        </div>
       </div>
 
       {/* EXHIBIT OVERVIEW */}
@@ -183,19 +124,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-slate-900 font-bold text-xl">{stats.verifiedExhibits}</p>
+               <p className="text-slate-900 font-bold text-xl">87</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-blue-600 font-bold text-xl">{stats.deniedDays}</p>
+               <p className="text-blue-600 font-bold text-xl">129</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-indigo-600 font-bold text-xl">{stats.auditTargets}</p>
+               <p className="text-indigo-600 font-bold text-xl">4</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-amber-600 font-bold text-xl">{stats.sjrhPages}</p>
+               <p className="text-amber-600 font-bold text-xl">36</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
             </div>
          </div>

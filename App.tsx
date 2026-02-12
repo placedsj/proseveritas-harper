@@ -4,11 +4,6 @@ import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import ScottSchedule from './components/ScottSchedule';
 import CustodyMath from './components/CustodyMath';
-import BusinessCommand from './components/BusinessCommand';
-import StrategyRoom from './components/StrategyRoom';
-import Roadmap from './components/Roadmap';
-import ProductLab from './components/ProductLab';
-import PowerMonitor from './components/PowerMonitor';
 import { MedicalRecords } from './components/MedicalRecords';
 import EvidenceProcessor from './components/EvidenceProcessor';
 import { GlobalSearch } from './components/GlobalSearch';
@@ -23,7 +18,7 @@ import DadBuildPlan from './components/DadBuildPlan';
 import DiscoveryArchive from './components/DiscoveryArchive';
 import SystemAudit from './components/SystemAudit';
 
-import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -65,14 +60,7 @@ const App: React.FC = () => {
           <NavButton target="health-rehab" icon={Activity} label="Health" />
           <NavButton target="gov-benefits" icon={Landmark} label="Gov" />
           <NavButton target="scott-schedule" icon={Scale} label="Scott" />
-          <NavButton target="custody-math" icon={Calculator} label="Math" />
-          <NavButton target="business" icon={Briefcase} label="Biz" />
-          <NavButton target="strategy" icon={Compass} label="Plan" />
-          <NavButton target="roadmap" icon={Map} label="Map" />
-          <NavButton target="products" icon={Package} label="Lab" />
-          <NavButton target="power-monitor" icon={Activity} label="Pwr" />
           <NavButton target="processor" icon={Map} label="Evidence" />
-          <NavButton target="medical-records" icon={Stethoscope} label="Med" />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
@@ -113,11 +101,6 @@ const App: React.FC = () => {
           {view === 'build-plan' && <DadBuildPlan />}
           {view === 'scott-schedule' && <ScottSchedule />}
           {view === 'custody-math' && <CustodyMath />}
-          {view === 'business' && <BusinessCommand />}
-          {view === 'strategy' && <StrategyRoom />}
-          {view === 'roadmap' && <Roadmap />}
-          {view === 'products' && <ProductLab />}
-          {view === 'power-monitor' && <PowerMonitor />}
           {view === 'medical-records' && <MedicalRecords />}
           {view === 'processor' && <EvidenceProcessor />}
         </div>
