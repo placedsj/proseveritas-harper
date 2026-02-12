@@ -1,24 +1,26 @@
-
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
-import ScottSchedule from './components/ScottSchedule';
-import CustodyMath from './components/CustodyMath';
-import { MedicalRecords } from './components/MedicalRecords';
-import EvidenceProcessor from './components/EvidenceProcessor';
 import { GlobalSearch } from './components/GlobalSearch';
-import MoralCompass from './components/MoralCompass';
-import ParentingPlan from './components/ParentingPlan';
-import EducationBuild from './components/EducationBuild';
-import HealthRehab from './components/HealthRehab';
-import HarperLog from './components/HarperLog';
-import GovBenefits from './components/GovBenefits';
-import LegalSRL from './components/LegalSRL';
-import DadBuildPlan from './components/DadBuildPlan';
-import DiscoveryArchive from './components/DiscoveryArchive';
-import SystemAudit from './components/SystemAudit';
+import LoadingSpinner from './components/LoadingSpinner';
 
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
+
+// Lazy load components
+const ScottSchedule = lazy(() => import('./components/ScottSchedule'));
+const CustodyMath = lazy(() => import('./components/CustodyMath'));
+const MedicalRecords = lazy(() => import('./components/MedicalRecords').then(module => ({ default: module.MedicalRecords })));
+const EvidenceProcessor = lazy(() => import('./components/EvidenceProcessor'));
+const MoralCompass = lazy(() => import('./components/MoralCompass'));
+const ParentingPlan = lazy(() => import('./components/ParentingPlan'));
+const EducationBuild = lazy(() => import('./components/EducationBuild'));
+const HealthRehab = lazy(() => import('./components/HealthRehab'));
+const HarperLog = lazy(() => import('./components/HarperLog'));
+const GovBenefits = lazy(() => import('./components/GovBenefits'));
+const LegalSRL = lazy(() => import('./components/LegalSRL'));
+const DadBuildPlan = lazy(() => import('./components/DadBuildPlan'));
+const DiscoveryArchive = lazy(() => import('./components/DiscoveryArchive'));
+const SystemAudit = lazy(() => import('./components/SystemAudit'));
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -88,21 +90,23 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 md:ml-24 max-w-6xl mx-auto w-full mb-20 md:mb-0">
         <div className="animate-fade-in">
-          {view === 'dashboard' && <Dashboard onNavigate={setView} />}
-          {view === 'discovery-archive' && <DiscoveryArchive />}
-          {view === 'system-audit' && <SystemAudit />}
-          {view === 'moral-compass' && <MoralCompass />}
-          {view === 'parenting-plan' && <ParentingPlan />}
-          {view === 'harper-log' && <HarperLog />}
-          {view === 'education-build' && <EducationBuild />}
-          {view === 'health-rehab' && <HealthRehab />}
-          {view === 'gov-benefits' && <GovBenefits />}
-          {view === 'legal-srl' && <LegalSRL />}
-          {view === 'build-plan' && <DadBuildPlan />}
-          {view === 'scott-schedule' && <ScottSchedule />}
-          {view === 'custody-math' && <CustodyMath />}
-          {view === 'medical-records' && <MedicalRecords />}
-          {view === 'processor' && <EvidenceProcessor />}
+          <Suspense fallback={<LoadingSpinner />}>
+            {view === 'dashboard' && <Dashboard onNavigate={setView} />}
+            {view === 'discovery-archive' && <DiscoveryArchive />}
+            {view === 'system-audit' && <SystemAudit />}
+            {view === 'moral-compass' && <MoralCompass />}
+            {view === 'parenting-plan' && <ParentingPlan />}
+            {view === 'harper-log' && <HarperLog />}
+            {view === 'education-build' && <EducationBuild />}
+            {view === 'health-rehab' && <HealthRehab />}
+            {view === 'gov-benefits' && <GovBenefits />}
+            {view === 'legal-srl' && <LegalSRL />}
+            {view === 'build-plan' && <DadBuildPlan />}
+            {view === 'scott-schedule' && <ScottSchedule />}
+            {view === 'custody-math' && <CustodyMath />}
+            {view === 'medical-records' && <MedicalRecords />}
+            {view === 'processor' && <EvidenceProcessor />}
+          </Suspense>
         </div>
       </main>
 
