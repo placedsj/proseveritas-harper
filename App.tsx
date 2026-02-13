@@ -7,6 +7,9 @@ import LoadingSpinner from './components/LoadingSpinner';
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
 
 // Lazy load components
+import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
+
+// Lazy load components to reduce initial bundle size
 const ScottSchedule = lazy(() => import('./components/ScottSchedule'));
 const CustodyMath = lazy(() => import('./components/CustodyMath'));
 const MedicalRecords = lazy(() => import('./components/MedicalRecords').then(module => ({ default: module.MedicalRecords })));
@@ -21,6 +24,12 @@ const LegalSRL = lazy(() => import('./components/LegalSRL'));
 const DadBuildPlan = lazy(() => import('./components/DadBuildPlan'));
 const DiscoveryArchive = lazy(() => import('./components/DiscoveryArchive'));
 const SystemAudit = lazy(() => import('./components/SystemAudit'));
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-64 w-full">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+  </div>
+);
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
@@ -92,6 +101,8 @@ const App: React.FC = () => {
         <div className="animate-fade-in">
           <Suspense fallback={<LoadingSpinner />}>
             {view === 'dashboard' && <Dashboard onNavigate={setView} />}
+          {view === 'dashboard' && <Dashboard onNavigate={setView} />}
+          <Suspense fallback={<LoadingSpinner />}>
             {view === 'discovery-archive' && <DiscoveryArchive />}
             {view === 'system-audit' && <SystemAudit />}
             {view === 'moral-compass' && <MoralCompass />}
