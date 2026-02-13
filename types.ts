@@ -1,4 +1,5 @@
 
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'power-monitor' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
 export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
 
 // Module 1: Scott Schedule

@@ -35,6 +35,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     <div className="space-y-6 animate-fade-in">
       {/* MISSION DIRECTIVE SECTION */}
       <button
+        onClick={() => onNavigate('moral-compass')}
+        className="w-full bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
         type="button"
         onClick={() => onNavigate('moral-compass')}
         className="w-full text-left bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
@@ -99,6 +101,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* TRACKERS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <button onClick={() => onNavigate('education-build')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
         <button
           type="button"
           onClick={() => onNavigate('education-build')}
@@ -112,6 +115,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <p className="text-xs text-slate-500 mt-1">Educational readiness verified. Credits progressing.</p>
         </button>
 
+        <button onClick={() => onNavigate('harper-log')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
         <button
           type="button"
           onClick={() => onNavigate('harper-log')}
@@ -123,6 +127,45 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           </div>
           <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
           <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
+        </button>
+
+        {/* Module 4 */}
+        <button
+          onClick={() => onNavigate('roadmap')}
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all text-left"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Map className="w-8 h-8 text-orange-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Execution Roadmap</h3>
+            <p className="text-sm text-slate-400">Track tasks, growth, tech, and legal milestones.</p>
+        </button>
+
+        {/* Module 5 */}
+        <button
+          onClick={() => onNavigate('products')}
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all text-left"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Package className="w-8 h-8 text-purple-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Product Lab</h3>
+            <p className="text-sm text-slate-400">Manage product tiers, specs, and inventory.</p>
+        </button>
+
+        {/* Module 6 */}
+        <button
+          onClick={() => onNavigate('power-monitor')}
+          className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all text-left"
+        >
+            <div className="flex justify-between items-start mb-4">
+                <Activity className="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-1">Power Monitor</h3>
+            <p className="text-sm text-slate-400">Live monitoring of power load, temperature, and status.</p>
         </button>
       </div>
 

@@ -1,3 +1,9 @@
+
+import React, { useState, Suspense } from 'react';
+import { ViewState } from './types';
+import Dashboard from './components/Dashboard';
+import { GlobalSearch } from './components/GlobalSearch';
+import { NavButton } from './components/NavButton';
 import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
@@ -31,6 +37,33 @@ const LoadingSpinner = () => (
   </div>
 );
 
+// Lazy load route components
+const ScottSchedule = React.lazy(() => import('./components/ScottSchedule'));
+const CustodyMath = React.lazy(() => import('./components/CustodyMath'));
+const BusinessCommand = React.lazy(() => import('./components/BusinessCommand'));
+const StrategyRoom = React.lazy(() => import('./components/StrategyRoom'));
+const Roadmap = React.lazy(() => import('./components/Roadmap'));
+const ProductLab = React.lazy(() => import('./components/ProductLab'));
+const PowerMonitor = React.lazy(() => import('./components/PowerMonitor'));
+const MedicalRecords = React.lazy(() => import('./components/MedicalRecords').then(module => ({ default: module.MedicalRecords })));
+const EvidenceProcessor = React.lazy(() => import('./components/EvidenceProcessor'));
+const MoralCompass = React.lazy(() => import('./components/MoralCompass'));
+const ParentingPlan = React.lazy(() => import('./components/ParentingPlan'));
+const EducationBuild = React.lazy(() => import('./components/EducationBuild'));
+const HealthRehab = React.lazy(() => import('./components/HealthRehab'));
+const HarperLog = React.lazy(() => import('./components/HarperLog'));
+const GovBenefits = React.lazy(() => import('./components/GovBenefits'));
+const LegalSRL = React.lazy(() => import('./components/LegalSRL'));
+const DadBuildPlan = React.lazy(() => import('./components/DadBuildPlan'));
+const DiscoveryArchive = React.lazy(() => import('./components/DiscoveryArchive'));
+const SystemAudit = React.lazy(() => import('./components/SystemAudit'));
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-full min-h-[50vh]">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+  </div>
+);
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -38,20 +71,6 @@ const App: React.FC = () => {
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
   };
-
-  const NavButton = ({ target, icon: Icon, label }: { target: ViewState, icon: any, label: string }) => (
-    <button
-      onClick={() => setView(target)}
-      className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ${
-        view === target 
-          ? 'bg-red-600 text-white shadow-lg shadow-red-200' 
-          : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
-      }`}
-    >
-      <Icon className="w-6 h-6 mb-1" />
-      <span className="text-[10px] uppercase tracking-wider font-bold">{label}</span>
-    </button>
-  );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans selection:bg-red-100 selection:text-red-900">
@@ -63,6 +82,22 @@ const App: React.FC = () => {
         </div>
         
         <div className="space-y-4 w-full px-2">
+          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" currentView={view} onNavigate={setView} />
+          <NavButton target="discovery-archive" icon={Database} label="Archive" currentView={view} onNavigate={setView} />
+          <NavButton target="system-audit" icon={Fingerprint} label="Audit" currentView={view} onNavigate={setView} />
+          <NavButton target="harper-log" icon={Heart} label="Harper" currentView={view} onNavigate={setView} />
+          <NavButton target="education-build" icon={GraduationCap} label="Build" currentView={view} onNavigate={setView} />
+          <NavButton target="health-rehab" icon={Activity} label="Health" currentView={view} onNavigate={setView} />
+          <NavButton target="gov-benefits" icon={Landmark} label="Gov" currentView={view} onNavigate={setView} />
+          <NavButton target="scott-schedule" icon={Scale} label="Scott" currentView={view} onNavigate={setView} />
+          <NavButton target="custody-math" icon={Calculator} label="Math" currentView={view} onNavigate={setView} />
+          <NavButton target="business" icon={Briefcase} label="Biz" currentView={view} onNavigate={setView} />
+          <NavButton target="strategy" icon={Compass} label="Plan" currentView={view} onNavigate={setView} />
+          <NavButton target="roadmap" icon={Map} label="Map" currentView={view} onNavigate={setView} />
+          <NavButton target="products" icon={Package} label="Lab" currentView={view} onNavigate={setView} />
+          <NavButton target="power-monitor" icon={Activity} label="Pwr" currentView={view} onNavigate={setView} />
+          <NavButton target="processor" icon={Map} label="Evidence" currentView={view} onNavigate={setView} />
+          <NavButton target="medical-records" icon={Stethoscope} label="Med" currentView={view} onNavigate={setView} />
           <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" />
           <NavButton target="discovery-archive" icon={Database} label="Archive" />
           <NavButton target="system-audit" icon={Fingerprint} label="Audit" />
@@ -115,6 +150,11 @@ const App: React.FC = () => {
             {view === 'build-plan' && <DadBuildPlan />}
             {view === 'scott-schedule' && <ScottSchedule />}
             {view === 'custody-math' && <CustodyMath />}
+            {view === 'business' && <BusinessCommand />}
+            {view === 'strategy' && <StrategyRoom />}
+            {view === 'roadmap' && <Roadmap />}
+            {view === 'products' && <ProductLab />}
+            {view === 'power-monitor' && <PowerMonitor />}
             {view === 'medical-records' && <MedicalRecords />}
             {view === 'processor' && <EvidenceProcessor />}
           </Suspense>
