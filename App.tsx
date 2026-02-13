@@ -2,6 +2,11 @@ import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import { GlobalSearch } from './components/GlobalSearch';
+import LoadingSpinner from './components/LoadingSpinner';
+
+import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
+
+// Lazy load components
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
 
 // Lazy load components to reduce initial bundle size
@@ -94,6 +99,8 @@ const App: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-8 md:ml-24 max-w-6xl mx-auto w-full mb-20 md:mb-0">
         <div className="animate-fade-in">
+          <Suspense fallback={<LoadingSpinner />}>
+            {view === 'dashboard' && <Dashboard onNavigate={setView} />}
           {view === 'dashboard' && <Dashboard onNavigate={setView} />}
           <Suspense fallback={<LoadingSpinner />}>
             {view === 'discovery-archive' && <DiscoveryArchive />}
