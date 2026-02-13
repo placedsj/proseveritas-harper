@@ -1,5 +1,6 @@
 
 export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'business' | 'products' | 'strategy' | 'roadmap' | 'power-monitor' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
+export type ViewState = 'dashboard' | 'scott-schedule' | 'custody-math' | 'medical-records' | 'processor' | 'moral-compass' | 'parenting-plan' | 'education-build' | 'health-rehab' | 'harper-log' | 'legal-srl' | 'gov-benefits' | 'build-plan' | 'discovery-archive' | 'system-audit';
 
 // Module 1: Scott Schedule
 export type ScottCategory = 'Denial of Parenting Time' | 'Alienation' | 'Unjustified Police Contact' | 'Failure to Consult' | 'Health/Safety Risk';
@@ -155,16 +156,6 @@ export interface MedicalRecord {
   ocrText: string;
   status: 'reviewed' | 'needs_review' | 'flagged';
   dateAdded: string; // When it was added to the vault
-  pageCount?: number;
-}
-
-// System Audit Log
-export interface SystemAuditLogEntry {
-  id: string;
-  date: string;
-  action: string;
-  status: 'Active' | 'Critical' | 'Flagged' | 'Verified';
-  note: string;
 }
 
 // Evidence Processor Item

@@ -1,23 +1,16 @@
+
 import React, { useState, useEffect } from 'react';
-import { Scale, Calculator, Briefcase, Timer, ArrowRight, AlertTriangle, Map, Package, Activity, Star, FileText, GraduationCap, Heart, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
-import { ViewState } from '../types';
+import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
 
 interface DashboardProps {
-  onNavigate: (view: ViewState) => void;
+  onNavigate: (view: any) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
-  const [stats, setStats] = useState({
-    verifiedExhibits: 0,
-    deniedDays: 0,
-    auditTargets: 0,
-    sjrhPages: 0
-  });
 
   useEffect(() => {
-    // Timer Logic
     const target = new Date('2026-03-30T09:30:00');
     const sentencing = new Date('2026-03-03T09:00:00');
     
@@ -35,19 +28,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       setSentencingDays(Math.floor(sDiff / (1000 * 60 * 60 * 24)));
     }, 1000 * 60);
 
-    // Stats Logic
-    const evidence = JSON.parse(localStorage.getItem('evidence') || '[]');
-    const scottLogs = JSON.parse(localStorage.getItem('scottLogs') || '[]');
-    const systemAuditLogs = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
-    const medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
-
-    setStats({
-      verifiedExhibits: evidence.filter((e: any) => e.verified).length,
-      deniedDays: scottLogs.filter((l: any) => l.category === 'Denial of Parenting Time').length,
-      auditTargets: systemAuditLogs.length,
-      sjrhPages: medicalRecords.reduce((acc: number, r: any) => acc + (r.pageCount || 0), 0)
-    });
-
     return () => clearInterval(timer);
   }, []);
 
@@ -57,6 +37,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       <button
         onClick={() => onNavigate('moral-compass')}
         className="w-full bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
+        type="button"
+        onClick={() => onNavigate('moral-compass')}
+        className="w-full text-left bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
       >
         <div className="flex items-center gap-4 text-left">
            <div className="bg-red-50 p-2 rounded-lg border border-red-100 group-hover:bg-red-100 transition-colors">
@@ -119,6 +102,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* TRACKERS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <button onClick={() => onNavigate('education-build')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button
+          type="button"
+          onClick={() => onNavigate('education-build')}
+          className="w-full text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all"
+        >
           <div className="flex justify-between items-start mb-4">
             <GraduationCap className="w-8 h-8 text-indigo-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Academic</span>
@@ -128,6 +116,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </button>
 
         <button onClick={() => onNavigate('harper-log')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button
+          type="button"
+          onClick={() => onNavigate('harper-log')}
+          className="w-full text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all"
+        >
           <div className="flex justify-between items-start mb-4">
             <Heart className="w-8 h-8 text-pink-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Safety</span>
@@ -183,19 +176,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-slate-900 font-bold text-xl">{stats.verifiedExhibits}</p>
+               <p className="text-slate-900 font-bold text-xl">87</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-blue-600 font-bold text-xl">{stats.deniedDays}</p>
+               <p className="text-blue-600 font-bold text-xl">129</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-indigo-600 font-bold text-xl">{stats.auditTargets}</p>
+               <p className="text-indigo-600 font-bold text-xl">4</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-amber-600 font-bold text-xl">{stats.sjrhPages}</p>
+               <p className="text-amber-600 font-bold text-xl">36</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
             </div>
          </div>

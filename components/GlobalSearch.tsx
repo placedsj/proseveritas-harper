@@ -354,7 +354,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-slate-900 font-semibold text-sm">{result.title}</h4>
-                    <p className="text-slate-500 text-xs truncate" dangerouslySetInnerHTML={{ __html: result.subtitle }} />
+                    <p className="text-slate-500 text-xs truncate">{result.subtitle}</p>
                   </div>
                   <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-900 opacity-0 group-hover:opacity-100 transition-all" />
                 </button>
