@@ -34,9 +34,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* MISSION DIRECTIVE SECTION */}
-      <div 
+      <button
+        type="button"
         onClick={() => onNavigate('moral-compass')}
-        className="bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
+        className="w-full text-left bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
       >
         <div className="flex items-center gap-4 text-left">
            <div className="bg-red-50 p-2 rounded-lg border border-red-100 group-hover:bg-red-100 transition-colors">
@@ -51,7 +52,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <span className="text-[10px] text-red-500/80 font-mono">SRL-ACTIVE</span>
           <ArrowRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
         </div>
-      </div>
+      </button>
 
       {/* DUAL ALERT SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -98,23 +99,31 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* TRACKERS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div onClick={() => onNavigate('education-build')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button
+          type="button"
+          onClick={() => onNavigate('education-build')}
+          className="w-full text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all"
+        >
           <div className="flex justify-between items-start mb-4">
             <GraduationCap className="w-8 h-8 text-indigo-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Academic</span>
           </div>
           <h3 className="text-slate-900 font-bold">CAEC / Upgrade Track</h3>
           <p className="text-xs text-slate-500 mt-1">Educational readiness verified. Credits progressing.</p>
-        </div>
+        </button>
 
-        <div onClick={() => onNavigate('harper-log')} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
+        <button
+          type="button"
+          onClick={() => onNavigate('harper-log')}
+          className="w-full text-left bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all"
+        >
           <div className="flex justify-between items-start mb-4">
             <Heart className="w-8 h-8 text-pink-500 group-hover:scale-110 transition-transform" />
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Safety</span>
           </div>
           <h3 className="text-slate-900 font-bold">Clinical Alert Log</h3>
           <p className="text-xs text-slate-500 mt-1">Pattern of health and visitation logged.</p>
-        </div>
+        </button>
       </div>
 
       {/* EXHIBIT OVERVIEW */}
