@@ -42,7 +42,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   }
 };
 
-const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
+const GlobalSearch: React.FC<GlobalSearchProps> = React.memo(({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
@@ -393,6 +393,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       </div>
     </div>
   );
-};
+});
 
 export { GlobalSearch };
