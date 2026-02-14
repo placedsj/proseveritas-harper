@@ -51,10 +51,10 @@ If you have the GitHub CLI (`gh`) installed and authenticated:
 2. Or run individual commands:
    ```bash
    # Close a specific PR with a comment
-   gh pr close 43 --comment "Closing this PR as it's no longer needed"
+   gh pr close 42 --comment "Closing this PR as it's no longer needed"
    
    # Close multiple PRs
-   for pr in 43 42 40 29 28 27 26 25 24 23 22 21 20 19 18 17; do
+   for pr in 42 40 29 28 27 26 25 24 23 22 21 20 19 18 17; do
      gh pr close $pr --comment "Closing stale PR to clean up repository"
    done
    ```

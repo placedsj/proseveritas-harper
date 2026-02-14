@@ -53,24 +53,37 @@ check_auth() {
     print_info "GitHub CLI authenticated"
 }
 
+# Function to check if jq is installed
+check_jq() {
+    if ! command -v jq &> /dev/null; then
+        print_error "jq is not installed"
+        echo "jq is required for JSON parsing. Please install it:"
+        echo "  - Ubuntu/Debian: sudo apt-get install jq"
+        echo "  - macOS: brew install jq"
+        echo "  - Or visit: https://stedolan.github.io/jq/"
+        exit 1
+    fi
+    print_info "jq found"
+}
+
 # Function to display PR info
 show_pr_info() {
-    local pr_number=$1
+    local pr_number="$1"
     print_info "PR #$pr_number details:"
-    gh pr view $pr_number --repo $REPO --json number,title,state,author,createdAt | jq -r '"  Title: \(.title)\n  Author: \(.author.login)\n  Created: \(.createdAt)\n  State: \(.state)"'
+    gh pr view "$pr_number" --repo "$REPO" --json number,title,state,author,createdAt | jq -r '"  Title: \(.title)\n  Author: \(.author.login)\n  Created: \(.createdAt)\n  State: \(.state)"'
 }
 
 # Function to close a single PR
 close_pr() {
-    local pr_number=$1
-    local message=${2:-$DEFAULT_MESSAGE}
+    local pr_number="$1"
+    local message="${2:-$DEFAULT_MESSAGE}"
     
     print_info "Closing PR #$pr_number..."
     
     if [ "$DRY_RUN" = true ]; then
         echo "  [DRY RUN] Would execute: gh pr close $pr_number --repo $REPO --comment \"$message\""
     else
-        if gh pr close $pr_number --repo $REPO --comment "$message"; then
+        if gh pr close "$pr_number" --repo "$REPO" --comment "$message"; then
             print_info "Successfully closed PR #$pr_number"
         else
             print_error "Failed to close PR #$pr_number"
@@ -90,10 +103,10 @@ close_all_prs() {
     for pr in "${PRS_TO_CLOSE[@]}"; do
         echo ""
         print_info "Processing PR #$pr"
-        show_pr_info $pr
+        show_pr_info "$pr"
         echo ""
         
-        if close_pr $pr "$DEFAULT_MESSAGE"; then
+        if close_pr "$pr" "$DEFAULT_MESSAGE"; then
             ((success_count++))
         else
             ((fail_count++))
@@ -145,7 +158,7 @@ list_prs() {
     print_info "Pull requests that would be closed:"
     echo ""
     for pr in "${PRS_TO_CLOSE[@]}"; do
-        show_pr_info $pr
+        show_pr_info "$pr"
         echo ""
     done
 }
@@ -203,12 +216,13 @@ main() {
     # Check prerequisites
     check_gh_cli
     check_auth
+    check_jq
     
     # Execute based on options
     if [ -n "$SPECIFIC_PR" ]; then
         print_info "Closing specific PR #$SPECIFIC_PR"
-        show_pr_info $SPECIFIC_PR
-        close_pr $SPECIFIC_PR "$DEFAULT_MESSAGE"
+        show_pr_info "$SPECIFIC_PR"
+        close_pr "$SPECIFIC_PR" "$DEFAULT_MESSAGE"
     else
         close_all_prs
     fi
