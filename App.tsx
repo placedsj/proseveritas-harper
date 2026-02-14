@@ -1,23 +1,18 @@
 
-import React, { useState, Suspense } from 'react';
-import { ViewState } from './types';
-import Dashboard from './components/Dashboard';
-import { GlobalSearch } from './components/GlobalSearch';
-import { NavButton } from './components/NavButton';
 import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import { GlobalSearch } from './components/GlobalSearch';
-import LoadingSpinner from './components/LoadingSpinner';
+import { NavButton } from './components/NavButton';
+import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
 
-import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
-
-// Lazy load components
-import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity } from 'lucide-react';
-
-// Lazy load components to reduce initial bundle size
 const ScottSchedule = lazy(() => import('./components/ScottSchedule'));
 const CustodyMath = lazy(() => import('./components/CustodyMath'));
+const BusinessCommand = lazy(() => import('./components/BusinessCommand'));
+const StrategyRoom = lazy(() => import('./components/StrategyRoom'));
+const Roadmap = lazy(() => import('./components/Roadmap'));
+const ProductLab = lazy(() => import('./components/ProductLab'));
+const PowerMonitor = lazy(() => import('./components/PowerMonitor'));
 const MedicalRecords = lazy(() => import('./components/MedicalRecords').then(module => ({ default: module.MedicalRecords })));
 const EvidenceProcessor = lazy(() => import('./components/EvidenceProcessor'));
 const MoralCompass = lazy(() => import('./components/MoralCompass'));
@@ -30,33 +25,6 @@ const LegalSRL = lazy(() => import('./components/LegalSRL'));
 const DadBuildPlan = lazy(() => import('./components/DadBuildPlan'));
 const DiscoveryArchive = lazy(() => import('./components/DiscoveryArchive'));
 const SystemAudit = lazy(() => import('./components/SystemAudit'));
-
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center h-64 w-full">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-  </div>
-);
-
-// Lazy load route components
-const ScottSchedule = React.lazy(() => import('./components/ScottSchedule'));
-const CustodyMath = React.lazy(() => import('./components/CustodyMath'));
-const BusinessCommand = React.lazy(() => import('./components/BusinessCommand'));
-const StrategyRoom = React.lazy(() => import('./components/StrategyRoom'));
-const Roadmap = React.lazy(() => import('./components/Roadmap'));
-const ProductLab = React.lazy(() => import('./components/ProductLab'));
-const PowerMonitor = React.lazy(() => import('./components/PowerMonitor'));
-const MedicalRecords = React.lazy(() => import('./components/MedicalRecords').then(module => ({ default: module.MedicalRecords })));
-const EvidenceProcessor = React.lazy(() => import('./components/EvidenceProcessor'));
-const MoralCompass = React.lazy(() => import('./components/MoralCompass'));
-const ParentingPlan = React.lazy(() => import('./components/ParentingPlan'));
-const EducationBuild = React.lazy(() => import('./components/EducationBuild'));
-const HealthRehab = React.lazy(() => import('./components/HealthRehab'));
-const HarperLog = React.lazy(() => import('./components/HarperLog'));
-const GovBenefits = React.lazy(() => import('./components/GovBenefits'));
-const LegalSRL = React.lazy(() => import('./components/LegalSRL'));
-const DadBuildPlan = React.lazy(() => import('./components/DadBuildPlan'));
-const DiscoveryArchive = React.lazy(() => import('./components/DiscoveryArchive'));
-const SystemAudit = React.lazy(() => import('./components/SystemAudit'));
 
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center h-full min-h-[50vh]">
@@ -98,15 +66,6 @@ const App: React.FC = () => {
           <NavButton target="power-monitor" icon={Activity} label="Pwr" currentView={view} onNavigate={setView} />
           <NavButton target="processor" icon={Map} label="Evidence" currentView={view} onNavigate={setView} />
           <NavButton target="medical-records" icon={Stethoscope} label="Med" currentView={view} onNavigate={setView} />
-          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" />
-          <NavButton target="discovery-archive" icon={Database} label="Archive" />
-          <NavButton target="system-audit" icon={Fingerprint} label="Audit" />
-          <NavButton target="harper-log" icon={Heart} label="Harper" />
-          <NavButton target="education-build" icon={GraduationCap} label="Build" />
-          <NavButton target="health-rehab" icon={Activity} label="Health" />
-          <NavButton target="gov-benefits" icon={Landmark} label="Gov" />
-          <NavButton target="scott-schedule" icon={Scale} label="Scott" />
-          <NavButton target="processor" icon={Map} label="Evidence" />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
@@ -136,8 +95,6 @@ const App: React.FC = () => {
         <div className="animate-fade-in">
           <Suspense fallback={<LoadingSpinner />}>
             {view === 'dashboard' && <Dashboard onNavigate={setView} />}
-          {view === 'dashboard' && <Dashboard onNavigate={setView} />}
-          <Suspense fallback={<LoadingSpinner />}>
             {view === 'discovery-archive' && <DiscoveryArchive />}
             {view === 'system-audit' && <SystemAudit />}
             {view === 'moral-compass' && <MoralCompass />}
