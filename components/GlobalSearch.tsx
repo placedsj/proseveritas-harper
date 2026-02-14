@@ -49,33 +49,34 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (!isOpen) {
+      setQuery('');
+      setResults([]);
+      setSearchData(null); // Clear data to free memory
+      return;
+    }
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
       }
     };
 
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-      // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
-      setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
-      });
-    } else {
-      setQuery('');
-      setResults([]);
-      setSearchData(null); // Clear data to free memory
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
+    // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
+    setSearchData({
+      evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
+      medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
+      scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
+      abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
+      timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
+      courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
+      dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+    });
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
