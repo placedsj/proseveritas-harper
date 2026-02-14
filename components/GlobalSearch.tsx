@@ -47,27 +47,49 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const onCloseRef = useRef(onClose);
 
   useEffect(() => {
-    if (isOpen) {
-      if (inputRef.current) {
-        inputRef.current.focus();
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCloseRef.current();
       }
-      // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
-      setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
-      });
-    } else {
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
       setQuery('');
       setResults([]);
       setSearchData(null); // Clear data to free memory
+      return;
     }
+
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
+    setSearchData({
+      evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
+      medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
+      scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
+      abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
+      timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
+      courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
+      dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+    });
   }, [isOpen]);
 
   useEffect(() => {
@@ -338,8 +360,15 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-900/30 backdrop-blur-sm flex items-start justify-center pt-24 px-4 animate-fade-in">
-      <div className="w-full max-w-2xl bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh]">
+    <div
+      className="fixed inset-0 z-[100] bg-slate-900/30 backdrop-blur-sm flex items-start justify-center pt-24 px-4 animate-fade-in"
+      onClick={onClose}
+      data-testid="global-search-overlay"
+    >
+      <div
+        className="w-full max-w-2xl bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh]"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
           <Search className="w-5 h-5 text-slate-400" />
