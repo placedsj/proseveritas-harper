@@ -22,6 +22,16 @@ interface SearchResult {
   score: number;
 }
 
+interface SearchData {
+  evidence: ProcessedEvidenceItem[];
+  medicalRecords: MedicalRecord[];
+  scottLogs: ScottLogEntry[];
+  abuseLogs: AbuseLogEntry[];
+  timelineEvents: TimelineEvent[];
+  courtEvents: CourtEvent[];
+  dailyMoves: DailyMove[];
+}
+
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   try {
     const item = localStorage.getItem(key);
@@ -35,20 +45,33 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-    if (!isOpen) {
+    if (isOpen) {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+      // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
+      setSearchData({
+        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
+        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
+        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
+        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
+        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
+        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
+        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+      });
+    } else {
       setQuery('');
       setResults([]);
+      setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (!query.trim()) {
+    if (!query.trim() || !searchData) {
       setResults([]);
       return;
     }
@@ -103,8 +126,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     };
 
     // 1. Evidence Processor
-    const processedEvidence = getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []);
-    processedEvidence.forEach(item => {
+    searchData.evidence.forEach(item => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.sender && item.sender.toLowerCase().includes(filters.sender)) score += 10;
@@ -133,8 +155,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // 2. Medical Records
-    const medicalRecords = getLocalStorageItem<MedicalRecord[]>('medicalRecords', []);
-    medicalRecords.forEach(record => {
+    searchData.medicalRecords.forEach(record => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.title && record.title.toLowerCase().includes(filters.title)) score += 15;
@@ -161,8 +182,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // 3. Scott Logs
-    const scottLogs = getLocalStorageItem<ScottLogEntry[]>('scottLogs', []);
-    scottLogs.forEach(log => {
+    searchData.scottLogs.forEach(log => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.category && log.category.toLowerCase().includes(filters.category)) score += 15;
@@ -200,8 +220,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // 4. Abuse Logs
-    const abuseLogs = getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []);
-    abuseLogs.forEach(log => {
+    searchData.abuseLogs.forEach(log => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.type && log.type.toLowerCase().includes(filters.type)) score += 15;
@@ -227,8 +246,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // 5. Timeline Events
-    const timelineEvents = getLocalStorageItem<TimelineEvent[]>('timelineEvents', []);
-    timelineEvents.forEach(timelineEvent => {
+    searchData.timelineEvents.forEach(timelineEvent => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.type && timelineEvent.type.toLowerCase().includes(filters.type)) score += 10;
@@ -254,8 +272,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // 6. Court Events
-    const courtEvents = getLocalStorageItem<CourtEvent[]>('courtEvents', []);
-    courtEvents.forEach(courtEvent => {
+    searchData.courtEvents.forEach(courtEvent => {
       let score = 0;
       let matchedSnippet = '';
       if (filters.caseName && courtEvent.caseName.toLowerCase().includes(filters.caseName)) score += 10;
@@ -281,8 +298,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     // Daily Moves
-    const savedMoves = getLocalStorageItem<DailyMove[]>('dailyMoves', []);
-    savedMoves.forEach(m => {
+    searchData.dailyMoves.forEach(m => {
       let score = 0;
       if (textQuery && m.text.toLowerCase().includes(textQuery)) score += 10;
       if (score > 0) {
@@ -298,7 +314,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     setResults(searchResults.sort((a, b) => b.score - a.score));
-  }, [query]);
+  }, [query, searchData]);
 
   const handleSelect = (view: ViewState) => {
     onNavigate(view);
