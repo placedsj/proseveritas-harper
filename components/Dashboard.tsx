@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search } from 'lucide-react';
+import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search, Map, Package } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (view: any) => void;
@@ -35,8 +35,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     <div className="space-y-6 animate-fade-in">
       {/* MISSION DIRECTIVE SECTION */}
       <button
-        onClick={() => onNavigate('moral-compass')}
-        className="w-full bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
         type="button"
         onClick={() => onNavigate('moral-compass')}
         className="w-full text-left bg-white border border-red-200 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-red-400 hover:shadow-md transition-all duration-200 group"
@@ -101,7 +99,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
       {/* TRACKERS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <button onClick={() => onNavigate('education-build')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md cursor-pointer group transition-all text-left">
         <button
           type="button"
           onClick={() => onNavigate('education-build')}
@@ -115,7 +112,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
           <p className="text-xs text-slate-500 mt-1">Educational readiness verified. Credits progressing.</p>
         </button>
 
-        <button onClick={() => onNavigate('harper-log')} className="w-full bg-white p-5 rounded-xl border border-slate-200 hover:border-pink-400 hover:shadow-md cursor-pointer group transition-all text-left">
         <button
           type="button"
           onClick={() => onNavigate('harper-log')}
@@ -131,6 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
         {/* Module 4 */}
         <button
+          type="button"
           onClick={() => onNavigate('roadmap')}
           className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-orange-500 cursor-pointer group transition-all text-left"
         >
@@ -144,6 +141,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
         {/* Module 5 */}
         <button
+          type="button"
           onClick={() => onNavigate('products')}
           className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-purple-500 cursor-pointer group transition-all text-left"
         >
@@ -157,6 +155,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
         {/* Module 6 */}
         <button
+          type="button"
           onClick={() => onNavigate('power-monitor')}
           className="w-full bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-yellow-500 cursor-pointer group transition-all text-left"
         >
