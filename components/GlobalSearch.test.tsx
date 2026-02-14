@@ -29,4 +29,13 @@ describe('GlobalSearch', () => {
 
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('removes escape listener on unmount', () => {
+    const { unmount } = render(<GlobalSearch isOpen onClose={onClose} onNavigate={onNavigate} />);
+
+    unmount();
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
 });
