@@ -49,12 +49,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isOpen) {
-      setQuery('');
-      setResults([]);
-      setSearchData(null); // Clear data to free memory
-      return;
-    }
+    if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -63,6 +58,19 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     };
 
     window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setQuery('');
+      setResults([]);
+      setSearchData(null); // Clear data to free memory
+      return;
+    }
 
     if (inputRef.current) {
       inputRef.current.focus();
@@ -77,11 +85,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
       dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
     });
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!query.trim() || !searchData) {

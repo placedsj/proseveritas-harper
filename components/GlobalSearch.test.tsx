@@ -16,6 +16,8 @@ describe('GlobalSearch', () => {
   it('closes when pressing Escape', () => {
     render(<GlobalSearch isOpen onClose={onClose} onNavigate={onNavigate} />);
 
+    expect(screen.getByPlaceholderText(/Search tasks/i)).toBeInTheDocument();
+
     fireEvent.keyDown(window, { key: 'Escape' });
 
     expect(onClose).toHaveBeenCalled();
