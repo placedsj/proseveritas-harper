@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
+import { Search, X, ArrowRight, LayoutDashboard, FileText, Stethoscope, Scale } from 'lucide-react';
 import { 
   ViewState, DailyMove,
-  ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
-  TimelineEvent, CourtEvent,
+  ProcessedEvidenceItem, MedicalRecord, ScottLogEntry,
 } from '../types';
 
 interface GlobalSearchProps {
@@ -15,7 +14,7 @@ interface GlobalSearchProps {
 
 interface SearchResult {
   id: string;
-  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log' | 'abuse-log' | 'timeline-event' | 'court-event' | 'evidence-vault';
+  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log';
   title: string;
   subtitle: string;
   view: ViewState;
@@ -26,9 +25,6 @@ interface SearchData {
   evidence: ProcessedEvidenceItem[];
   medicalRecords: MedicalRecord[];
   scottLogs: ScottLogEntry[];
-  abuseLogs: AbuseLogEntry[];
-  timelineEvents: TimelineEvent[];
-  courtEvents: CourtEvent[];
   dailyMoves: DailyMove[];
 }
 
@@ -58,9 +54,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
         evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
         medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
         scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
         dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
       });
     } else {
@@ -219,84 +212,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    // 4. Abuse Logs
-    searchData.abuseLogs.forEach(log => {
-      let score = 0;
-      let matchedSnippet = '';
-      if (filters.type && log.type.toLowerCase().includes(filters.type)) score += 15;
-      if (filters.text && log.description.toLowerCase().includes(filters.text)) {
-        score += 20;
-        matchedSnippet = generateSnippet(log.description, filters.text);
-      } else if (textQuery && log.description.toLowerCase().includes(textQuery)) {
-        score += 10;
-        matchedSnippet = generateSnippet(log.description, textQuery);
-      }
-      if (matchesDateFilters(log.timestamp)) score += 5;
-
-      if (score > 0) {
-        searchResults.push({
-          id: `al-${log.id}`,
-          type: 'abuse-log',
-          title: log.type,
-          subtitle: matchedSnippet || (log.description ? log.description.substring(0, 60) + '...' : ''),
-          view: 'scott-schedule',
-          score: score
-        });
-      }
-    });
-
-    // 5. Timeline Events
-    searchData.timelineEvents.forEach(timelineEvent => {
-      let score = 0;
-      let matchedSnippet = '';
-      if (filters.type && timelineEvent.type.toLowerCase().includes(filters.type)) score += 10;
-      if (filters.title && timelineEvent.title.toLowerCase().includes(filters.title)) {
-        score += 15;
-        matchedSnippet = generateSnippet(timelineEvent.title, filters.title);
-      } else if (textQuery && timelineEvent.title.toLowerCase().includes(textQuery)) {
-        score += 8;
-        matchedSnippet = generateSnippet(timelineEvent.title, textQuery);
-      }
-      if (matchesDateFilters(timelineEvent.date)) score += 5;
-
-      if (score > 0) {
-        searchResults.push({
-          id: `tl-${timelineEvent.id}`,
-          type: 'timeline-event',
-          title: timelineEvent.title,
-          subtitle: matchedSnippet || `Date: ${timelineEvent.date}, Type: ${timelineEvent.type}`,
-          view: 'dashboard', // Default to dashboard for now, timeline view is embedded
-          score: score
-        });
-      }
-    });
-
-    // 6. Court Events
-    searchData.courtEvents.forEach(courtEvent => {
-      let score = 0;
-      let matchedSnippet = '';
-      if (filters.caseName && courtEvent.caseName.toLowerCase().includes(filters.caseName)) score += 10;
-      if (filters.title && courtEvent.requiredAction.toLowerCase().includes(filters.title)) {
-        score += 15;
-        matchedSnippet = generateSnippet(courtEvent.requiredAction, filters.title);
-      } else if (textQuery && courtEvent.requiredAction.toLowerCase().includes(textQuery)) {
-        score += 8;
-        matchedSnippet = generateSnippet(courtEvent.requiredAction, textQuery);
-      }
-      if (matchesDateFilters(courtEvent.date)) score += 5;
-      
-      if (score > 0) {
-        searchResults.push({
-          id: `ce-${courtEvent.id}`,
-          type: 'court-event',
-          title: courtEvent.requiredAction,
-          subtitle: matchedSnippet || `Case: ${courtEvent.caseName}, Date: ${courtEvent.date}`,
-          view: 'dashboard',
-          score: score
-        });
-      }
-    });
-
     // Daily Moves
     searchData.dailyMoves.forEach(m => {
       let score = 0;
@@ -327,10 +242,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       case 'evidence-processor': return <FileText className="w-5 h-5 text-red-600" />;
       case 'medical-record': return <Stethoscope className="w-5 h-5 text-indigo-600" />;
       case 'scott-log': return <Scale className="w-5 h-5 text-amber-600" />;
-      case 'abuse-log': return <ShieldAlert className="w-5 h-5 text-red-600" />;
-      case 'timeline-event': return <ClockIcon className="w-5 h-5 text-teal-600" />;
-      case 'court-event': return <Gavel className="w-5 h-5 text-orange-600" />;
-      case 'evidence-vault': return <FileText className="w-5 h-5 text-slate-500" />;
       default: return <Search className="w-5 h-5 text-slate-400" />;
     }
   };

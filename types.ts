@@ -63,87 +63,11 @@ export interface ParentingBlock {
   hoursLost: number; // Auto-calc
 }
 
-export interface ChatMessage {
-  id: string;
-  sender: 'user' | 'cofounder';
-  mode?: 'MOTION' | 'COUNSEL' | 'CALM' | 'FIRE' | 'ORGANIZE' | 'AUTOMATE' | 'CHECK';
-  content: string;
-  timestamp: number;
-}
-
-// Daily Ritual
-export interface DailyChecklist {
-  sleep: boolean;
-  mental: boolean;
-  food: boolean;
-  readReality: boolean;
-  oneTask: boolean;
-  noContact: boolean;
-  progressMade: boolean;
-}
-
-// Timeline
-export interface TimelineEvent {
-  id: string;
-  date: string;
-  title: string;
-  type: 'prep' | 'deadline' | 'court';
-  completed: boolean;
-}
-
-// Evidence Vault
-export interface EvidenceItem {
-  id: string;
-  title: string;
-  description: string;
-  category: 'criminal' | 'custody' | 'fitness' | 'financial';
-  status: 'ready' | 'needs_printing' | 'needs_requesting' | 'requested';
-  dateReceived?: string;
-  dateRequested?: string;
-}
-
-// Spiral Journal
-export interface SpiralEntry {
-  id: string;
-  timestamp: number;
-  content: string;
-  aiResponse?: string;
-}
-
 // Global Search
 export interface DailyMove {
   id: string;
   text: string;
   completed: boolean;
-}
-
-// Abuse Log & Heatmap
-export type IncidentType = 'Harassment' | 'Alienation' | 'Denied Access' | 'False Police Report' | 'Safety Risk' | 'Financial';
-
-export interface AbuseLogEntry {
-  id: string;
-  timestamp: string;
-  type: IncidentType;
-  description: string;
-  severity: number;
-  childReaction: string;
-  witnesses?: string;
-  policeReportNumber?: string;
-  evidencePhoto?: string;
-  businessCorrelation?: string;
-}
-
-// Court Timeline
-export type CaseName = 'Criminal Defense' | 'Family Law';
-export type CourtStatus = 'Pending' | 'Done';
-
-export interface CourtEvent {
-  id: string;
-  date: string;
-  caseName: CaseName;
-  judgeName: string;
-  requiredAction: string;
-  status: CourtStatus;
 }
 
 // Medical Records
@@ -217,13 +141,4 @@ export interface BusinessProject {
   value: number;
   nextAction: string;
   dueDate?: string;
-}
-
-// Module: Business Survival
-export interface BusinessTask {
-  id: string;
-  clientOrTask: string;
-  dueDate: string;
-  dollarValue: number;
-  completed: boolean;
 }
