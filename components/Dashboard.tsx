@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Scale, ArrowRight, Star, FileText, GraduationCap, Heart, Activity, Landmark, Gavel, ShieldCheck, Search, Map, Package } from 'lucide-react';
+import { ScottLogEntry, SystemAuditLog, MedicalRecord } from '../types';
 
 interface DashboardProps {
   onNavigate: (view: any) => void;
@@ -9,8 +10,26 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0 });
   const [sentencingDays, setSentencingDays] = useState(0);
+  const [stats, setStats] = useState({
+    verifiedExhibits: 0,
+    daysDenied: 0,
+    auditTargets: 0,
+    sjrhPages: 0
+  });
 
   useEffect(() => {
+    // Stats Logic
+    const scottLogs: ScottLogEntry[] = JSON.parse(localStorage.getItem('scottLogs') || '[]');
+    const auditLogs: SystemAuditLog[] = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
+    const medicalRecords: MedicalRecord[] = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+
+    setStats({
+      verifiedExhibits: scottLogs.filter(l => l.exhibitRef && l.exhibitRef.trim() !== '').length,
+      daysDenied: scottLogs.filter(l => l.category === 'Denial of Parenting Time').length,
+      auditTargets: auditLogs.length,
+      sjrhPages: medicalRecords.reduce((acc, curr) => acc + (curr.pageCount || 0), 0)
+    });
+
     const target = new Date('2026-03-30T09:30:00');
     const sentencing = new Date('2026-03-03T09:00:00');
     
@@ -175,19 +194,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
          </h3>
          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-slate-900 font-bold text-xl">87</p>
+               <p className="text-slate-900 font-bold text-xl">{stats.verifiedExhibits}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Verified Exhibits</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-blue-600 font-bold text-xl">129</p>
+               <p className="text-blue-600 font-bold text-xl">{stats.daysDenied}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Days Denied</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-indigo-600 font-bold text-xl">4</p>
+               <p className="text-indigo-600 font-bold text-xl">{stats.auditTargets}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">Audit Targets</p>
             </div>
             <div className="p-3 bg-slate-50 rounded border border-slate-200">
-               <p className="text-amber-600 font-bold text-xl">36</p>
+               <p className="text-amber-600 font-bold text-xl">{stats.sjrhPages}</p>
                <p className="text-[10px] text-slate-500 uppercase font-black">SJRH Pages</p>
             </div>
          </div>
