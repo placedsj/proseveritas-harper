@@ -86,15 +86,24 @@ const ScottSchedule: React.FC = () => {
   };
 
   const exportCSV = () => {
+    // SENTINEL: Prevent CSV Injection (Formula Injection) by escaping fields starting with =, +, -, @
+    const safeCSV = (value: string) => {
+      let str = value || '';
+      if (/^[=\+\-@]/.test(str)) {
+        str = "'" + str;
+      }
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
     const headers = ['Date', 'Category', 'The Say (Allegation)', 'The Fact (Reality)', 'Child Impact', 'Exhibit', 'Statute'];
     const rows = logs.map(log => [
       `"${new Date(log.incidentDate).toLocaleString()}"`,
-      `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      safeCSV(log.category),
+      safeCSV(log.theSay),
+      safeCSV(log.theFact),
+      safeCSV(log.childImpact),
+      safeCSV(log.exhibitRef),
+      safeCSV(log.statuteTag)
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
