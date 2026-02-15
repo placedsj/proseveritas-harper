@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
+import { escapeCSV } from '../utils/security';
 import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
 
 const categories: ScottCategory[] = [
@@ -88,13 +89,13 @@ const ScottSchedule: React.FC = () => {
   const exportCSV = () => {
     const headers = ['Date', 'Category', 'The Say (Allegation)', 'The Fact (Reality)', 'Child Impact', 'Exhibit', 'Statute'];
     const rows = logs.map(log => [
-      `"${new Date(log.incidentDate).toLocaleString()}"`,
-      `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      escapeCSV(new Date(log.incidentDate).toLocaleString()),
+      escapeCSV(log.category),
+      escapeCSV(log.theSay),
+      escapeCSV(log.theFact),
+      escapeCSV(log.childImpact),
+      escapeCSV(log.exhibitRef),
+      escapeCSV(log.statuteTag)
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
