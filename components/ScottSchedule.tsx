@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
-import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
+import { FileText, Save, Download, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
 
 const categories: ScottCategory[] = [
   'Denial of Parenting Time', 
