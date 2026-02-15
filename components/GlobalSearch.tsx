@@ -338,44 +338,55 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-900/30 backdrop-blur-sm flex items-start justify-center pt-24 px-4 animate-fade-in">
+    <div
+      className="fixed inset-0 z-[100] bg-slate-900/30 backdrop-blur-sm flex items-start justify-center pt-24 px-4 animate-fade-in"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Global Search"
+    >
       <div className="w-full max-w-2xl bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[70vh]">
         
         <div className="p-4 border-b border-slate-100 flex items-center gap-3">
-          <Search className="w-5 h-5 text-slate-400" />
+          <Search className="w-5 h-5 text-slate-400" aria-hidden="true" />
           <input 
             ref={inputRef}
             type="text" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search tasks, evidence, logs..."
+            aria-label="Search query"
             className="flex-1 bg-transparent text-slate-900 text-lg placeholder-slate-400 focus:outline-none"
           />
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors">
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-900 transition-colors"
+            aria-label="Close search"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="overflow-y-auto flex-1 p-2 bg-slate-50">
           {results.length > 0 ? (
-            <div className="space-y-1">
+            <ul className="space-y-1" role="list">
               {results.map((result) => (
-                <button
-                  key={result.id}
-                  onClick={() => handleSelect(result.view)}
-                  className="w-full text-left p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all flex items-center gap-4 group border border-transparent hover:border-slate-200"
-                >
-                  <div className={`p-2 rounded-lg bg-white border border-slate-200 transition-colors`}>
-                    {getTypeIcon(result.type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-slate-900 font-semibold text-sm">{result.title}</h4>
-                    <p className="text-slate-500 text-xs truncate">{result.subtitle}</p>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-900 opacity-0 group-hover:opacity-100 transition-all" />
-                </button>
+                <li key={result.id}>
+                  <button
+                    onClick={() => handleSelect(result.view)}
+                    className="w-full text-left p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all flex items-center gap-4 group border border-transparent hover:border-slate-200"
+                  >
+                    <div className={`p-2 rounded-lg bg-white border border-slate-200 transition-colors`}>
+                      {getTypeIcon(result.type)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-slate-900 font-semibold text-sm">{result.title}</h4>
+                      <p className="text-slate-500 text-xs truncate">{result.subtitle}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-slate-900 opacity-0 group-hover:opacity-100 transition-all" />
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           ) : query ? (
             <div className="p-8 text-center text-slate-500">
               <p>No results found for "{query}"</p>

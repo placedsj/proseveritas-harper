@@ -69,7 +69,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
-          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors" aria-label="Open search">
             <Search className="w-6 h-6" />
           </button>
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mx-auto shadow-sm" title="System Online" />
@@ -83,7 +83,7 @@ const App: React.FC = () => {
           <h1 className="font-bold text-lg text-slate-900 tracking-tight uppercase">Defense Grid</h1>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900">
+          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900" aria-label="Open search">
             <Search className="w-6 h-6" />
           </button>
           <span className="text-xs text-green-600 font-mono bg-green-50 px-2 py-1 rounded border border-green-100">ONLINE</span>
