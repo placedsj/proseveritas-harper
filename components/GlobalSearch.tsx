@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
 import { 
   ViewState, DailyMove,
@@ -42,7 +42,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   }
 };
 
-const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
+const GlobalSearchComponent: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
@@ -394,5 +394,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     </div>
   );
 };
+
+const GlobalSearch = memo(GlobalSearchComponent);
 
 export { GlobalSearch };
