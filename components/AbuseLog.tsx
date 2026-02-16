@@ -35,6 +35,7 @@ const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line
     if (forceAddMode) setIsAdding(true);
   }, [forceAddMode]);
 

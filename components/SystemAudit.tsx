@@ -1,14 +1,24 @@
 
-import React from 'react';
-import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Fingerprint, Eye, Search, Clock, AlertTriangle } from 'lucide-react';
+import { SystemAuditLog } from '../types';
+
+const initialLogs: SystemAuditLog[] = [
+  { id: '1', date: 'Feb 7, 2026', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
+  { id: '2', date: 'Jan 23, 2026', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
+  { id: '3', date: 'Jan 23, 2026', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
+  { id: '4', date: 'Jan 15, 2026', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
+];
 
 const SystemAudit: React.FC = () => {
-  const auditLogs = [
-    { date: 'Feb 7, 2026', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
-    { date: 'Jan 23, 2026', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
-    { date: 'Jan 23, 2026', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
-    { date: 'Jan 15, 2026', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
-  ];
+  const [auditLogs, setAuditLogs] = useState<SystemAuditLog[]>(() => {
+    const saved = localStorage.getItem('systemAuditLogs');
+    return saved ? JSON.parse(saved) : initialLogs;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('systemAuditLogs', JSON.stringify(auditLogs));
+  }, [auditLogs]);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -28,8 +38,8 @@ const SystemAudit: React.FC = () => {
             <Eye className="w-4 h-4 text-blue-600" /> Forensic Trail
           </h3>
           <div className="space-y-4">
-            {auditLogs.map((log, i) => (
-              <div key={i} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
+            {auditLogs.map((log) => (
+              <div key={log.id} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-blue-700 font-bold text-sm">{log.action}</span>
                   <span className="text-[10px] text-slate-500 font-mono uppercase">{log.date}</span>
