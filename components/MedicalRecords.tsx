@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MedicalRecord } from '../types';
-import { Stethoscope, Plus, FileText, Calendar, Edit2, Download, CheckCircle, AlertTriangle, X, Save, Eye, EyeOff } from 'lucide-react';
-
-const escapeBackticksForTemplateLiteral = (text: string) => text.replace(/`/g, '\\`');
+import { Stethoscope, Plus, Calendar, Download, Save, Eye, EyeOff } from 'lucide-react';
 
 const initialRecords: MedicalRecord[] = [
   {
@@ -14,6 +12,7 @@ const initialRecords: MedicalRecord[] = [
     ocrText: `Medical Review Officer's Report - Confidential. Revised on January 10, 2025. Donor Name: Emma Ryan. Reason for Test: Reasonable Suspicion. Results: Negative Dilute.`,
     status: 'needs_review',
     dateAdded: '2025-01-25',
+    pageCount: 1,
   },
   {
     id: '2',
@@ -23,6 +22,7 @@ const initialRecords: MedicalRecord[] = [
     ocrText: `===============================================================================\nOCR EXTRACTION: scan0007.pdf\nProcessed: 2026-02-01\nTotal Pages: 35\n================================================================================\nHorizon Health Network Order Summary. PPRN: 432086. ADM Date: 10-Sep-2025 12:06. Visit Reason: Laceration Puncture. Documeted 50-minute secure ward detention without physician order. MRI indications: Fall from 30ft 5 years ago. Result: Early degenerative changes C5-C6. No significant canal stenosis. NP Claire Logan attending.`,
     status: 'needs_review',
     dateAdded: '2025-01-25',
+    pageCount: 35,
   },
 ];
 
@@ -36,7 +36,7 @@ const MedicalRecords: React.FC = () => {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   
   const [newRecord, setNewRecord] = useState<Partial<MedicalRecord>>({
-    title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review'
+    title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review', pageCount: 0
   });
 
   useEffect(() => {
@@ -60,9 +60,13 @@ const MedicalRecords: React.FC = () => {
       ocrText: newRecord.ocrText,
       status: newRecord.status || 'needs_review',
       dateAdded: new Date().toISOString().split('T')[0],
+      pageCount: newRecord.pageCount || 0,
     };
     setRecords([record, ...records]);
     setIsAdding(false);
+    setNewRecord({
+      title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review', pageCount: 0
+    });
   };
 
   return (
@@ -76,6 +80,78 @@ const MedicalRecords: React.FC = () => {
           <Plus className="w-4 h-4" /> {isAdding ? "Cancel" : "Add Record"}
         </button>
       </div>
+
+      {isAdding && (
+        <div className="bg-white p-6 rounded-xl border border-blue-200 shadow-md animate-fade-in text-left">
+          <h3 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Add New Evidence</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Title</label>
+               <input
+                 type="text"
+                 value={newRecord.title}
+                 onChange={e => setNewRecord({...newRecord, title: e.target.value})}
+                 className="w-full border border-slate-300 rounded p-2 text-sm"
+               />
+            </div>
+            <div>
+               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Source</label>
+               <input
+                 type="text"
+                 value={newRecord.source}
+                 onChange={e => setNewRecord({...newRecord, source: e.target.value})}
+                 className="w-full border border-slate-300 rounded p-2 text-sm"
+               />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+             <div>
+               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Date of Record</label>
+               <input
+                 type="date"
+                 value={newRecord.dateOfRecord}
+                 onChange={e => setNewRecord({...newRecord, dateOfRecord: e.target.value})}
+                 className="w-full border border-slate-300 rounded p-2 text-sm"
+               />
+             </div>
+             <div>
+               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Page Count</label>
+               <input
+                 type="number"
+                 value={newRecord.pageCount}
+                 onChange={e => setNewRecord({...newRecord, pageCount: parseInt(e.target.value) || 0})}
+                 className="w-full border border-slate-300 rounded p-2 text-sm"
+               />
+             </div>
+             <div>
+               <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Status</label>
+               <select
+                 value={newRecord.status}
+                 onChange={e => setNewRecord({...newRecord, status: e.target.value as any})}
+                 className="w-full border border-slate-300 rounded p-2 text-sm"
+               >
+                 <option value="needs_review">Needs Review</option>
+                 <option value="reviewed">Reviewed</option>
+                 <option value="flagged">Flagged</option>
+               </select>
+             </div>
+          </div>
+          <div className="mb-4">
+             <label className="block text-xs font-bold text-slate-500 uppercase mb-1">OCR Text / Notes</label>
+             <textarea
+               value={newRecord.ocrText}
+               onChange={e => setNewRecord({...newRecord, ocrText: e.target.value})}
+               className="w-full border border-slate-300 rounded p-2 text-sm h-32 font-mono"
+             />
+          </div>
+          <button
+            onClick={handleAddRecord}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded font-bold shadow-md transition-all flex justify-center items-center gap-2"
+          >
+            <Save className="w-4 h-4" /> Save Record
+          </button>
+        </div>
+      )}
 
       <div className="space-y-4">
         {records.map(record => (

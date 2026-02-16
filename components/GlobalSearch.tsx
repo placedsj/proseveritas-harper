@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, X, ArrowRight, LayoutDashboard, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
 import { 
   ViewState, DailyMove,
   ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
@@ -44,36 +44,34 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-      // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
-      setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
-      });
-    } else {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+    if (!isOpen) {
+      // eslint-disable-next-line
       setQuery('');
-      setResults([]);
-      setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
 
-  useEffect(() => {
+  const searchData = useMemo(() => {
+    if (!isOpen) return null;
+    return {
+      evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
+      medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
+      scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
+      abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
+      timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
+      courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
+      dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+    };
+  }, [isOpen]);
+
+  const results = useMemo(() => {
     if (!query.trim() || !searchData) {
-      setResults([]);
-      return;
+      return [];
     }
 
     const lowerQuery = query.toLowerCase();
@@ -313,7 +311,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    setResults(searchResults.sort((a, b) => b.score - a.score));
+    return searchResults.sort((a, b) => b.score - a.score);
   }, [query, searchData]);
 
   const handleSelect = (view: ViewState) => {

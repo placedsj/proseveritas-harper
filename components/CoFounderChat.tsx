@@ -4,7 +4,7 @@ import { getCoFounderResponse } from '../services/geminiService';
 import { MessageSquare, Send, Cpu } from 'lucide-react';
 
 const CoFounderChat: React.FC = () => {
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     { 
       id: '0', 
       sender: 'cofounder', 
