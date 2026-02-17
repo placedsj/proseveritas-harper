@@ -1,4 +1,3 @@
-
 import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
@@ -50,22 +49,22 @@ const App: React.FC = () => {
         </div>
         
         <div className="space-y-4 w-full px-2">
-          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" currentView={view} onNavigate={setView} />
-          <NavButton target="discovery-archive" icon={Database} label="Archive" currentView={view} onNavigate={setView} />
-          <NavButton target="system-audit" icon={Fingerprint} label="Audit" currentView={view} onNavigate={setView} />
-          <NavButton target="harper-log" icon={Heart} label="Harper" currentView={view} onNavigate={setView} />
-          <NavButton target="education-build" icon={GraduationCap} label="Build" currentView={view} onNavigate={setView} />
-          <NavButton target="health-rehab" icon={Activity} label="Health" currentView={view} onNavigate={setView} />
-          <NavButton target="gov-benefits" icon={Landmark} label="Gov" currentView={view} onNavigate={setView} />
-          <NavButton target="scott-schedule" icon={Scale} label="Scott" currentView={view} onNavigate={setView} />
-          <NavButton target="custody-math" icon={Calculator} label="Math" currentView={view} onNavigate={setView} />
-          <NavButton target="business" icon={Briefcase} label="Biz" currentView={view} onNavigate={setView} />
-          <NavButton target="strategy" icon={Compass} label="Plan" currentView={view} onNavigate={setView} />
-          <NavButton target="roadmap" icon={Map} label="Map" currentView={view} onNavigate={setView} />
-          <NavButton target="products" icon={Package} label="Lab" currentView={view} onNavigate={setView} />
-          <NavButton target="power-monitor" icon={Activity} label="Pwr" currentView={view} onNavigate={setView} />
-          <NavButton target="processor" icon={Map} label="Evidence" currentView={view} onNavigate={setView} />
-          <NavButton target="medical-records" icon={Stethoscope} label="Med" currentView={view} onNavigate={setView} />
+          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" isActive={view === 'dashboard'} onNavigate={setView} />
+          <NavButton target="discovery-archive" icon={Database} label="Archive" isActive={view === 'discovery-archive'} onNavigate={setView} />
+          <NavButton target="system-audit" icon={Fingerprint} label="Audit" isActive={view === 'system-audit'} onNavigate={setView} />
+          <NavButton target="harper-log" icon={Heart} label="Harper" isActive={view === 'harper-log'} onNavigate={setView} />
+          <NavButton target="education-build" icon={GraduationCap} label="Build" isActive={view === 'education-build'} onNavigate={setView} />
+          <NavButton target="health-rehab" icon={Activity} label="Health" isActive={view === 'health-rehab'} onNavigate={setView} />
+          <NavButton target="gov-benefits" icon={Landmark} label="Gov" isActive={view === 'gov-benefits'} onNavigate={setView} />
+          <NavButton target="scott-schedule" icon={Scale} label="Scott" isActive={view === 'scott-schedule'} onNavigate={setView} />
+          <NavButton target="custody-math" icon={Calculator} label="Math" isActive={view === 'custody-math'} onNavigate={setView} />
+          <NavButton target="business" icon={Briefcase} label="Biz" isActive={view === 'business'} onNavigate={setView} />
+          <NavButton target="strategy" icon={Compass} label="Plan" isActive={view === 'strategy'} onNavigate={setView} />
+          <NavButton target="roadmap" icon={Map} label="Map" isActive={view === 'roadmap'} onNavigate={setView} />
+          <NavButton target="products" icon={Package} label="Lab" isActive={view === 'products'} onNavigate={setView} />
+          <NavButton target="power-monitor" icon={Activity} label="Pwr" isActive={view === 'power-monitor'} onNavigate={setView} />
+          <NavButton target="processor" icon={Map} label="Evidence" isActive={view === 'processor'} onNavigate={setView} />
+          <NavButton target="medical-records" icon={Stethoscope} label="Med" isActive={view === 'medical-records'} onNavigate={setView} />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
