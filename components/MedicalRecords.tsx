@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { MedicalRecord } from '../types';
-import { Stethoscope, Plus, FileText, Calendar, Edit2, Download, CheckCircle, AlertTriangle, X, Save, Eye, EyeOff } from 'lucide-react';
-
-const escapeBackticksForTemplateLiteral = (text: string) => text.replace(/`/g, '\\`');
+import { Stethoscope, Plus, Calendar, Download, Eye, EyeOff } from 'lucide-react';
 
 const initialRecords: MedicalRecord[] = [
   {
@@ -36,7 +34,7 @@ const MedicalRecords: React.FC = () => {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
   
   const [newRecord, setNewRecord] = useState<Partial<MedicalRecord>>({
-    title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review'
+    title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review', pageCount: 0
   });
 
   useEffect(() => {
@@ -54,15 +52,19 @@ const MedicalRecords: React.FC = () => {
     if (!newRecord.title || !newRecord.ocrText) return;
     const record: MedicalRecord = {
       id: Date.now().toString(),
-      title: newRecord.title,
+      title: newRecord.title || 'Untitled',
       source: newRecord.source || 'Unknown',
       dateOfRecord: newRecord.dateOfRecord || '',
-      ocrText: newRecord.ocrText,
-      status: newRecord.status || 'needs_review',
+      ocrText: newRecord.ocrText || '',
+      status: (newRecord.status as MedicalRecord['status']) || 'needs_review',
       dateAdded: new Date().toISOString().split('T')[0],
+      pageCount: newRecord.pageCount
     };
     setRecords([record, ...records]);
     setIsAdding(false);
+    setNewRecord({
+      title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review', pageCount: 0
+    });
   };
 
   return (
@@ -77,6 +79,65 @@ const MedicalRecords: React.FC = () => {
         </button>
       </div>
 
+      {isAdding && (
+        <div className="bg-white p-6 rounded-xl border border-blue-200 animate-fade-in shadow-md mb-6 text-left">
+           <h3 className="font-bold text-slate-900 mb-4 uppercase tracking-widest text-sm">New Medical Record</h3>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Document Title</label>
+                  <input
+                    type="text"
+                    value={newRecord.title}
+                    onChange={e => setNewRecord({...newRecord, title: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+              </div>
+              <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Source Facility</label>
+                  <input
+                    type="text"
+                    value={newRecord.source}
+                    onChange={e => setNewRecord({...newRecord, source: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+              </div>
+              <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Date of Record</label>
+                  <input
+                    type="date"
+                    value={newRecord.dateOfRecord}
+                    onChange={e => setNewRecord({...newRecord, dateOfRecord: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+              </div>
+               <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Page Count</label>
+                  <input
+                    type="number"
+                    value={newRecord.pageCount}
+                    onChange={e => setNewRecord({...newRecord, pageCount: parseInt(e.target.value) || 0})}
+                    className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm focus:outline-none focus:border-blue-500"
+                  />
+              </div>
+           </div>
+           <div className="mb-4">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1">OCR / Extracted Text</label>
+              <textarea
+                value={newRecord.ocrText}
+                onChange={e => setNewRecord({...newRecord, ocrText: e.target.value})}
+                className="w-full h-32 bg-slate-50 border border-slate-300 rounded p-2 text-xs font-mono focus:outline-none focus:border-blue-500"
+              />
+           </div>
+           <button
+             onClick={handleAddRecord}
+             disabled={!newRecord.title}
+             className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 rounded transition-colors"
+           >
+             Save to Archive
+           </button>
+        </div>
+      )}
+
       <div className="space-y-4">
         {records.map(record => (
           <div key={record.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all hover:border-blue-200">
@@ -84,7 +145,7 @@ const MedicalRecords: React.FC = () => {
               <div className="flex flex-col text-left">
                 <h3 className="text-lg font-bold text-slate-900">{record.title}</h3>
                 <p className="text-slate-500 text-xs mt-1 flex items-center gap-2">
-                  <Calendar className="w-3 h-3" /> {record.dateOfRecord} | {record.source}
+                  <Calendar className="w-3 h-3" /> {record.dateOfRecord} | {record.source} | {record.pageCount || 0} Pages
                 </p>
               </div>
               <div className="flex gap-2">

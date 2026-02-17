@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const apiKey = process.env.API_KEY || '';
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
 export const getCoFounderResponse = async (userMessage: string, context: string): Promise<string> => {
@@ -27,7 +27,7 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
       `,
     });
     return response.text || "MOTION: Focus established. Next move?";
-  } catch (error) {
+  } catch {
     return "CALM: Connection latency detected. Continue manual logging.";
   }
 };
@@ -40,7 +40,7 @@ export const getRealityCheck = async (thought: string): Promise<string> => {
         contents: `Stoic reality-checker. Facts only. User: "${thought}". One sentence STOP command. Max 30 words.`
     });
     return response.text || "Focus on what you can control.";
-  } catch (error) {
+  } catch {
       return "Focus on the present moment.";
   }
 };
