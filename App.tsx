@@ -120,11 +120,11 @@ const App: React.FC = () => {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 overflow-x-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-600' : 'text-slate-400'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-600' : 'text-slate-400'}`}><Database className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('harper-log')} className={`p-2 min-w-[50px] ${view === 'harper-log' ? 'text-pink-600' : 'text-slate-400'}`}><Heart className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('system-audit')} className={`p-2 min-w-[50px] ${view === 'system-audit' ? 'text-blue-600' : 'text-slate-400'}`}><Fingerprint className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-600' : 'text-slate-400'}`}><Scale className="w-6 h-6 mx-auto" /></button>
+        <button aria-label="Dashboard" aria-current={view === 'dashboard' ? 'page' : undefined} onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-600' : 'text-slate-400'}`}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
+        <button aria-label="Discovery Archive" aria-current={view === 'discovery-archive' ? 'page' : undefined} onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-600' : 'text-slate-400'}`}><Database className="w-6 h-6 mx-auto" /></button>
+        <button aria-label="Harper Log" aria-current={view === 'harper-log' ? 'page' : undefined} onClick={() => setView('harper-log')} className={`p-2 min-w-[50px] ${view === 'harper-log' ? 'text-pink-600' : 'text-slate-400'}`}><Heart className="w-6 h-6 mx-auto" /></button>
+        <button aria-label="System Audit" aria-current={view === 'system-audit' ? 'page' : undefined} onClick={() => setView('system-audit')} className={`p-2 min-w-[50px] ${view === 'system-audit' ? 'text-blue-600' : 'text-slate-400'}`}><Fingerprint className="w-6 h-6 mx-auto" /></button>
+        <button aria-label="Scott Schedule" aria-current={view === 'scott-schedule' ? 'page' : undefined} onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-600' : 'text-slate-400'}`}><Scale className="w-6 h-6 mx-auto" /></button>
       </nav>
 
       <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={setView} />
