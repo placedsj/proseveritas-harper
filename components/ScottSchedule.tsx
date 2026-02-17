@@ -1,7 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
-import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
+import { FileText, Save, Download, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
+
+export const safeCSV = (str: string): string => {
+  if (!str) return "";
+  const unsafePrefixes = ['=', '+', '-', '@'];
+  if (unsafePrefixes.some(prefix => str.startsWith(prefix))) {
+    return "'" + str;
+  }
+  return str;
+};
 
 const categories: ScottCategory[] = [
   'Denial of Parenting Time', 
@@ -90,11 +99,11 @@ const ScottSchedule: React.FC = () => {
     const rows = logs.map(log => [
       `"${new Date(log.incidentDate).toLocaleString()}"`,
       `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      `"${safeCSV(log.theSay).replace(/"/g, '""')}"`,
+      `"${safeCSV(log.theFact).replace(/"/g, '""')}"`,
+      `"${safeCSV(log.childImpact)}"`,
+      `"${safeCSV(log.exhibitRef)}"`,
+      `"${safeCSV(log.statuteTag)}"`
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
