@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
+import useDebounce from '../hooks/useDebounce';
 import { 
   ViewState, DailyMove,
   ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
@@ -44,6 +45,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,12 +73,12 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   }, [isOpen]);
 
   useEffect(() => {
-    if (!query.trim() || !searchData) {
+    if (!debouncedQuery.trim() || !searchData) {
       setResults([]);
       return;
     }
 
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = debouncedQuery.toLowerCase();
     const searchResults: SearchResult[] = [];
     const filters: { [key: string]: string } = {};
     let textQuery = lowerQuery;
@@ -314,7 +316,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     setResults(searchResults.sort((a, b) => b.score - a.score));
-  }, [query, searchData]);
+  }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
     onNavigate(view);
