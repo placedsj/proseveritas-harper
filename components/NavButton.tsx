@@ -12,6 +12,7 @@ interface NavButtonProps {
 export const NavButton: React.FC<NavButtonProps> = ({ target, icon: Icon, label, currentView, onNavigate }) => (
   <button
     onClick={() => onNavigate(target)}
+    aria-current={currentView === target ? 'page' : undefined}
     className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ${
       currentView === target
         ? 'bg-red-600 text-white shadow-lg shadow-red-200'
