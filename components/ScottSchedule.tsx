@@ -3,6 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
 import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
 
+export const safeCSVField = (field: string | null | undefined): string => {
+  if (!field) return "";
+  const str = String(field);
+  // Prevent CSV Injection (Formula Injection) by escaping dangerous start characters
+  if (/^[=+\-@]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+};
+
 const categories: ScottCategory[] = [
   'Denial of Parenting Time', 
   'Alienation', 
@@ -90,11 +100,11 @@ const ScottSchedule: React.FC = () => {
     const rows = logs.map(log => [
       `"${new Date(log.incidentDate).toLocaleString()}"`,
       `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      `"${safeCSVField(log.theSay).replace(/"/g, '""')}"`,
+      `"${safeCSVField(log.theFact).replace(/"/g, '""')}"`,
+      `"${safeCSVField(log.childImpact)}"`,
+      `"${safeCSVField(log.exhibitRef)}"`,
+      `"${safeCSVField(log.statuteTag)}"`
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
