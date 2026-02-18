@@ -13,6 +13,22 @@ const categories: ScottCategory[] = [
 
 const impacts: ChildImpact[] = ['Crying', 'Silent', 'Regressive', 'N/A'];
 
+export const safeCSVField = (text: string): string => {
+  if (!text) return '""';
+
+  // 1. Prevent Formula Injection: Prepend ' to dangerous characters
+  let safeText = text;
+  if (/^[=\+\-@]/.test(text)) {
+    safeText = "'" + text;
+  }
+
+  // 2. Escape double quotes: Replace " with ""
+  safeText = safeText.replace(/"/g, '""');
+
+  // 3. Wrap in double quotes for CSV format
+  return `"${safeText}"`;
+};
+
 const initialLogs: ScottLogEntry[] = [
   {
     id: 'photo-1',
@@ -88,13 +104,13 @@ const ScottSchedule: React.FC = () => {
   const exportCSV = () => {
     const headers = ['Date', 'Category', 'The Say (Allegation)', 'The Fact (Reality)', 'Child Impact', 'Exhibit', 'Statute'];
     const rows = logs.map(log => [
-      `"${new Date(log.incidentDate).toLocaleString()}"`,
-      `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      safeCSVField(new Date(log.incidentDate).toLocaleString()),
+      safeCSVField(log.category),
+      safeCSVField(log.theSay),
+      safeCSVField(log.theFact),
+      safeCSVField(log.childImpact),
+      safeCSVField(log.exhibitRef),
+      safeCSVField(log.statuteTag)
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
