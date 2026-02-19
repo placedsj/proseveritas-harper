@@ -155,6 +155,16 @@ export interface MedicalRecord {
   ocrText: string;
   status: 'reviewed' | 'needs_review' | 'flagged';
   dateAdded: string; // When it was added to the vault
+  pageCount?: number;
+}
+
+// Module: System Audit
+export interface SystemAuditLogEntry {
+  id: string;
+  date: string;
+  action: string;
+  status: 'Active' | 'Critical' | 'Flagged' | 'Verified';
+  note: string;
 }
 
 // Evidence Processor Item
