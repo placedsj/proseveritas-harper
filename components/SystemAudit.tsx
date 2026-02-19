@@ -1,14 +1,51 @@
 
-import React from 'react';
-import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle, Plus, Save } from 'lucide-react';
+import { SystemAuditLogEntry } from '../types';
+
+const initialLogs: SystemAuditLogEntry[] = [
+    { id: '1', date: 'Feb 7, 2026', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
+    { id: '2', date: 'Jan 23, 2026', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
+    { id: '3', date: 'Jan 23, 2026', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
+    { id: '4', date: 'Jan 15, 2026', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
+];
 
 const SystemAudit: React.FC = () => {
-  const auditLogs = [
-    { date: 'Feb 7, 2026', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
-    { date: 'Jan 23, 2026', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
-    { date: 'Jan 23, 2026', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
-    { date: 'Jan 15, 2026', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
-  ];
+  const [logs, setLogs] = useState<SystemAuditLogEntry[]>(() => {
+    const saved = localStorage.getItem('systemAuditLogs');
+    return saved ? JSON.parse(saved) : initialLogs;
+  });
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [newLog, setNewLog] = useState<Partial<SystemAuditLogEntry>>({
+    date: new Date().toISOString().split('T')[0],
+    action: '',
+    status: 'Active',
+    note: ''
+  });
+
+  useEffect(() => {
+    localStorage.setItem('systemAuditLogs', JSON.stringify(logs));
+  }, [logs]);
+
+  const handleAddAuditLog = () => {
+    if (!newLog.action || !newLog.note) return;
+    const log: SystemAuditLogEntry = {
+      id: Date.now().toString(),
+      date: newLog.date || new Date().toISOString().split('T')[0],
+      action: newLog.action,
+      status: newLog.status as any,
+      note: newLog.note
+    };
+    setLogs([log, ...logs]);
+    setIsAdding(false);
+    setNewLog({
+       date: new Date().toISOString().split('T')[0],
+       action: '',
+       status: 'Active',
+       note: ''
+    });
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -20,6 +57,12 @@ const SystemAudit: React.FC = () => {
           </h2>
           <p className="text-slate-500 text-sm text-left">Investigating Institutional Capture & Document Fabrications.</p>
         </div>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2 font-bold text-sm shadow-md transition-all"
+        >
+          <Plus className="w-4 h-4" /> {isAdding ? "Cancel" : "Add Log"}
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -27,9 +70,55 @@ const SystemAudit: React.FC = () => {
           <h3 className="font-bold text-slate-900 uppercase tracking-widest text-sm flex items-center gap-2">
             <Eye className="w-4 h-4 text-blue-600" /> Forensic Trail
           </h3>
+
+          {isAdding && (
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4 animate-fade-in text-left">
+              <h4 className="text-xs font-bold text-blue-800 uppercase mb-3">New Audit Entry</h4>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  placeholder="Action / Audit Title"
+                  className="w-full p-2 rounded border border-blue-200 text-xs"
+                  value={newLog.action}
+                  onChange={e => setNewLog({...newLog, action: e.target.value})}
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    className="flex-1 p-2 rounded border border-blue-200 text-xs"
+                    value={newLog.date}
+                    onChange={e => setNewLog({...newLog, date: e.target.value})}
+                  />
+                  <select
+                    className="flex-1 p-2 rounded border border-blue-200 text-xs"
+                    value={newLog.status}
+                    onChange={e => setNewLog({...newLog, status: e.target.value as any})}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Critical">Critical</option>
+                    <option value="Flagged">Flagged</option>
+                    <option value="Verified">Verified</option>
+                  </select>
+                </div>
+                <textarea
+                  placeholder="Audit Notes..."
+                  className="w-full p-2 rounded border border-blue-200 text-xs h-20"
+                  value={newLog.note}
+                  onChange={e => setNewLog({...newLog, note: e.target.value})}
+                />
+                <button
+                  onClick={handleAddAuditLog}
+                  className="w-full bg-blue-600 text-white py-2 rounded text-xs font-bold uppercase hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Save className="w-3 h-3" /> Save Entry
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-4">
-            {auditLogs.map((log, i) => (
-              <div key={i} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
+            {logs.map((log) => (
+              <div key={log.id} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-blue-700 font-bold text-sm">{log.action}</span>
                   <span className="text-[10px] text-slate-500 font-mono uppercase">{log.date}</span>
