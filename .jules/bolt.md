@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-12 - Debounced Global Search
+**Learning:** `GlobalSearch` was performing expensive synchronous filtering on every keystroke, causing potential UI lag.
+**Action:** Implemented a reusable `useDebounce` hook (300ms delay) and applied it to the `GlobalSearch` query. This separates the input state (immediate feedback) from the search execution (delayed), significantly reducing the number of filtering operations.
