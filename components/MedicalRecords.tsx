@@ -120,8 +120,9 @@ const MedicalRecords: React.FC = () => {
                <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Page Count</label>
                <input
                   type="number"
+                  min="0"
                   value={newRecord.pageCount}
-                  onChange={e => setNewRecord({...newRecord, pageCount: parseInt(e.target.value) || 0})}
+                  onChange={e => setNewRecord({...newRecord, pageCount: Math.max(0, parseInt(e.target.value) || 0)})}
                   className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none"
                />
              </div>
