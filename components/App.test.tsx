@@ -38,4 +38,20 @@ describe('App', () => {
     // "Status: Pro Se Command" is in Dashboard
     expect(screen.getByText(/Status: Pro Se Command/i)).toBeInTheDocument();
   });
+
+  it('contains accessible navigation and search controls', () => {
+    render(<App />);
+
+    // Sidebar search button
+    const searchButtons = screen.getAllByLabelText('Open global search');
+    expect(searchButtons.length).toBeGreaterThan(0);
+
+    // Mobile bottom nav buttons
+    // Note: These are hidden on desktop, but rendered in the DOM
+    expect(screen.getByLabelText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByLabelText('Discovery Archive')).toBeInTheDocument();
+    expect(screen.getByLabelText('Harper Log')).toBeInTheDocument();
+    expect(screen.getByLabelText('System Audit')).toBeInTheDocument();
+    expect(screen.getByLabelText('Scott Schedule')).toBeInTheDocument();
+  });
 });
