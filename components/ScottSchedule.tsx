@@ -13,6 +13,15 @@ const categories: ScottCategory[] = [
 
 const impacts: ChildImpact[] = ['Crying', 'Silent', 'Regressive', 'N/A'];
 
+// Helper to prevent CSV Formula Injection
+const safeCSVField = (value: string): string => {
+  if (!value) return '';
+  // Prepend single quote if value starts with =, +, -, or @
+  const cleanValue = /^[=+\-@]/.test(value) ? `'${value}` : value;
+  // Escape double quotes
+  return cleanValue.replace(/"/g, '""');
+};
+
 const initialLogs: ScottLogEntry[] = [
   {
     id: 'photo-1',
@@ -90,11 +99,11 @@ const ScottSchedule: React.FC = () => {
     const rows = logs.map(log => [
       `"${new Date(log.incidentDate).toLocaleString()}"`,
       `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
+      `"${safeCSVField(log.theSay)}"`,
+      `"${safeCSVField(log.theFact)}"`,
       `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      `"${safeCSVField(log.exhibitRef)}"`,
+      `"${safeCSVField(log.statuteTag)}"`
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 
