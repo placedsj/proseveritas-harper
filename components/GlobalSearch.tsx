@@ -6,6 +6,7 @@ import {
   ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
   TimelineEvent, CourtEvent,
 } from '../types';
+import useDebounce from '../hooks/useDebounce';
 
 interface GlobalSearchProps {
   isOpen: boolean;
@@ -44,7 +45,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 200);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -66,18 +67,13 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       });
     } else {
       setQuery('');
-      setDebouncedQuery('');
+      // setDebouncedQuery(''); // No longer needed as it follows query
       setResults([]);
       setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [query]);
+  // Removed local debounce useEffect
 
   useEffect(() => {
     if (!debouncedQuery.trim() || !searchData) {
@@ -100,6 +96,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     }
 
     const matchesDateFilters = (itemDateStr?: string) => {
+      const hasDateFilters = filters.date || filters.from || filters.to;
+      if (!hasDateFilters) return false;
+
       if (!itemDateStr) return false;
       const itemDate = new Date(itemDateStr);
       if (isNaN(itemDate.getTime())) return false;
