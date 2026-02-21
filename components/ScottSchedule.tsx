@@ -85,16 +85,24 @@ const ScottSchedule: React.FC = () => {
     });
   };
 
+  const sanitizeCsvCell = (value: string): string => {
+    const sanitized = value.replace(/"/g, '""');
+    if (/^[=+\-@\t\r]/.test(sanitized)) {
+      return `"'${sanitized}"`;
+    }
+    return `"${sanitized}"`;
+  };
+
   const exportCSV = () => {
     const headers = ['Date', 'Category', 'The Say (Allegation)', 'The Fact (Reality)', 'Child Impact', 'Exhibit', 'Statute'];
     const rows = logs.map(log => [
-      `"${new Date(log.incidentDate).toLocaleString()}"`,
-      `"${log.category}"`,
-      `"${log.theSay.replace(/"/g, '""')}"`,
-      `"${log.theFact.replace(/"/g, '""')}"`,
-      `"${log.childImpact}"`,
-      `"${log.exhibitRef}"`,
-      `"${log.statuteTag}"`
+      sanitizeCsvCell(new Date(log.incidentDate).toLocaleString()),
+      sanitizeCsvCell(log.category),
+      sanitizeCsvCell(log.theSay),
+      sanitizeCsvCell(log.theFact),
+      sanitizeCsvCell(log.childImpact),
+      sanitizeCsvCell(log.exhibitRef),
+      sanitizeCsvCell(log.statuteTag)
     ]);
 
     const csvContent = "data:text/csv;charset=utf-8," 

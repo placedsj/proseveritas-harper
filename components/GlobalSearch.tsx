@@ -44,6 +44,7 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,18 +66,26 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       });
     } else {
       setQuery('');
+      setDebouncedQuery('');
       setResults([]);
       setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (!query.trim() || !searchData) {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    if (!debouncedQuery.trim() || !searchData) {
       setResults([]);
       return;
     }
 
-    const lowerQuery = query.toLowerCase();
+    const lowerQuery = debouncedQuery.toLowerCase();
     const searchResults: SearchResult[] = [];
     const filters: { [key: string]: string } = {};
     let textQuery = lowerQuery;
@@ -314,7 +323,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     });
 
     setResults(searchResults.sort((a, b) => b.score - a.score));
-  }, [query, searchData]);
+  }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
     onNavigate(view);
@@ -376,9 +385,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
                 </button>
               ))}
             </div>
-          ) : query ? (
+          ) : debouncedQuery ? (
             <div className="p-8 text-center text-slate-500">
-              <p>No results found for "{query}"</p>
+              <p>No results found for "{debouncedQuery}"</p>
             </div>
           ) : (
             <div className="p-8 text-center text-slate-400 text-sm">
