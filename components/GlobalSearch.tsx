@@ -350,8 +350,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search tasks, evidence, logs..."
             className="flex-1 bg-transparent text-slate-900 text-lg placeholder-slate-400 focus:outline-none"
+            aria-label="Search query"
           />
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-900 transition-colors" aria-label="Close search">
             <X className="w-5 h-5" />
           </button>
         </div>
