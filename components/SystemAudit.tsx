@@ -1,14 +1,52 @@
+import React, { useState, useEffect } from 'react';
+import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle, Plus, Save, X } from 'lucide-react';
+import { SystemAuditLog } from '../types';
 
-import React from 'react';
-import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle } from 'lucide-react';
+const INITIAL_LOGS: SystemAuditLog[] = [
+  { id: '1', date: '2026-02-07', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
+  { id: '2', date: '2026-01-23', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
+  { id: '3', date: '2026-01-23', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
+  { id: '4', date: '2026-01-15', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
+];
 
 const SystemAudit: React.FC = () => {
-  const auditLogs = [
-    { date: 'Feb 7, 2026', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
-    { date: 'Jan 23, 2026', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
-    { date: 'Jan 23, 2026', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
-    { date: 'Jan 15, 2026', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
-  ];
+  const [logs, setLogs] = useState<SystemAuditLog[]>(() => {
+    const saved = localStorage.getItem('systemAuditLogs');
+    return saved ? JSON.parse(saved) : INITIAL_LOGS;
+  });
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [newLog, setNewLog] = useState<Partial<SystemAuditLog>>({
+    date: new Date().toISOString().split('T')[0],
+    action: '',
+    status: 'Active',
+    note: ''
+  });
+
+  useEffect(() => {
+    localStorage.setItem('systemAuditLogs', JSON.stringify(logs));
+  }, [logs]);
+
+  const handleSave = () => {
+    if (!newLog.action || !newLog.note) return;
+
+    const entry: SystemAuditLog = {
+      id: Date.now().toString(),
+      date: newLog.date || new Date().toISOString().split('T')[0],
+      action: newLog.action,
+      status: (newLog.status as any) || 'Active',
+      note: newLog.note
+    };
+
+    setLogs([entry, ...logs]);
+    setIsAdding(false);
+    setNewLog({
+      date: new Date().toISOString().split('T')[0],
+      action: '',
+      status: 'Active',
+      note: ''
+    });
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -20,16 +58,85 @@ const SystemAudit: React.FC = () => {
           </h2>
           <p className="text-slate-500 text-sm text-left">Investigating Institutional Capture & Document Fabrications.</p>
         </div>
+        <button
+          onClick={() => setIsAdding(!isAdding)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2 font-bold shadow-md hover:shadow-lg transition-all"
+        >
+          <Plus className="w-4 h-4" /> Log Audit
+        </button>
       </div>
+
+      {isAdding && (
+        <div className="bg-white p-6 rounded-xl border border-blue-200 animate-fade-in shadow-lg text-left">
+          <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+             <h3 className="text-lg font-bold text-slate-900 uppercase tracking-wider">New Audit Entry</h3>
+             <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900"><X className="w-5 h-5" /></button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+            <div>
+              <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Date</label>
+              <input
+                type="date"
+                value={newLog.date}
+                onChange={e => setNewLog({...newLog, date: e.target.value})}
+                className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none transition-all"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Action / Target</label>
+              <input
+                type="text"
+                value={newLog.action}
+                onChange={e => setNewLog({...newLog, action: e.target.value})}
+                className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none transition-all"
+                placeholder="e.g. Horizon Privacy Audit"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+             <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Status</label>
+             <select
+               value={newLog.status}
+               onChange={e => setNewLog({...newLog, status: e.target.value as any})}
+               className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none transition-all"
+             >
+               <option value="Active">Active</option>
+               <option value="Critical">Critical</option>
+               <option value="Flagged">Flagged</option>
+               <option value="Verified">Verified</option>
+             </select>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Findings / Note</label>
+            <textarea
+              value={newLog.note}
+              onChange={e => setNewLog({...newLog, note: e.target.value})}
+              className="w-full bg-slate-50 border border-slate-300 rounded p-3 text-slate-900 focus:border-blue-500 focus:outline-none h-24 transition-all"
+              placeholder="Enter forensic findings..."
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-bold shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 uppercase tracking-widest"
+          >
+            <Save className="w-5 h-5" />
+            SAVE TO LOG
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-6">
           <h3 className="font-bold text-slate-900 uppercase tracking-widest text-sm flex items-center gap-2">
             <Eye className="w-4 h-4 text-blue-600" /> Forensic Trail
           </h3>
-          <div className="space-y-4">
-            {auditLogs.map((log, i) => (
-              <div key={i} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 scrollbar-thin">
+            {logs.map((log) => (
+              <div key={log.id} className="p-4 bg-slate-50 rounded border border-slate-200 group hover:border-blue-300 transition-all text-left">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-blue-700 font-bold text-sm">{log.action}</span>
                   <span className="text-[10px] text-slate-500 font-mono uppercase">{log.date}</span>
