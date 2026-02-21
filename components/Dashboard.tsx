@@ -59,9 +59,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       }
     };
 
-    loadStats();
+    // Defer heavy stats loading to unblock initial render
+    const requestIdleCallback = (window as any).requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1));
+    const cancelIdleCallback = (window as any).cancelIdleCallback || ((id: any) => clearTimeout(id));
 
-    return () => clearInterval(timer);
+    const idleId = requestIdleCallback(loadStats);
+
+    return () => {
+      clearInterval(timer);
+      cancelIdleCallback(idleId);
+    };
   }, []);
 
   return (
