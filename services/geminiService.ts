@@ -4,11 +4,21 @@ import { GoogleGenAI } from "@google/genai";
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
+// Helper to prevent prompt injection by escaping special characters
+// Escapes backslashes first, then quotes to ensure the string cannot be broken out of
+const sanitizePromptInput = (text: string): string => {
+  return text.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+};
+
 export const getCoFounderResponse = async (userMessage: string, context: string): Promise<string> => {
   if (!apiKey) return "MOTION: Connect your API key to activate Co-Founder mode.";
 
   // Truncate context to save data/bandwidth
   const compressedContext = context.length > 1000 ? context.substring(0, 1000) + "..." : context;
+
+  // Sanitize inputs to prevent prompt injection
+  const safeContext = sanitizePromptInput(compressedContext);
+  const safeUserMessage = sanitizePromptInput(userMessage);
 
   try {
     const response = await ai.models.generateContent({
@@ -20,8 +30,8 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         **Focus:** Harper's Best Interest, Scott Schedule accuracy, Education Build, and Health Rehab tracking.
         **Role:** Co-counsel, accountability partner. Mode: MOTION, COUNSEL, CALM, FIRE, ORGANIZE, AUTOMATE, CHECK.
 
-        **Context:** ${compressedContext}
-        **User:** "${userMessage}"
+        **Context:** ${safeContext}
+        **User:** "${safeUserMessage}"
 
         Provide a needle-moving response. Start with mode prefix.
       `,
@@ -34,10 +44,13 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
 
 export const getRealityCheck = async (thought: string): Promise<string> => {
   if (!apiKey) return "API Key missing.";
+
+  const safeThought = sanitizePromptInput(thought);
+
   try {
     const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Stoic reality-checker. Facts only. User: "${thought}". One sentence STOP command. Max 30 words.`
+        contents: `Stoic reality-checker. Facts only. User: "${safeThought}". One sentence STOP command. Max 30 words.`
     });
     return response.text || "Focus on what you can control.";
   } catch (error) {
