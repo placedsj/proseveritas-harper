@@ -1,36 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { MedicalRecord } from '../types';
+import { INITIAL_MEDICAL_RECORDS } from './initialData';
 import { Stethoscope, Plus, FileText, Calendar, Edit2, Download, CheckCircle, AlertTriangle, X, Save, Eye, EyeOff } from 'lucide-react';
 
 const escapeBackticksForTemplateLiteral = (text: string) => text.replace(/`/g, '\\`');
 
-const initialRecords: MedicalRecord[] = [
-  {
-    id: '1',
-    title: '[Regional Hospital] Medical Fax - [Patient Name] Drug Test',
-    source: '[Regional Hospital]',
-    dateOfRecord: '2025-01-10',
-    ocrText: `Medical Review Officer's Report - Confidential. Revised on January 10, 2025. Donor Name: [Patient Name]. Reason for Test: Reasonable Suspicion. Results: Negative Dilute.`,
-    status: 'needs_review',
-    dateAdded: '2025-01-25',
-    pageCount: 1,
-  },
-  {
-    id: '2',
-    title: '[Regional Hospital] Medical Records - [Subject Name] Emergency Visit (35 Pages)',
-    source: '[Regional Hospital]',
-    dateOfRecord: '2025-09-10',
-    ocrText: `===============================================================================\nOCR EXTRACTION: scan0007.pdf\nProcessed: 2026-02-01\nTotal Pages: 35\n================================================================================\n[Health Network] Order Summary. PPRN: [Redacted]. ADM Date: 10-Sep-2025 12:06. Visit Reason: Laceration Puncture. Documented 50-minute secure ward detention without physician order. MRI indications: Fall from 30ft 5 years ago. Result: Early degenerative changes C5-C6. No significant canal stenosis. NP [Medical Professional] attending.`,
-    status: 'needs_review',
-    dateAdded: '2025-01-25',
-    pageCount: 35,
-  },
-];
-
 const MedicalRecords: React.FC = () => {
   const [records, setRecords] = useState<MedicalRecord[]>(() => {
     const saved = localStorage.getItem('medicalRecords');
-    return saved ? JSON.parse(saved) : initialRecords;
+    return saved ? JSON.parse(saved) : INITIAL_MEDICAL_RECORDS;
   });
 
   const [isAdding, setIsAdding] = useState(false);

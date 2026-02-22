@@ -2,17 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, ShieldCheck, CheckCircle } from 'lucide-react';
 import { ProcessedEvidenceItem } from '../types';
-
-const RAW_RECORDS: Omit<ProcessedEvidenceItem, 'wScore' | 'verified'>[] = [
-  { file: "2025-01-08(1).png", date: "Jan 08 2025", sender: "UNKNOWN", rec: "UNKNOWN", text: "Thanks [Name]. Touch base later if you don’t mind to check in with her. you and [Name] are doing a great job...", cat: "NON_COMPLIANCE", prio: 8, hash: "a3f5d8c2e1b9f4d7e6c5b8a1d2e3f4g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2" },
-  { file: "IMG_3841.PNG", date: "Dec 09 2024", sender: "[Subject Name]", rec: "Court", text: "Final Statement | am not requesting additional parenting time—I am only seeking due process. | have personally witnessed [Name] using methamphetamine inside the home where [Child Name] resides.", cat: "CRIMINAL_CONDUCT", prio: 10, hash: "e9d1d8c2e1b9f4d7e6c5b8a1d2e3f4g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2" },
-  { file: "IMG_3618.PNG", date: "Jan 10 2025", sender: "Lab", rec: "Department", text: "MRO Report - Specimen N11381257. Results: Negative Dilute. Creatinine levels low. Omitted from official Social Dev report.", cat: "ENDANGERMENT", prio: 9, hash: "z8v4d8c2e1b9f4d7e6c5b8a1d2e3f4g5h6i7j8k9l0m1n2o3p4q5r6s7t8u9v0w1x2" }
-];
+import { INITIAL_EVIDENCE } from './initialData';
 
 const EvidenceProcessor: React.FC = () => {
   const [evidence, setEvidence] = useState<ProcessedEvidenceItem[]>(() => {
     const saved = localStorage.getItem('evidence');
-    return saved ? JSON.parse(saved) : RAW_RECORDS.map(r => ({ ...r, wScore: (r.prio || 5) * 2, verified: false }));
+    return saved ? JSON.parse(saved) : INITIAL_EVIDENCE;
   });
 
   useEffect(() => {
