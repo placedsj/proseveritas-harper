@@ -2,6 +2,7 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
+import DataInitializer from './components/DataInitializer';
 import { GlobalSearch } from './components/GlobalSearch';
 import { NavButton } from './components/NavButton';
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
@@ -42,6 +43,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans selection:bg-red-100 selection:text-red-900">
+      <DataInitializer />
       
       {/* Sidebar */}
       <nav className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-24 bg-white border-r border-slate-200 py-6 items-center z-50 overflow-y-auto scrollbar-hide shadow-sm">

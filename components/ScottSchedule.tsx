@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
+import { INITIAL_SCOTT_LOGS } from './initialData';
 import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
 
 const categories: ScottCategory[] = [
@@ -13,33 +14,10 @@ const categories: ScottCategory[] = [
 
 const impacts: ChildImpact[] = ['Crying', 'Silent', 'Regressive', 'N/A'];
 
-const initialLogs: ScottLogEntry[] = [
-  {
-    id: 'photo-1',
-    incidentDate: '2025-12-25T13:01:00',
-    category: 'Denial of Parenting Time',
-    theSay: "Merry Christmas we've been very busy. I have said Merry Christmas from you and you can celebrate with her Sunday.",
-    theFact: "Direct denial of Christmas Day access despite multiple previous requests. 'Busy' is not a legal basis for withholding a child. Exhibit A-14.",
-    childImpact: 'N/A',
-    exhibitRef: 'Screenshot_20251225.png',
-    statuteTag: 'Best Interests / Relationship Continuity'
-  },
-  {
-    id: 'photo-2',
-    incidentDate: '2025-10-21T17:04:00',
-    category: 'Alienation',
-    theSay: "Unless it's about parental or custodial agreements she would be breaking the no contact order.",
-    theFact: "Jane RYAN (maternal grandmother) fabricating existence of a 'no contact order' to prevent Craig from communicating with the mother regarding Harper. Victim Services confirms NO NCO exists.",
-    childImpact: 'N/A',
-    exhibitRef: 'Screenshot_20251021.png',
-    statuteTag: 'Parental Alienation / Public Mischief'
-  }
-];
-
 const ScottSchedule: React.FC = () => {
   const [logs, setLogs] = useState<ScottLogEntry[]>(() => {
     const saved = localStorage.getItem('scottLogs');
-    return saved ? JSON.parse(saved) : initialLogs;
+    return saved ? JSON.parse(saved) : INITIAL_SCOTT_LOGS;
   });
 
   const [isAdding, setIsAdding] = useState(false);
