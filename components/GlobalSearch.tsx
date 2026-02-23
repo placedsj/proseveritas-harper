@@ -1,11 +1,15 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
+import {
+  Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale,
+  ShieldAlert, Gavel, Clock as ClockIcon, Fingerprint, Briefcase, Compass, Package
+} from 'lucide-react';
 import { 
   ViewState, DailyMove,
   ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
-  TimelineEvent, CourtEvent,
+  TimelineEvent, CourtEvent, SystemAuditLog, BusinessProject, RoadmapTask,
+  StrategyNote, ProductTier
 } from '../types';
+import { StorageService } from '../services/storageService';
 
 interface GlobalSearchProps {
   isOpen: boolean;
@@ -15,7 +19,9 @@ interface GlobalSearchProps {
 
 interface SearchResult {
   id: string;
-  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log' | 'abuse-log' | 'timeline-event' | 'court-event' | 'evidence-vault';
+  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log' | 'abuse-log' |
+        'timeline-event' | 'court-event' | 'system-audit' | 'business-project' |
+        'roadmap-task' | 'strategy-note' | 'product-tier';
   title: string;
   subtitle: string;
   view: ViewState;
@@ -30,17 +36,12 @@ interface SearchData {
   timelineEvents: TimelineEvent[];
   courtEvents: CourtEvent[];
   dailyMoves: DailyMove[];
+  systemAuditLogs: SystemAuditLog[];
+  businessProjects: BusinessProject[];
+  roadmapTasks: RoadmapTask[];
+  strategyNotes: StrategyNote[];
+  productTiers: ProductTier[];
 }
-
-const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
-  try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
-  } catch (error: unknown) {
-    console.error(`Error parsing localStorage item for key "${key}":`, error);
-    return defaultValue;
-  }
-};
 
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
@@ -56,13 +57,18 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
       // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
       setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+        evidence: StorageService.getEvidence(),
+        medicalRecords: StorageService.getMedicalRecords(),
+        scottLogs: StorageService.getScottLogs(),
+        abuseLogs: StorageService.getAbuseLogs(),
+        timelineEvents: StorageService.getTimelineEvents(),
+        courtEvents: StorageService.getCourtEvents(),
+        dailyMoves: StorageService.getDailyMoves(),
+        systemAuditLogs: StorageService.getSystemAuditLogs(),
+        businessProjects: StorageService.getBusinessProjects(),
+        roadmapTasks: StorageService.getRoadmapTasks(),
+        strategyNotes: StorageService.getStrategyNotes(),
+        productTiers: StorageService.getProductTiers(),
       });
     } else {
       setQuery('');
@@ -90,7 +96,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     const filters: { [key: string]: string } = {};
     let textQuery = lowerQuery;
 
-    const filterRegex = /(sender|receiver|from|to|date|category|type|status|title|source|text):([\w\s.-]+)(?=\s|$)/g;
+    const filterRegex = /(sender|receiver|from|to|date|category|type|status|title|source|text|action|note|name):([\w\s.-]+)(?=\s|$)/g;
     let match: RegExpExecArray | null;
     while ((match = filterRegex.exec(lowerQuery)) !== null) {
       if (match[1] && match[2]) {
@@ -118,7 +124,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
         toDate.setHours(23, 59, 59, 999); 
         if (isNaN(toDate.getTime()) || itemDate > toDate) return false;
       }
-      return true;
+
+      // Only contribute to score if date filters are active
+      return !!(filters.date || filters.from || filters.to);
     };
 
     const generateSnippet = (fullText: string, highlightWord: string, maxLength = 80) => {
@@ -274,7 +282,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
           type: 'timeline-event',
           title: timelineEvent.title,
           subtitle: matchedSnippet || `Date: ${timelineEvent.date}, Type: ${timelineEvent.type}`,
-          view: 'dashboard', // Default to dashboard for now, timeline view is embedded
+          view: 'dashboard', // Default to dashboard for now
           score: score
         });
       }
@@ -301,6 +309,110 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
           title: courtEvent.requiredAction,
           subtitle: matchedSnippet || `Case: ${courtEvent.caseName}, Date: ${courtEvent.date}`,
           view: 'dashboard',
+          score: score
+        });
+      }
+    });
+
+    // 7. System Audit Logs
+    searchData.systemAuditLogs.forEach(log => {
+      let score = 0;
+      let matchedSnippet = '';
+      if (filters.action && log.action.toLowerCase().includes(filters.action)) score += 15;
+      if (filters.note && log.note.toLowerCase().includes(filters.note)) {
+        score += 20;
+        matchedSnippet = generateSnippet(log.note, filters.note);
+      } else if (textQuery && (log.action.toLowerCase().includes(textQuery) || log.note.toLowerCase().includes(textQuery))) {
+        score += 10;
+        if (log.note.toLowerCase().includes(textQuery)) matchedSnippet = generateSnippet(log.note, textQuery);
+      }
+      if (matchesDateFilters(log.date)) score += 5;
+
+      if (score > 0) {
+        searchResults.push({
+          id: `sa-${log.id}`,
+          type: 'system-audit',
+          title: log.action,
+          subtitle: matchedSnippet || log.note,
+          view: 'system-audit',
+          score: score
+        });
+      }
+    });
+
+    // 8. Business Projects
+    searchData.businessProjects.forEach(project => {
+      let score = 0;
+      if (filters.name && project.name.toLowerCase().includes(filters.name)) score += 15;
+      if (textQuery && project.name.toLowerCase().includes(textQuery)) score += 10;
+
+      if (score > 0) {
+        searchResults.push({
+          id: `bp-${project.id}`,
+          type: 'business-project',
+          title: project.name,
+          subtitle: `Status: ${project.status}, Value: $${project.value}`,
+          view: 'business',
+          score: score
+        });
+      }
+    });
+
+    // 9. Roadmap Tasks
+    searchData.roadmapTasks.forEach(task => {
+      let score = 0;
+      if (filters.title && task.title.toLowerCase().includes(filters.title)) score += 15;
+      if (textQuery && task.title.toLowerCase().includes(textQuery)) score += 10;
+
+      if (score > 0) {
+        searchResults.push({
+          id: `rt-${task.id}`,
+          type: 'roadmap-task',
+          title: task.title,
+          subtitle: `Category: ${task.category}, Status: ${task.status}`,
+          view: 'roadmap',
+          score: score
+        });
+      }
+    });
+
+    // 10. Strategy Notes
+    searchData.strategyNotes.forEach(note => {
+      let score = 0;
+      let matchedSnippet = '';
+      if (filters.text && note.content.toLowerCase().includes(filters.text)) {
+        score += 20;
+        matchedSnippet = generateSnippet(note.content, filters.text);
+      } else if (textQuery && note.content.toLowerCase().includes(textQuery)) {
+        score += 10;
+        matchedSnippet = generateSnippet(note.content, textQuery);
+      }
+
+      if (score > 0) {
+        searchResults.push({
+          id: `sn-${note.id}`,
+          type: 'strategy-note',
+          title: `Strategy: ${note.category}`,
+          subtitle: matchedSnippet || note.content.substring(0, 50),
+          view: 'strategy',
+          score: score
+        });
+      }
+    });
+
+    // 11. Product Tiers
+    searchData.productTiers.forEach(tier => {
+      let score = 0;
+      if (filters.name && tier.name.toLowerCase().includes(filters.name)) score += 15;
+      if (textQuery && tier.name.toLowerCase().includes(textQuery)) score += 10;
+
+      if (score > 0) {
+        searchResults.push({
+          id: `pt-${tier.id}`,
+          type: 'product-tier',
+          title: tier.name,
+          subtitle: `Price: $${tier.price}, Amps: ${tier.amps}`,
+          view: 'products',
           score: score
         });
       }
@@ -339,7 +451,11 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       case 'abuse-log': return <ShieldAlert className="w-5 h-5 text-red-600" />;
       case 'timeline-event': return <ClockIcon className="w-5 h-5 text-teal-600" />;
       case 'court-event': return <Gavel className="w-5 h-5 text-orange-600" />;
-      case 'evidence-vault': return <FileText className="w-5 h-5 text-slate-500" />;
+      case 'system-audit': return <Fingerprint className="w-5 h-5 text-blue-600" />;
+      case 'business-project': return <Briefcase className="w-5 h-5 text-slate-700" />;
+      case 'roadmap-task': return <Map className="w-5 h-5 text-purple-600" />;
+      case 'strategy-note': return <Compass className="w-5 h-5 text-indigo-500" />;
+      case 'product-tier': return <Package className="w-5 h-5 text-pink-500" />;
       default: return <Search className="w-5 h-5 text-slate-400" />;
     }
   };
@@ -357,7 +473,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
             type="text" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tasks, evidence, logs..."
+            placeholder="Search tasks, evidence, logs, audits..."
             className="flex-1 bg-transparent text-slate-900 text-lg placeholder-slate-400 focus:outline-none"
             aria-label="Search query"
           />
