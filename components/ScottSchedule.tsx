@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ScottLogEntry, ScottCategory, ChildImpact } from '../types';
 import { FileText, Save, Download, AlertTriangle, Scale, Plus, Info, ShieldCheck, X, Camera } from 'lucide-react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const categories: ScottCategory[] = [
   'Denial of Parenting Time', 
@@ -37,10 +38,7 @@ const initialLogs: ScottLogEntry[] = [
 ];
 
 const ScottSchedule: React.FC = () => {
-  const [logs, setLogs] = useState<ScottLogEntry[]>(() => {
-    const saved = localStorage.getItem('scottLogs');
-    return saved ? JSON.parse(saved) : initialLogs;
-  });
+  const [logs, setLogs] = useLocalStorage<ScottLogEntry[]>('scottLogs', initialLogs);
 
   const [isAdding, setIsAdding] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
@@ -53,10 +51,6 @@ const ScottSchedule: React.FC = () => {
     exhibitRef: '',
     statuteTag: ''
   });
-
-  useEffect(() => {
-    localStorage.setItem('scottLogs', JSON.stringify(logs));
-  }, [logs]);
 
   const handleSave = () => {
     if (!newLog.theFact) return;
