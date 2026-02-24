@@ -1,5 +1,5 @@
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import { GlobalSearch } from './components/GlobalSearch';
@@ -36,9 +36,21 @@ const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
-  };
+  const toggleSearch = useCallback(() => {
+    setIsSearchOpen(prev => !prev);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        toggleSearch();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleSearch]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans selection:bg-red-100 selection:text-red-900">
@@ -69,7 +81,7 @@ const App: React.FC = () => {
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
-          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors" aria-label="Open global search">
+          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors" aria-label="Open global search" title="Open search (Cmd+K)">
             <Search className="w-6 h-6" />
           </button>
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mx-auto shadow-sm" title="System Online" />
@@ -83,7 +95,7 @@ const App: React.FC = () => {
           <h1 className="font-bold text-lg text-slate-900 tracking-tight uppercase">Defense Grid</h1>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900" aria-label="Open global search">
+          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900" aria-label="Open global search" title="Open search (Cmd+K)">
             <Search className="w-6 h-6" />
           </button>
           <span className="text-xs text-green-600 font-mono bg-green-50 px-2 py-1 rounded border border-green-100">ONLINE</span>
