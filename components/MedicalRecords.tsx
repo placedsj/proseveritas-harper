@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MedicalRecord } from '../types';
 import { Stethoscope, Plus, FileText, Calendar, Edit2, Download, CheckCircle, AlertTriangle, X, Save, Eye, EyeOff } from 'lucide-react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const escapeBackticksForTemplateLiteral = (text: string) => text.replace(/`/g, '\\`');
 
@@ -28,10 +29,7 @@ const initialRecords: MedicalRecord[] = [
 ];
 
 const MedicalRecords: React.FC = () => {
-  const [records, setRecords] = useState<MedicalRecord[]>(() => {
-    const saved = localStorage.getItem('medicalRecords');
-    return saved ? JSON.parse(saved) : initialRecords;
-  });
+  const [records, setRecords] = useLocalStorage<MedicalRecord[]>('medicalRecords', initialRecords);
 
   const [isAdding, setIsAdding] = useState(false);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -39,10 +37,6 @@ const MedicalRecords: React.FC = () => {
   const [newRecord, setNewRecord] = useState<Partial<MedicalRecord>>({
     title: '', source: '', dateOfRecord: new Date().toISOString().split('T')[0], ocrText: '', status: 'needs_review', pageCount: 0
   });
-
-  useEffect(() => {
-    localStorage.setItem('medicalRecords', JSON.stringify(records));
-  }, [records]);
 
   const toggleExpand = (id: string) => {
     const next = new Set(expandedIds);
