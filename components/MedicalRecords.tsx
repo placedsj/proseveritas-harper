@@ -70,6 +70,18 @@ const MedicalRecords: React.FC = () => {
     });
   };
 
+  const handleDownload = (record: MedicalRecord) => {
+    const element = document.createElement("a");
+    const file = new Blob([record.ocrText], {type: 'text/plain'});
+    const url = URL.createObjectURL(file);
+    element.href = url;
+    element.download = `${record.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center mb-6">
@@ -190,7 +202,7 @@ const MedicalRecords: React.FC = () => {
                <button onClick={() => toggleExpand(record.id)} className="text-xs text-blue-600 hover:underline">
                   {expandedIds.has(record.id) ? "Collapse View" : "View Full Forensic Text"}
                </button>
-               <button className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1">
+               <button onClick={() => handleDownload(record)} className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1">
                   <Download className="w-3 h-3" /> Download Text
                </button>
             </div>
