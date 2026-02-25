@@ -3,19 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { TimelineEvent } from '../types';
 import { Calendar, Plus, X, CheckSquare, Square } from 'lucide-react';
 
-const initialEvents: TimelineEvent[] = [
-  { id: '1', date: 'Jan 21, 2026', title: 'Justin Gulliver quits in front of Judge Winchester. Case returned to Judge Palmer.', type: 'court', completed: true },
-  { id: '2', date: 'Jan 25, 2026', title: 'Self-Representation (SRL) status confirmed across all files.', type: 'prep', completed: true },
-  { id: '3', date: 'March 3, 2026', title: 'SENTENCING HEARING (Criminal) - Judge Palmer presiding.', type: 'court', completed: false },
-  { id: '4', date: 'March 30, 2026', title: 'CUSTODY HEARING (FDSJ-739-24) - Restore Parenting Time.', type: 'court', completed: false },
-  { id: '5', date: 'April 15, 2026', title: 'Discovery Cut-off for June Trial.', type: 'deadline', completed: false },
-  { id: '6', date: 'June 15, 2026', title: 'FULL CUSTODY TRIAL (FDSJ-739-24).', type: 'court', completed: false },
-];
-
 const Timeline: React.FC = () => {
   const [events, setEvents] = useState<TimelineEvent[]>(() => {
     const saved = localStorage.getItem('timelineEvents_v2');
-    return saved ? JSON.parse(saved) : initialEvents;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -106,7 +97,7 @@ const Timeline: React.FC = () => {
               <label className="block text-slate-400 text-xs uppercase font-bold mb-1">Type</label>
               <select 
                 value={newEvent.type}
-                onChange={e => setNewEvent({...newEvent, type: e.target.value as any})}
+                onChange={e => setNewEvent({...newEvent, type: e.target.value as 'court' | 'deadline' | 'prep'})}
                 className="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-blue-500 focus:outline-none"
               >
                 <option value="prep">Prep / Task</option>

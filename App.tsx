@@ -4,6 +4,7 @@ import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import { GlobalSearch } from './components/GlobalSearch';
 import { NavButton } from './components/NavButton';
+import { DataInitializer } from './components/DataInitializer';
 import { LayoutDashboard, Scale, Search, Map, Heart, Landmark, Database, Fingerprint, GraduationCap, Activity, Calculator, Briefcase, Compass, Package, Stethoscope } from 'lucide-react';
 
 const ScottSchedule = lazy(() => import('./components/ScottSchedule'));
@@ -41,6 +42,7 @@ const App: React.FC = () => {
   };
 
   return (
+    <DataInitializer>
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row font-sans selection:bg-red-100 selection:text-red-900">
       
       {/* Sidebar */}
@@ -129,6 +131,7 @@ const App: React.FC = () => {
 
       <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={setView} />
     </div>
+    </DataInitializer>
   );
 };
 
