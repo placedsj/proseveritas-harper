@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
 import { 
   ViewState, DailyMove,
@@ -45,7 +45,6 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +66,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     } else {
       setQuery('');
       setDebouncedQuery('');
-      setResults([]);
       setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
@@ -79,10 +77,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     return () => clearTimeout(timer);
   }, [query]);
 
-  useEffect(() => {
+  const results = useMemo(() => {
     if (!debouncedQuery.trim() || !searchData) {
-      setResults([]);
-      return;
+      return [];
     }
 
     const lowerQuery = debouncedQuery.toLowerCase();
@@ -100,6 +97,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     }
 
     const matchesDateFilters = (itemDateStr?: string) => {
+      if (!filters.date && !filters.from && !filters.to) return false;
       if (!itemDateStr) return false;
       const itemDate = new Date(itemDateStr);
       if (isNaN(itemDate.getTime())) return false;
@@ -121,8 +119,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       return true;
     };
 
-    const generateSnippet = (fullText: string, highlightWord: string, maxLength = 80) => {
-      const index = fullText.toLowerCase().indexOf(highlightWord.toLowerCase());
+    const generateSnippet = (fullText: string, highlightWord: string, maxLength = 80, lowerFullText?: string) => {
+      const lowerText = lowerFullText || fullText.toLowerCase();
+      const index = lowerText.indexOf(highlightWord.toLowerCase());
       if (index === -1) {
         return fullText.substring(0, maxLength) + (fullText.length > maxLength ? '...' : '');
       }
@@ -138,15 +137,21 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.evidence.forEach(item => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.sender && item.sender.toLowerCase().includes(filters.sender)) score += 10;
-      if (filters.receiver && item.rec.toLowerCase().includes(filters.receiver)) score += 10;
-      if (filters.category && item.cat.toLowerCase().includes(filters.category)) score += 15;
-      if (filters.text && item.text.toLowerCase().includes(filters.text)) {
+      const lowerText = item.text.toLowerCase();
+      const lowerSender = item.sender.toLowerCase();
+      const lowerRec = item.rec.toLowerCase();
+      const lowerCat = item.cat.toLowerCase();
+
+      if (filters.sender && lowerSender.includes(filters.sender)) score += 10;
+      if (filters.receiver && lowerRec.includes(filters.receiver)) score += 10;
+      if (filters.category && lowerCat.includes(filters.category)) score += 15;
+
+      if (filters.text && lowerText.includes(filters.text)) {
         score += 20;
-        matchedSnippet = generateSnippet(item.text, filters.text);
-      } else if (textQuery && item.text.toLowerCase().includes(textQuery)) {
+        matchedSnippet = generateSnippet(item.text, filters.text, 80, lowerText);
+      } else if (textQuery && lowerText.includes(textQuery)) {
         score += 10;
-        matchedSnippet = generateSnippet(item.text, textQuery);
+        matchedSnippet = generateSnippet(item.text, textQuery, 80, lowerText);
       }
       if (matchesDateFilters(item.date)) score += 5;
       if (item.file.toLowerCase().includes(lowerQuery)) score += 5;
@@ -167,14 +172,19 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.medicalRecords.forEach(record => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.title && record.title.toLowerCase().includes(filters.title)) score += 15;
-      if (filters.source && record.source.toLowerCase().includes(filters.source)) score += 10;
-      if (filters.text && record.ocrText.toLowerCase().includes(filters.text)) {
+      const lowerOcr = record.ocrText.toLowerCase();
+      const lowerTitle = record.title.toLowerCase();
+      const lowerSource = record.source.toLowerCase();
+
+      if (filters.title && lowerTitle.includes(filters.title)) score += 15;
+      if (filters.source && lowerSource.includes(filters.source)) score += 10;
+
+      if (filters.text && lowerOcr.includes(filters.text)) {
         score += 20;
-        matchedSnippet = generateSnippet(record.ocrText, filters.text);
-      } else if (textQuery && record.ocrText.toLowerCase().includes(textQuery)) {
+        matchedSnippet = generateSnippet(record.ocrText, filters.text, 80, lowerOcr);
+      } else if (textQuery && lowerOcr.includes(textQuery)) {
         score += 10;
-        matchedSnippet = generateSnippet(record.ocrText, textQuery);
+        matchedSnippet = generateSnippet(record.ocrText, textQuery, 80, lowerOcr);
       }
       if (matchesDateFilters(record.dateOfRecord)) score += 5;
       
@@ -194,24 +204,28 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.scottLogs.forEach(log => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.category && log.category.toLowerCase().includes(filters.category)) score += 15;
+      const lowerCategory = log.category.toLowerCase();
+      const lowerSay = log.theSay.toLowerCase();
+      const lowerFact = log.theFact.toLowerCase();
+
+      if (filters.category && lowerCategory.includes(filters.category)) score += 15;
       if (filters.text) {
-        if (log.theSay.toLowerCase().includes(filters.text)) {
+        if (lowerSay.includes(filters.text)) {
           score += 10;
-          matchedSnippet = generateSnippet(log.theSay, filters.text);
+          matchedSnippet = generateSnippet(log.theSay, filters.text, 80, lowerSay);
         }
-        if (log.theFact.toLowerCase().includes(filters.text)) {
+        if (lowerFact.includes(filters.text)) {
           score += 15;
-          matchedSnippet = generateSnippet(log.theFact, filters.text);
+          matchedSnippet = generateSnippet(log.theFact, filters.text, 80, lowerFact);
         }
       } else if (textQuery) {
-        if (log.theSay.toLowerCase().includes(textQuery)) {
+        if (lowerSay.includes(textQuery)) {
           score += 5;
-          matchedSnippet = generateSnippet(log.theSay, textQuery);
+          matchedSnippet = generateSnippet(log.theSay, textQuery, 80, lowerSay);
         }
-        if (log.theFact.toLowerCase().includes(textQuery)) {
+        if (lowerFact.includes(textQuery)) {
           score += 8;
-          matchedSnippet = generateSnippet(log.theFact, textQuery);
+          matchedSnippet = generateSnippet(log.theFact, textQuery, 80, lowerFact);
         }
       }
       if (matchesDateFilters(log.incidentDate)) score += 5;
@@ -232,13 +246,16 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.abuseLogs.forEach(log => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.type && log.type.toLowerCase().includes(filters.type)) score += 15;
-      if (filters.text && log.description.toLowerCase().includes(filters.text)) {
+      const lowerType = log.type.toLowerCase();
+      const lowerDesc = log.description.toLowerCase();
+
+      if (filters.type && lowerType.includes(filters.type)) score += 15;
+      if (filters.text && lowerDesc.includes(filters.text)) {
         score += 20;
-        matchedSnippet = generateSnippet(log.description, filters.text);
-      } else if (textQuery && log.description.toLowerCase().includes(textQuery)) {
+        matchedSnippet = generateSnippet(log.description, filters.text, 80, lowerDesc);
+      } else if (textQuery && lowerDesc.includes(textQuery)) {
         score += 10;
-        matchedSnippet = generateSnippet(log.description, textQuery);
+        matchedSnippet = generateSnippet(log.description, textQuery, 80, lowerDesc);
       }
       if (matchesDateFilters(log.timestamp)) score += 5;
 
@@ -258,13 +275,16 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.timelineEvents.forEach(timelineEvent => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.type && timelineEvent.type.toLowerCase().includes(filters.type)) score += 10;
-      if (filters.title && timelineEvent.title.toLowerCase().includes(filters.title)) {
+      const lowerType = timelineEvent.type.toLowerCase();
+      const lowerTitle = timelineEvent.title.toLowerCase();
+
+      if (filters.type && lowerType.includes(filters.type)) score += 10;
+      if (filters.title && lowerTitle.includes(filters.title)) {
         score += 15;
-        matchedSnippet = generateSnippet(timelineEvent.title, filters.title);
-      } else if (textQuery && timelineEvent.title.toLowerCase().includes(textQuery)) {
+        matchedSnippet = generateSnippet(timelineEvent.title, filters.title, 80, lowerTitle);
+      } else if (textQuery && lowerTitle.includes(textQuery)) {
         score += 8;
-        matchedSnippet = generateSnippet(timelineEvent.title, textQuery);
+        matchedSnippet = generateSnippet(timelineEvent.title, textQuery, 80, lowerTitle);
       }
       if (matchesDateFilters(timelineEvent.date)) score += 5;
 
@@ -284,13 +304,16 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     searchData.courtEvents.forEach(courtEvent => {
       let score = 0;
       let matchedSnippet = '';
-      if (filters.caseName && courtEvent.caseName.toLowerCase().includes(filters.caseName)) score += 10;
-      if (filters.title && courtEvent.requiredAction.toLowerCase().includes(filters.title)) {
+      const lowerCase = courtEvent.caseName.toLowerCase();
+      const lowerAction = courtEvent.requiredAction.toLowerCase();
+
+      if (filters.caseName && lowerCase.includes(filters.caseName)) score += 10;
+      if (filters.title && lowerAction.includes(filters.title)) {
         score += 15;
-        matchedSnippet = generateSnippet(courtEvent.requiredAction, filters.title);
-      } else if (textQuery && courtEvent.requiredAction.toLowerCase().includes(textQuery)) {
+        matchedSnippet = generateSnippet(courtEvent.requiredAction, filters.title, 80, lowerAction);
+      } else if (textQuery && lowerAction.includes(textQuery)) {
         score += 8;
-        matchedSnippet = generateSnippet(courtEvent.requiredAction, textQuery);
+        matchedSnippet = generateSnippet(courtEvent.requiredAction, textQuery, 80, lowerAction);
       }
       if (matchesDateFilters(courtEvent.date)) score += 5;
       
@@ -322,7 +345,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    setResults(searchResults.sort((a, b) => b.score - a.score));
+    return searchResults.sort((a, b) => b.score - a.score);
   }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
