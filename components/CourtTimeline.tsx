@@ -5,9 +5,7 @@ import { Gavel, Plus, CheckCircle2, Clock, Calendar } from 'lucide-react';
 const CourtTimeline: React.FC = () => {
   const [events, setEvents] = useState<CourtEvent[]>(() => {
     const saved = localStorage.getItem('courtEvents');
-    return saved ? JSON.parse(saved) : [
-      { id: '1', date: '2026-02-03', caseName: 'Criminal Defense', judgeName: 'TBD', requiredAction: 'Sentencing Hearing - R v Schulz', status: 'Pending' }
-    ];
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [isAdding, setIsAdding] = useState(false);

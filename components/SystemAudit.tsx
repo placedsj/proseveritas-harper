@@ -2,17 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ShieldAlert, Fingerprint, Eye, Search, FileWarning, Clock, AlertTriangle, Plus, Save, X } from 'lucide-react';
 import { SystemAuditLog } from '../types';
 
-const INITIAL_LOGS: SystemAuditLog[] = [
-  { id: '1', date: '2026-02-07', action: 'Horizon Privacy Audit', status: 'Active', note: 'Kelly Chase confirming permission to review Sept 10 records. Investigating "Trade" (MRI for Psych Eval) and Secure Ward detention protocol.' },
-  { id: '2', date: '2026-01-23', action: 'Order Gap Identification', status: 'Critical', note: 'Documentation found: Admitted to secure ward (Room 47) at 16:30. "Mental Health Consult" order not placed until 17:18. Illegal detention for 48 minutes.' },
-  { id: '3', date: '2026-01-23', action: 'Triage Discrepancy', status: 'Flagged', note: 'Diagnosis code (S6190) lists "wrist and hand" while triage notes confirm "left dorsal hand". Code used to trigger mental health risk profiling?' },
-  { id: '4', date: '2026-01-15', action: 'Victim Status Audit', status: 'Verified', note: 'SJPF confirmed File 25-2390069 as domestic incident. PSR omission confirmed as willful suppression by Goldsworthy.' },
-];
-
 const SystemAudit: React.FC = () => {
   const [logs, setLogs] = useState<SystemAuditLog[]>(() => {
     const saved = localStorage.getItem('systemAuditLogs');
-    return saved ? JSON.parse(saved) : INITIAL_LOGS;
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -34,7 +27,7 @@ const SystemAudit: React.FC = () => {
       id: Date.now().toString(),
       date: newLog.date || new Date().toISOString().split('T')[0],
       action: newLog.action,
-      status: (newLog.status as any) || 'Active',
+      status: (newLog.status as 'Active' | 'Critical' | 'Flagged' | 'Verified') || 'Active',
       note: newLog.note
     };
 
@@ -99,7 +92,7 @@ const SystemAudit: React.FC = () => {
              <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Status</label>
              <select
                value={newLog.status}
-               onChange={e => setNewLog({...newLog, status: e.target.value as any})}
+               onChange={e => setNewLog({...newLog, status: e.target.value as 'Active' | 'Critical' | 'Flagged' | 'Verified'})}
                className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none transition-all"
              >
                <option value="Active">Active</option>
