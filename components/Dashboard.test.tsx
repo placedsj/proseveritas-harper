@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Dashboard from './Dashboard';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
@@ -12,7 +12,7 @@ describe('Dashboard', () => {
     vi.clearAllMocks();
   });
 
-  it('calculates and displays statistics correctly from localStorage', () => {
+  it('calculates and displays statistics correctly from localStorage', async () => {
     // Mock Data
     const evidence: Partial<ProcessedEvidenceItem>[] = [
       { verified: true },
@@ -44,31 +44,35 @@ describe('Dashboard', () => {
 
     render(<Dashboard onNavigate={vi.fn()} />);
 
-    const checkStat = (label: string, value: string) => {
+    const checkStat = async (label: string, value: string) => {
+      await waitFor(() => {
         const labelEl = screen.getByText(label);
         const valueEl = labelEl.parentElement?.querySelector('p:first-child');
         expect(valueEl).toHaveTextContent(value);
+      });
     };
 
-    checkStat('Verified Exhibits', '2');
-    checkStat('Days Denied', '2');
-    checkStat('Audit Targets', '4');
-    checkStat('SJRH Pages', '36');
+    await checkStat('Verified Exhibits', '2');
+    await checkStat('Days Denied', '2');
+    await checkStat('Audit Targets', '4');
+    await checkStat('SJRH Pages', '36');
   });
 
-  it('handles empty localStorage gracefully', () => {
+  it('handles empty localStorage gracefully', async () => {
     localStorage.clear();
     render(<Dashboard onNavigate={vi.fn()} />);
 
-    const checkStat = (label: string, value: string) => {
+    const checkStat = async (label: string, value: string) => {
+      await waitFor(() => {
         const labelEl = screen.getByText(label);
         const valueEl = labelEl.parentElement?.querySelector('p:first-child');
         expect(valueEl).toHaveTextContent(value);
+      });
     };
 
-    checkStat('Verified Exhibits', '0');
-    checkStat('Days Denied', '0');
-    checkStat('Audit Targets', '0');
-    checkStat('SJRH Pages', '0');
+    await checkStat('Verified Exhibits', '0');
+    await checkStat('Days Denied', '0');
+    await checkStat('Audit Targets', '0');
+    await checkStat('SJRH Pages', '0');
   });
 });

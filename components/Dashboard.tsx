@@ -17,6 +17,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
   });
 
   useEffect(() => {
+    let isMounted = true;
     // Timer Logic
     const target = new Date('2026-03-30T09:30:00');
     const sentencing = new Date('2026-03-03T09:00:00');
@@ -40,6 +41,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
     // Stats Logic
     const loadStats = () => {
+      if (!isMounted) return;
       try {
         const evidence: ProcessedEvidenceItem[] = JSON.parse(localStorage.getItem('evidence') || '[]');
         const verifiedExhibits = evidence.filter(e => e.verified).length;
@@ -53,15 +55,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         const medicalRecords: MedicalRecord[] = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
         const sjrhPages = medicalRecords.reduce((sum, r) => sum + (r.pageCount || 0), 0);
 
-        setStats({ verifiedExhibits, daysDenied, auditTargets, sjrhPages });
+        if (isMounted) {
+          setStats({ verifiedExhibits, daysDenied, auditTargets, sjrhPages });
+        }
       } catch (error) {
         console.error('Error loading dashboard stats:', error);
       }
     };
 
-    loadStats();
+    // ⚡ Bolt: Defer heavy localStorage parsing to unblock initial paint
+    setTimeout(loadStats, 0);
 
-    return () => clearInterval(timer);
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
   }, []);
 
   return (
