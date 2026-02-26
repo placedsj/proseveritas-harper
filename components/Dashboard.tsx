@@ -59,9 +59,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
       }
     };
 
-    loadStats();
+    // Optimization: Defer heavy localStorage parsing to unblock initial paint
+    const statsTimer = setTimeout(loadStats, 0);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      clearTimeout(statsTimer);
+    };
   }, []);
 
   return (
