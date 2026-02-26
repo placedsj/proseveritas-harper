@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
+import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon, Fingerprint } from 'lucide-react';
 import { 
   ViewState, DailyMove,
   ProcessedEvidenceItem, MedicalRecord, ScottLogEntry, AbuseLogEntry,
-  TimelineEvent, CourtEvent,
+  TimelineEvent, CourtEvent, SystemAuditLog,
 } from '../types';
 
 interface GlobalSearchProps {
@@ -15,7 +15,7 @@ interface GlobalSearchProps {
 
 interface SearchResult {
   id: string;
-  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log' | 'abuse-log' | 'timeline-event' | 'court-event' | 'evidence-vault';
+  type: 'task' | 'evidence-processor' | 'medical-record' | 'scott-log' | 'abuse-log' | 'timeline-event' | 'court-event' | 'evidence-vault' | 'system-audit-log';
   title: string;
   subtitle: string;
   view: ViewState;
@@ -30,6 +30,7 @@ interface SearchData {
   timelineEvents: TimelineEvent[];
   courtEvents: CourtEvent[];
   dailyMoves: DailyMove[];
+  systemAuditLogs: SystemAuditLog[];
 }
 
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
@@ -63,6 +64,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
         timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
         courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
         dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+        systemAuditLogs: getLocalStorageItem<SystemAuditLog[]>('systemAuditLogs', []),
       });
     } else {
       setQuery('');
@@ -322,6 +324,39 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
+    // System Audit Logs
+    searchData.systemAuditLogs.forEach(log => {
+      let score = 0;
+      let matchedSnippet = '';
+      if (filters.action && log.action.toLowerCase().includes(filters.action)) score += 15;
+      if (filters.status && log.status.toLowerCase().includes(filters.status)) score += 10;
+      if (filters.text && log.note.toLowerCase().includes(filters.text)) {
+        score += 20;
+        matchedSnippet = generateSnippet(log.note, filters.text);
+      } else if (textQuery) {
+        if (log.action.toLowerCase().includes(textQuery)) {
+          score += 10;
+          matchedSnippet = generateSnippet(log.action, textQuery);
+        }
+        if (log.note.toLowerCase().includes(textQuery)) {
+          score += 15;
+          matchedSnippet = generateSnippet(log.note, textQuery);
+        }
+      }
+      if (matchesDateFilters(log.date)) score += 5;
+
+      if (score > 0) {
+        searchResults.push({
+          id: `audit-${log.id}`,
+          type: 'system-audit-log',
+          title: log.action,
+          subtitle: matchedSnippet || `Status: ${log.status}, Date: ${log.date}`,
+          view: 'system-audit',
+          score: score
+        });
+      }
+    });
+
     setResults(searchResults.sort((a, b) => b.score - a.score));
   }, [debouncedQuery, searchData]);
 
@@ -340,6 +375,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       case 'timeline-event': return <ClockIcon className="w-5 h-5 text-teal-600" />;
       case 'court-event': return <Gavel className="w-5 h-5 text-orange-600" />;
       case 'evidence-vault': return <FileText className="w-5 h-5 text-slate-500" />;
+      case 'system-audit-log': return <Fingerprint className="w-5 h-5 text-blue-600" />;
       default: return <Search className="w-5 h-5 text-slate-400" />;
     }
   };
