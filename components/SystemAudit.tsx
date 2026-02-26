@@ -70,13 +70,14 @@ const SystemAudit: React.FC = () => {
         <div className="bg-white p-6 rounded-xl border border-blue-200 animate-fade-in shadow-lg text-left">
           <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
              <h3 className="text-lg font-bold text-slate-900 uppercase tracking-wider">New Audit Entry</h3>
-             <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900"><X className="w-5 h-5" /></button>
+             <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900" aria-label="Close form"><X className="w-5 h-5" /></button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
             <div>
-              <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Date</label>
+              <label htmlFor="audit-date" className="block text-slate-500 text-xs uppercase font-bold mb-1">Date</label>
               <input
+                id="audit-date"
                 type="date"
                 value={newLog.date}
                 onChange={e => setNewLog({...newLog, date: e.target.value})}
@@ -84,8 +85,9 @@ const SystemAudit: React.FC = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Action / Target</label>
+              <label htmlFor="audit-action" className="block text-slate-500 text-xs uppercase font-bold mb-1">Action / Target</label>
               <input
+                id="audit-action"
                 type="text"
                 value={newLog.action}
                 onChange={e => setNewLog({...newLog, action: e.target.value})}
@@ -96,8 +98,9 @@ const SystemAudit: React.FC = () => {
           </div>
 
           <div className="mb-4">
-             <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Status</label>
+             <label htmlFor="audit-status" className="block text-slate-500 text-xs uppercase font-bold mb-1">Status</label>
              <select
+               id="audit-status"
                value={newLog.status}
                onChange={e => setNewLog({...newLog, status: e.target.value as any})}
                className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-slate-900 focus:border-blue-500 focus:outline-none transition-all"
@@ -110,8 +113,9 @@ const SystemAudit: React.FC = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-slate-500 text-xs uppercase font-bold mb-1">Findings / Note</label>
+            <label htmlFor="audit-note" className="block text-slate-500 text-xs uppercase font-bold mb-1">Findings / Note</label>
             <textarea
+              id="audit-note"
               value={newLog.note}
               onChange={e => setNewLog({...newLog, note: e.target.value})}
               className="w-full bg-slate-50 border border-slate-300 rounded p-3 text-slate-900 focus:border-blue-500 focus:outline-none h-24 transition-all"
@@ -121,7 +125,8 @@ const SystemAudit: React.FC = () => {
 
           <button
             onClick={handleSave}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-bold shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 uppercase tracking-widest"
+            disabled={!newLog.action || !newLog.note}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded font-bold shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:bg-blue-600"
           >
             <Save className="w-5 h-5" />
             SAVE TO LOG
