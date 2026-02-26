@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.env.API_KEY || '';
@@ -20,8 +19,8 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
         **Focus:** Harper's Best Interest, Scott Schedule accuracy, Education Build, and Health Rehab tracking.
         **Role:** Co-counsel, accountability partner. Mode: MOTION, COUNSEL, CALM, FIRE, ORGANIZE, AUTOMATE, CHECK.
 
-        **Context:** ${compressedContext}
-        **User:** "${userMessage}"
+        **Context:** ${JSON.stringify(compressedContext)}
+        **User:** ${JSON.stringify(userMessage)}
 
         Provide a needle-moving response. Start with mode prefix.
       `,
@@ -37,7 +36,7 @@ export const getRealityCheck = async (thought: string): Promise<string> => {
   try {
     const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Stoic reality-checker. Facts only. User: "${thought}". One sentence STOP command. Max 30 words.`
+        contents: `Stoic reality-checker. Facts only. User: ${JSON.stringify(thought)}. One sentence STOP command. Max 30 words.`
     });
     return response.text || "Focus on what you can control.";
   } catch (error) {
