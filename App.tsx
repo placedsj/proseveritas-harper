@@ -1,4 +1,3 @@
-
 import React, { useState, Suspense, lazy } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
@@ -50,26 +49,26 @@ const App: React.FC = () => {
         </div>
         
         <div className="space-y-4 w-full px-2">
-          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" currentView={view} onNavigate={setView} />
-          <NavButton target="discovery-archive" icon={Database} label="Archive" currentView={view} onNavigate={setView} />
-          <NavButton target="system-audit" icon={Fingerprint} label="Audit" currentView={view} onNavigate={setView} />
-          <NavButton target="harper-log" icon={Heart} label="Harper" currentView={view} onNavigate={setView} />
-          <NavButton target="education-build" icon={GraduationCap} label="Build" currentView={view} onNavigate={setView} />
-          <NavButton target="health-rehab" icon={Activity} label="Health" currentView={view} onNavigate={setView} />
-          <NavButton target="gov-benefits" icon={Landmark} label="Gov" currentView={view} onNavigate={setView} />
-          <NavButton target="scott-schedule" icon={Scale} label="Scott" currentView={view} onNavigate={setView} />
-          <NavButton target="custody-math" icon={Calculator} label="Math" currentView={view} onNavigate={setView} />
-          <NavButton target="business" icon={Briefcase} label="Biz" currentView={view} onNavigate={setView} />
-          <NavButton target="strategy" icon={Compass} label="Plan" currentView={view} onNavigate={setView} />
-          <NavButton target="roadmap" icon={Map} label="Map" currentView={view} onNavigate={setView} />
-          <NavButton target="products" icon={Package} label="Lab" currentView={view} onNavigate={setView} />
-          <NavButton target="power-monitor" icon={Activity} label="Pwr" currentView={view} onNavigate={setView} />
-          <NavButton target="processor" icon={Map} label="Evidence" currentView={view} onNavigate={setView} />
-          <NavButton target="medical-records" icon={Stethoscope} label="Med" currentView={view} onNavigate={setView} />
+          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" isActive={view === 'dashboard'} onNavigate={setView} />
+          <NavButton target="discovery-archive" icon={Database} label="Archive" isActive={view === 'discovery-archive'} onNavigate={setView} />
+          <NavButton target="system-audit" icon={Fingerprint} label="Audit" isActive={view === 'system-audit'} onNavigate={setView} />
+          <NavButton target="harper-log" icon={Heart} label="Harper" isActive={view === 'harper-log'} onNavigate={setView} />
+          <NavButton target="education-build" icon={GraduationCap} label="Build" isActive={view === 'education-build'} onNavigate={setView} />
+          <NavButton target="health-rehab" icon={Activity} label="Health" isActive={view === 'health-rehab'} onNavigate={setView} />
+          <NavButton target="gov-benefits" icon={Landmark} label="Gov" isActive={view === 'gov-benefits'} onNavigate={setView} />
+          <NavButton target="scott-schedule" icon={Scale} label="Scott" isActive={view === 'scott-schedule'} onNavigate={setView} />
+          <NavButton target="custody-math" icon={Calculator} label="Math" isActive={view === 'custody-math'} onNavigate={setView} />
+          <NavButton target="business" icon={Briefcase} label="Biz" isActive={view === 'business'} onNavigate={setView} />
+          <NavButton target="strategy" icon={Compass} label="Plan" isActive={view === 'strategy'} onNavigate={setView} />
+          <NavButton target="roadmap" icon={Map} label="Map" isActive={view === 'roadmap'} onNavigate={setView} />
+          <NavButton target="products" icon={Package} label="Lab" isActive={view === 'products'} onNavigate={setView} />
+          <NavButton target="power-monitor" icon={Activity} label="Pwr" isActive={view === 'power-monitor'} onNavigate={setView} />
+          <NavButton target="processor" icon={Map} label="Evidence" isActive={view === 'processor'} onNavigate={setView} />
+          <NavButton target="medical-records" icon={Stethoscope} label="Med" isActive={view === 'medical-records'} onNavigate={setView} />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
-          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors" aria-label="Open global search">
+          <button onClick={toggleSearch} className="p-2 text-slate-400 hover:text-slate-900 transition-colors" aria-label="Open global search" title="Open search (Cmd+K)">
             <Search className="w-6 h-6" />
           </button>
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mx-auto shadow-sm" title="System Online" />
@@ -83,7 +82,7 @@ const App: React.FC = () => {
           <h1 className="font-bold text-lg text-slate-900 tracking-tight uppercase">Defense Grid</h1>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900" aria-label="Open global search">
+          <button onClick={toggleSearch} className="text-slate-400 hover:text-slate-900" aria-label="Open global search" title="Open search (Cmd+K)">
             <Search className="w-6 h-6" />
           </button>
           <span className="text-xs text-green-600 font-mono bg-green-50 px-2 py-1 rounded border border-green-100">ONLINE</span>
@@ -120,11 +119,11 @@ const App: React.FC = () => {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 overflow-x-auto shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-600' : 'text-slate-400'}`} aria-label="Dashboard"><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-600' : 'text-slate-400'}`} aria-label="Discovery Archive"><Database className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('harper-log')} className={`p-2 min-w-[50px] ${view === 'harper-log' ? 'text-pink-600' : 'text-slate-400'}`} aria-label="Harper Log"><Heart className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('system-audit')} className={`p-2 min-w-[50px] ${view === 'system-audit' ? 'text-blue-600' : 'text-slate-400'}`} aria-label="System Audit"><Fingerprint className="w-6 h-6 mx-auto" /></button>
-        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-600' : 'text-slate-400'}`} aria-label="Scott Schedule"><Scale className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('dashboard')} className={`p-2 min-w-[50px] ${view === 'dashboard' ? 'text-red-600' : 'text-slate-400'}`} aria-label="Dashboard" aria-current={view === 'dashboard' ? 'page' : undefined}><LayoutDashboard className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('discovery-archive')} className={`p-2 min-w-[50px] ${view === 'discovery-archive' ? 'text-indigo-600' : 'text-slate-400'}`} aria-label="Discovery Archive" aria-current={view === 'discovery-archive' ? 'page' : undefined}><Database className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('harper-log')} className={`p-2 min-w-[50px] ${view === 'harper-log' ? 'text-pink-600' : 'text-slate-400'}`} aria-label="Harper Log" aria-current={view === 'harper-log' ? 'page' : undefined}><Heart className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('system-audit')} className={`p-2 min-w-[50px] ${view === 'system-audit' ? 'text-blue-600' : 'text-slate-400'}`} aria-label="System Audit" aria-current={view === 'system-audit' ? 'page' : undefined}><Fingerprint className="w-6 h-6 mx-auto" /></button>
+        <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-600' : 'text-slate-400'}`} aria-label="Scott Schedule" aria-current={view === 'scott-schedule' ? 'page' : undefined}><Scale className="w-6 h-6 mx-auto" /></button>
       </nav>
 
       <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={setView} />
