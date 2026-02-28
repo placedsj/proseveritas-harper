@@ -50,26 +50,34 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
     if (isOpen) {
       if (inputRef.current) {
         inputRef.current.focus();
       }
-      // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
-      setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
-      });
+      // Defer loading all data into memory to avoid blocking the main thread when the modal opens
+      timeoutId = setTimeout(() => {
+        setSearchData({
+          evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
+          medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
+          scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
+          abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
+          timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
+          courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
+          dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+        });
+      }, 0);
     } else {
       setQuery('');
       setDebouncedQuery('');
       setResults([]);
       setSearchData(null); // Clear data to free memory
     }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [isOpen]);
 
   useEffect(() => {
