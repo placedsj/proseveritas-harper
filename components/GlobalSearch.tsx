@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, X, ArrowRight, LayoutDashboard, Map, FileText, Stethoscope, Scale, ShieldAlert, Gavel, Clock as ClockIcon } from 'lucide-react';
 import { 
   ViewState, DailyMove,
@@ -45,7 +45,6 @@ const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
 const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate }) => {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
   const [searchData, setSearchData] = useState<SearchData | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +66,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     } else {
       setQuery('');
       setDebouncedQuery('');
-      setResults([]);
       setSearchData(null); // Clear data to free memory
     }
   }, [isOpen]);
@@ -79,10 +77,12 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
     return () => clearTimeout(timer);
   }, [query]);
 
-  useEffect(() => {
+  // ⚡ Bolt Optimization: Using useMemo to derive search results directly during render.
+  // This avoids a separate render pass that was previously triggered by setResults
+  // inside a useEffect, significantly reducing input lag and re-renders while typing.
+  const results = useMemo(() => {
     if (!debouncedQuery.trim() || !searchData) {
-      setResults([]);
-      return;
+      return [];
     }
 
     const lowerQuery = debouncedQuery.toLowerCase();
@@ -322,7 +322,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    setResults(searchResults.sort((a, b) => b.score - a.score));
+    return searchResults.sort((a, b) => b.score - a.score);
   }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
