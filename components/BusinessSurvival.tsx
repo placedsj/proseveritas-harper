@@ -104,7 +104,7 @@ const BusinessSurvival: React.FC = () => {
             </div>
             <div className="flex items-center gap-4">
               <span className="font-mono text-green-400 font-bold">${task.dollarValue.toLocaleString()}</span>
-              <button onClick={() => deletetask(task.id)} className="text-slate-600 hover:text-red-500">
+              <button onClick={() => deletetask(task.id)} className="text-slate-600 hover:text-red-500" aria-label="Delete task">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
