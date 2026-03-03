@@ -18,13 +18,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
 
   useEffect(() => {
     // Timer Logic
-    const target = new Date('2026-03-30T09:30:00');
-    const sentencing = new Date('2026-03-03T09:00:00');
+    const targetTime = new Date('2026-03-30T09:30:00').getTime();
+    const sentencingTime = new Date('2026-03-03T09:00:00').getTime();
     
     const updateTime = () => {
-      const now = new Date();
-      const diff = target.getTime() - now.getTime();
-      const sDiff = sentencing.getTime() - now.getTime();
+      const now = Date.now();
+      const diff = targetTime - now;
+      const sDiff = sentencingTime - now;
       
       if (diff > 0) {
         setTimeLeft({
