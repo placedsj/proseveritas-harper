@@ -99,25 +99,37 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     }
 
+    // Bolt Optimization: Pre-compute date filters outside the O(N) loop to avoid expensive
+    // Date object instantiations and parsing for every single item in the search iteration.
+    const hasDateFilters = !!(filters.date || filters.from || filters.to);
+
+    let fromDateFilter: Date | null = null;
+    if (filters.from) {
+      const parsedFrom = new Date(filters.from);
+      if (!isNaN(parsedFrom.getTime())) fromDateFilter = parsedFrom;
+    }
+
+    let toDateFilter: Date | null = null;
+    if (filters.to) {
+      const parsedTo = new Date(filters.to);
+      parsedTo.setHours(23, 59, 59, 999);
+      if (!isNaN(parsedTo.getTime())) toDateFilter = parsedTo;
+    }
+
     const matchesDateFilters = (itemDateStr?: string) => {
       if (!itemDateStr) return false;
       const itemDate = new Date(itemDateStr);
       if (isNaN(itemDate.getTime())) return false;
 
+      if (!hasDateFilters) return true; // Early return, all items with valid dates pass if no filters
+
       if (filters.date) {
         if (!itemDateStr.toLowerCase().includes(filters.date)) return false;
       }
       
-      if (filters.from) {
-        const fromDate = new Date(filters.from);
-        if (isNaN(fromDate.getTime()) || itemDate < fromDate) return false;
-      }
+      if (fromDateFilter && itemDate < fromDateFilter) return false;
+      if (toDateFilter && itemDate > toDateFilter) return false;
 
-      if (filters.to) {
-        const toDate = new Date(filters.to);
-        toDate.setHours(23, 59, 59, 999); 
-        if (isNaN(toDate.getTime()) || itemDate > toDate) return false;
-      }
       return true;
     };
 
