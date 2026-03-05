@@ -99,8 +99,19 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     }
 
+    // Cache parsed filter dates to avoid re-parsing on every item
+    const parsedFromDate = filters.from ? new Date(filters.from) : null;
+    const isFromValid = parsedFromDate && !isNaN(parsedFromDate.getTime());
+
+    const parsedToDate = filters.to ? new Date(filters.to) : null;
+    if (parsedToDate) parsedToDate.setHours(23, 59, 59, 999);
+    const isToValid = parsedToDate && !isNaN(parsedToDate.getTime());
+
+    const hasDateFilters = !!(filters.date || filters.from || filters.to);
+
     const matchesDateFilters = (itemDateStr?: string) => {
       if (!itemDateStr) return false;
+      if (!hasDateFilters) return true;
       const itemDate = new Date(itemDateStr);
       if (isNaN(itemDate.getTime())) return false;
 
@@ -109,14 +120,11 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
       
       if (filters.from) {
-        const fromDate = new Date(filters.from);
-        if (isNaN(fromDate.getTime()) || itemDate < fromDate) return false;
+        if (!isFromValid || itemDate < parsedFromDate!) return false;
       }
 
       if (filters.to) {
-        const toDate = new Date(filters.to);
-        toDate.setHours(23, 59, 59, 999); 
-        if (isNaN(toDate.getTime()) || itemDate > toDate) return false;
+        if (!isToValid || itemDate > parsedToDate!) return false;
       }
       return true;
     };
