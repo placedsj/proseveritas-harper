@@ -35,7 +35,13 @@ const CourtTimeline: React.FC = () => {
       status: 'Pending'
     };
 
-    setEvents([...events, event].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    // Bolt: Use Schwartzian Transform to sort dates efficiently with O(N) instantiations
+    const sortedEvents = [...events, event]
+      .map(e => ({ e, time: new Date(e.date).getTime() }))
+      .sort((a, b) => a.time - b.time)
+      .map(item => item.e);
+
+    setEvents(sortedEvents);
     setIsAdding(false);
     setNewEvent({ date: '', caseName: 'Criminal Defense', judgeName: '', requiredAction: '', status: 'Pending' });
   };
