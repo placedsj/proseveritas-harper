@@ -37,7 +37,7 @@ const GovBenefits: React.FC = () => {
           <p className="text-slate-500 text-sm">Managing New Brunswick & Federal Support Systems.</p>
         </div>
         <div className="flex gap-2">
-           <a href="https://www.worksafenb.ca" target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 border border-blue-200 px-2 py-1 rounded bg-white transition-colors font-bold uppercase shadow-sm">
+           <a href="https://www.worksafenb.ca" target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 border border-blue-200 px-2 py-1 rounded bg-white transition-colors font-bold uppercase shadow-sm">
               WorkSafeNB Portal <ExternalLink className="w-3 h-3" />
            </a>
         </div>
