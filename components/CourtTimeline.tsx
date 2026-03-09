@@ -35,7 +35,9 @@ const CourtTimeline: React.FC = () => {
       status: 'Pending'
     };
 
-    setEvents([...events, event].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    // ⚡ Bolt Optimization: Use fast string comparison for dates instead of new Date().getTime()
+    // This reduces expensive object instantiations and garbage collection cycles during array sorting.
+    setEvents([...events, event].sort((a,b) => a.date < b.date ? -1 : (a.date > b.date ? 1 : 0)));
     setIsAdding(false);
     setNewEvent({ date: '', caseName: 'Criminal Defense', judgeName: '', requiredAction: '', status: 'Pending' });
   };
