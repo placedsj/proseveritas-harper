@@ -26,8 +26,10 @@ const CustodyMath: React.FC = () => {
     return Number((diff / (1000 * 60 * 60)).toFixed(1));
   };
 
+  const isFormValid = Boolean(newBlock.startDate && newBlock.startTime && newBlock.endDate && newBlock.endTime);
+
   const addBlock = () => {
-    if (!newBlock.startDate || !newBlock.startTime || !newBlock.endDate || !newBlock.endTime) return;
+    if (!isFormValid) return;
 
     const startIso = `${newBlock.startDate}T${newBlock.startTime}`;
     const endIso = `${newBlock.endDate}T${newBlock.endTime}`;
@@ -109,31 +111,40 @@ const CustodyMath: React.FC = () => {
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
             <div>
-                <label className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Start Date</label>
-                <input type="date" value={newBlock.startDate} onChange={e => setNewBlock({...newBlock, startDate: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
+                <label htmlFor="custody-start-date" className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Start Date</label>
+                <input id="custody-start-date" type="date" value={newBlock.startDate} onChange={e => setNewBlock({...newBlock, startDate: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
             </div>
             <div>
-                <label className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Time</label>
-                <input type="time" value={newBlock.startTime} onChange={e => setNewBlock({...newBlock, startTime: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
+                <label htmlFor="custody-start-time" className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Time</label>
+                <input id="custody-start-time" type="time" value={newBlock.startTime} onChange={e => setNewBlock({...newBlock, startTime: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
             </div>
             <div>
-                <label className="text-[10px] uppercase text-slate-500 font-bold block mb-1">End Date</label>
-                <input type="date" value={newBlock.endDate} onChange={e => setNewBlock({...newBlock, endDate: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
+                <label htmlFor="custody-end-date" className="text-[10px] uppercase text-slate-500 font-bold block mb-1">End Date</label>
+                <input id="custody-end-date" type="date" value={newBlock.endDate} onChange={e => setNewBlock({...newBlock, endDate: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
             </div>
              <div>
-                <label className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Time</label>
-                <input type="time" value={newBlock.endTime} onChange={e => setNewBlock({...newBlock, endTime: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
+                <label htmlFor="custody-end-time" className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Time</label>
+                <input id="custody-end-time" type="time" value={newBlock.endTime} onChange={e => setNewBlock({...newBlock, endTime: e.target.value})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500" />
             </div>
             <div>
-                 <label className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Outcome</label>
-                 <select value={newBlock.status} onChange={e => setNewBlock({...newBlock, status: e.target.value as any})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer">
+                 <label htmlFor="custody-outcome" className="text-[10px] uppercase text-slate-500 font-bold block mb-1">Outcome</label>
+                 <select id="custody-outcome" value={newBlock.status} onChange={e => setNewBlock({...newBlock, status: e.target.value as any})} className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm text-slate-900 focus:outline-none focus:border-blue-500 cursor-pointer">
                      <option value="Success">Success</option>
                      <option value="Denied by Mother">Denied (Mother)</option>
                      <option value="Forfeited by Father">Forfeited (Father)</option>
                  </select>
             </div>
         </div>
-        <button onClick={addBlock} className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition-colors shadow-md active:scale-95">
+        <button
+            onClick={addBlock}
+            disabled={!isFormValid}
+            title={!isFormValid ? "Please fill all date and time fields" : ""}
+            className={`w-full mt-4 font-bold py-2 rounded transition-colors shadow-md ${
+                isFormValid
+                ? 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95'
+                : 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-70 shadow-none'
+            }`}
+        >
             Calculate & Log Block
         </button>
       </div>
