@@ -9,7 +9,7 @@ interface NavButtonProps {
   onNavigate: (view: ViewState) => void;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ target, icon: Icon, label, currentView, onNavigate }) => (
+const NavButtonComponent: React.FC<NavButtonProps> = ({ target, icon: Icon, label, currentView, onNavigate }) => (
   <button
     onClick={() => onNavigate(target)}
     className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ${
@@ -22,3 +22,16 @@ export const NavButton: React.FC<NavButtonProps> = ({ target, icon: Icon, label,
     <span className="text-[10px] uppercase tracking-wider font-bold">{label}</span>
   </button>
 );
+
+export const NavButton = React.memo(NavButtonComponent, (prevProps, nextProps) => {
+  const wasActive = prevProps.currentView === prevProps.target;
+  const isActive = nextProps.currentView === nextProps.target;
+
+  return (
+    wasActive === isActive &&
+    prevProps.target === nextProps.target &&
+    prevProps.icon === nextProps.icon &&
+    prevProps.label === nextProps.label &&
+    prevProps.onNavigate === nextProps.onNavigate
+  );
+});
