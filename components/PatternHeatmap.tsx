@@ -9,8 +9,11 @@ interface PatternHeatmapProps {
 
 const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
   // Sort logs by date ascending
+  // ⚡ Bolt Optimization: Use direct ISO string comparison instead of new Date() instantiation.
+  // This avoids O(N*log(N)) Date object allocations during sorting, significantly
+  // improving performance as the incident log grows over months/years.
   const sortedLogs = useMemo(() => {
-    return [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    return [...logs].sort((a, b) => (a.timestamp < b.timestamp ? -1 : a.timestamp > b.timestamp ? 1 : 0));
   }, [logs]);
 
   const getSeverity = (log: AbuseLogEntry): number => {
