@@ -5,3 +5,6 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+## 2025-02-12 - Limit GlobalSearch rendering
+**Learning:** `GlobalSearch` was trying to render potentially hundreds of elements synchronously when calculating search results, which can cause UI lag.
+**Action:** Implemented a `.slice(0, 50)` limit before passing the results to the state, preventing massive DOM updates and freezing.
