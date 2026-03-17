@@ -109,6 +109,7 @@ const CoFounderChat: React.FC = () => {
       </div>
 
       <div className="p-4 bg-slate-800 border-t border-slate-700 flex gap-2">
+        {/* Security: Enforce maxLength to prevent token exhaustion / Financial DoS attacks on the Gemini API */}
         <input 
           type="text" 
           value={input}
@@ -116,6 +117,7 @@ const CoFounderChat: React.FC = () => {
           onKeyPress={e => e.key === 'Enter' && sendMessage()}
           placeholder="Ask for direction, copy review, or next moves..."
           className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-orange-500 focus:outline-none"
+          maxLength={2000}
         />
         <button 
           onClick={sendMessage}
