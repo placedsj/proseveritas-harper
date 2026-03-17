@@ -50,11 +50,13 @@ const SpiralJournal: React.FC = () => {
           Write down the racing thoughts here. Get them out of your head. Do NOT act on them.
         </p>
         
+        {/* Security: Enforce maxLength to prevent token exhaustion / Financial DoS attacks on the Gemini API */}
         <textarea
           value={currentThought}
           onChange={(e) => setCurrentThought(e.target.value)}
           placeholder="I'm worried about..."
           className="w-full bg-slate-900 text-white p-4 rounded border border-slate-700 focus:border-purple-500 focus:outline-none min-h-[120px] mb-4"
+          maxLength={2000}
         />
         
         <button
