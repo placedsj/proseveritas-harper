@@ -8,9 +8,12 @@ interface PatternHeatmapProps {
 }
 
 const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
-  // Sort logs by date ascending
+  // Sort logs by date ascending using Schwartzian transform
   const sortedLogs = useMemo(() => {
-    return [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    return [...logs]
+      .map(log => ({ log, time: new Date(log.timestamp).getTime() }))
+      .sort((a, b) => a.time - b.time)
+      .map(({ log }) => log);
   }, [logs]);
 
   const getSeverity = (log: AbuseLogEntry): number => {
