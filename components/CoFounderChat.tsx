@@ -112,6 +112,7 @@ const CoFounderChat: React.FC = () => {
         <input 
           type="text" 
           value={input}
+          maxLength={2000}
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && sendMessage()}
           placeholder="Ask for direction, copy review, or next moves..."
