@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import Dashboard from './Dashboard';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
@@ -12,7 +12,7 @@ describe('Dashboard', () => {
     vi.clearAllMocks();
   });
 
-  it('calculates and displays statistics correctly from localStorage', () => {
+  it('calculates and displays statistics correctly from localStorage', async () => {
     // Mock Data
     const evidence: Partial<ProcessedEvidenceItem>[] = [
       { verified: true },
@@ -50,13 +50,17 @@ describe('Dashboard', () => {
         expect(valueEl).toHaveTextContent(value);
     };
 
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
+
     checkStat('Verified Exhibits', '2');
     checkStat('Days Denied', '2');
     checkStat('Audit Targets', '4');
     checkStat('SJRH Pages', '36');
   });
 
-  it('handles empty localStorage gracefully', () => {
+  it('handles empty localStorage gracefully', async () => {
     localStorage.clear();
     render(<Dashboard onNavigate={vi.fn()} />);
 
@@ -65,6 +69,10 @@ describe('Dashboard', () => {
         const valueEl = labelEl.parentElement?.querySelector('p:first-child');
         expect(valueEl).toHaveTextContent(value);
     };
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     checkStat('Verified Exhibits', '0');
     checkStat('Days Denied', '0');

@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-03-21 - Chunking LocalStorage Parsing
+**Learning:** The Dashboard aggregates statistics from multiple large `localStorage` tables (`evidence`, `scottLogs`, `systemAuditLogs`, `medicalRecords`) synchronously on mount. As the application grows, this blocks the main thread and freezes the UI.
+**Action:** Chunk the parsing operations into microtasks using `await new Promise(resolve => setTimeout(resolve, 0))` to allow the browser to paint and handle user interactions between heavy JSON parsing tasks.
