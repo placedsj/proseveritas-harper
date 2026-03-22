@@ -39,17 +39,21 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const timer = setInterval(updateTime, 1000 * 60);
 
     // Stats Logic
-    const loadStats = () => {
+    const loadStats = async () => {
       try {
+        await new Promise(resolve => setTimeout(resolve, 0));
         const evidence: ProcessedEvidenceItem[] = JSON.parse(localStorage.getItem('evidence') || '[]');
         const verifiedExhibits = evidence.filter(e => e.verified).length;
 
+        await new Promise(resolve => setTimeout(resolve, 0));
         const scottLogs: ScottLogEntry[] = JSON.parse(localStorage.getItem('scottLogs') || '[]');
         const daysDenied = scottLogs.filter(l => l.category === 'Denial of Parenting Time').length;
 
+        await new Promise(resolve => setTimeout(resolve, 0));
         const auditLogs: SystemAuditLog[] = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
         const auditTargets = auditLogs.length;
 
+        await new Promise(resolve => setTimeout(resolve, 0));
         const medicalRecords: MedicalRecord[] = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
         const sjrhPages = medicalRecords.reduce((sum, r) => sum + (r.pageCount || 0), 0);
 
