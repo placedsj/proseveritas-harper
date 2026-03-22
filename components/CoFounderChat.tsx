@@ -111,6 +111,7 @@ const CoFounderChat: React.FC = () => {
       <div className="p-4 bg-slate-800 border-t border-slate-700 flex gap-2">
         <input 
           type="text" 
+          maxLength={2000}
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={e => e.key === 'Enter' && sendMessage()}

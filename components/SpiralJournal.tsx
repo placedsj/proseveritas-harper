@@ -51,6 +51,7 @@ const SpiralJournal: React.FC = () => {
         </p>
         
         <textarea
+          maxLength={2000}
           value={currentThought}
           onChange={(e) => setCurrentThought(e.target.value)}
           placeholder="I'm worried about..."
