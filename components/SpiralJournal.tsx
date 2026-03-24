@@ -54,6 +54,7 @@ const SpiralJournal: React.FC = () => {
           value={currentThought}
           onChange={(e) => setCurrentThought(e.target.value)}
           placeholder="I'm worried about..."
+          maxLength={2000}
           className="w-full bg-slate-900 text-white p-4 rounded border border-slate-700 focus:border-purple-500 focus:outline-none min-h-[120px] mb-4"
         />
         
