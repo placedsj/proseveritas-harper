@@ -322,7 +322,11 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    setResults(searchResults.sort((a, b) => b.score - a.score));
+    // Performance Optimization: Slice the array to a maximum of 50 items.
+    // This prevents massive DOM updates and UI lag when a broad query
+    // matches a large number of items in the dataset, while still providing
+    // the most relevant results to the user.
+    setResults(searchResults.sort((a, b) => b.score - a.score).slice(0, 50));
   }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
