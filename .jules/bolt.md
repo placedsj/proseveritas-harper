@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-12 - DOM Rendering Optimization in Search
+**Learning:** `GlobalSearch` was sorting and attempting to render potentially thousands of matched DOM nodes simultaneously on broad search queries, causing layout thrashing and massive main-thread blocking.
+**Action:** Implemented an O(1) rendering cap by chaining `.slice(0, 50)` directly after the sort operation. This guarantees React never has to render more than 50 list items at once, restoring smooth UI performance.
