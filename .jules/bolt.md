@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-12 - Array Calculation Optimization
+**Learning:** Chained `.filter().reduce()` creates intermediate arrays and iterates multiple times, reducing performance on large datasets.
+**Action:** Combine chained array calculations into a single-pass `.reduce()` to eliminate intermediate array creation and reduce iteration overhead.
