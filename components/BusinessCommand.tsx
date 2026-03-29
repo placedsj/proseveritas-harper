@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BusinessProject } from '../types';
 import { Briefcase, HardHat, Zap, Clock, CheckCircle2, Plus, DollarSign } from 'lucide-react';
 
@@ -39,7 +39,10 @@ const BusinessCommand: React.FC = () => {
     setNewProject({ name: '', type: 'PLACED', status: 'Lead', value: 0, nextAction: '' });
   };
 
-  const totalValue = projects.reduce((sum, p) => sum + p.value, 0);
+  // ⚡ Bolt: Memoized derived calculation to prevent re-evaluation on every state change (e.g. typing in form)
+  const totalValue = useMemo(() => {
+    return projects.reduce((sum, p) => sum + p.value, 0);
+  }, [projects]);
 
   return (
     <div className="space-y-6">
