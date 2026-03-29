@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BusinessTask } from '../types';
 import { Briefcase, Plus, DollarSign, CheckSquare, Square, Trash2 } from 'lucide-react';
 
@@ -39,7 +39,14 @@ const BusinessSurvival: React.FC = () => {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const totalValue = tasks.filter(t => !t.completed).reduce((sum, t) => sum + t.dollarValue, 0);
+  // ⚡ Bolt: Memoized derived calculation to prevent re-evaluation on every state change (e.g. typing)
+  // Also combined .filter().reduce() into a single .reduce() pass to eliminate intermediate array creation
+  const totalValue = useMemo(() => {
+    return tasks.reduce((sum, t) => {
+      if (!t.completed) return sum + t.dollarValue;
+      return sum;
+    }, 0);
+  }, [tasks]);
 
   return (
     <div className="space-y-6">
