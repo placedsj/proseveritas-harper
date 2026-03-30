@@ -322,7 +322,9 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     });
 
-    setResults(searchResults.sort((a, b) => b.score - a.score));
+    // Bolt: Limit rendered results to prevent massive DOM updates and UI lag
+    // Performance impact: Reduces DOM nodes and React re-render time for large datasets
+    setResults(searchResults.sort((a, b) => b.score - a.score).slice(0, 50));
   }, [debouncedQuery, searchData]);
 
   const handleSelect = (view: ViewState) => {
