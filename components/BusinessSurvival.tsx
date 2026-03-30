@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BusinessTask } from '../types';
 import { Briefcase, Plus, DollarSign, CheckSquare, Square, Trash2 } from 'lucide-react';
 
@@ -39,7 +39,11 @@ const BusinessSurvival: React.FC = () => {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const totalValue = tasks.filter(t => !t.completed).reduce((sum, t) => sum + t.dollarValue, 0);
+  // ⚡ Bolt: Calculate total value in a single pass to avoid intermediate array allocation
+  // Memoized to prevent O(n) recalculations on every keystroke in the new task inputs
+  const totalValue = useMemo(() => {
+    return tasks.reduce((sum, t) => !t.completed ? sum + t.dollarValue : sum, 0);
+  }, [tasks]);
 
   return (
     <div className="space-y-6">
