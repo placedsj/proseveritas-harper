@@ -39,7 +39,11 @@ const BusinessSurvival: React.FC = () => {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const totalValue = tasks.filter(t => !t.completed).reduce((sum, t) => sum + t.dollarValue, 0);
+  // ⚡ Bolt: Wrapped in useMemo to prevent recalculation during unrelated state updates (e.g., keystrokes in the new task inputs).
+  // Also optimized to use a single-pass reduce to eliminate intermediate array creation and reduce iteration overhead.
+  const totalValue = React.useMemo(() => {
+    return tasks.reduce((sum, t) => sum + (!t.completed ? t.dollarValue : 0), 0);
+  }, [tasks]);
 
   return (
     <div className="space-y-6">
