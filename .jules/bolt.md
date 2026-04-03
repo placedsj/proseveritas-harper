@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-12 - Array Calculation Memoization
+**Learning:** Derived values from array state, such as chained `.filter().reduce()` for totals, can cause unnecessary recalculations and intermediate array creations during unrelated state updates (e.g., typing in a controlled input).
+**Action:** Combine operations into a single-pass `.reduce()` and wrap the calculation in `useMemo` to eliminate iteration overhead and prevent recalculation on unrelated re-renders.
