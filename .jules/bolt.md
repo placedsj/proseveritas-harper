@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-23 - Single-pass reduce calculation
+**Learning:** Chained `.filter().reduce()` operations create intermediate arrays which consume extra memory and iterate over the data multiple times, which can lead to performance bottlenecks for large task lists.
+**Action:** Replaced `.filter().reduce()` with a single `.reduce()` call and wrapped the calculation in `useMemo` to only re-compute when dependencies change, minimizing overhead and React re-renders.
