@@ -18,7 +18,15 @@ interface AbuseLogProps {
 const AbuseLog: React.FC<AbuseLogProps> = ({ forceAddMode = false }) => {
   const [logs, setLogs] = useState<AbuseLogEntry[]>(() => {
     const saved = localStorage.getItem('abuseLogs');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (error) {
+        console.error('Failed to load abuse logs');
+        return [];
+      }
+    }
+    return [];
   });
 
   const [isAdding, setIsAdding] = useState(forceAddMode);
