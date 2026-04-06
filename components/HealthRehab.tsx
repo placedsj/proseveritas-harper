@@ -47,7 +47,7 @@ const HealthRehab: React.FC = () => {
 
             <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
                <span className="text-[10px] text-slate-400">Updated: {s.lastReview}</span>
-               <button className="text-red-500 hover:text-red-700 transition-colors">
+               <button className="text-red-500 hover:text-red-700 transition-colors" aria-label="View details">
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                </button>
             </div>
