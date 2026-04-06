@@ -70,7 +70,7 @@ const SystemAudit: React.FC = () => {
         <div className="bg-white p-6 rounded-xl border border-blue-200 animate-fade-in shadow-lg text-left">
           <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
              <h3 className="text-lg font-bold text-slate-900 uppercase tracking-wider">New Audit Entry</h3>
-             <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900"><X className="w-5 h-5" /></button>
+             <button onClick={() => setIsAdding(false)} className="text-slate-400 hover:text-slate-900" aria-label="Close new audit entry"><X className="w-5 h-5" /></button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
