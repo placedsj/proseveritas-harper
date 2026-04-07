@@ -10,7 +10,8 @@ interface PatternHeatmapProps {
 const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
   // Sort logs by date ascending
   const sortedLogs = useMemo(() => {
-    return [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    // ⚡ Bolt: Avoid expensive Date object allocations by using string comparison for ISO dates
+    return [...logs].sort((a, b) => a.timestamp < b.timestamp ? -1 : (a.timestamp > b.timestamp ? 1 : 0));
   }, [logs]);
 
   const getSeverity = (log: AbuseLogEntry): number => {
@@ -44,7 +45,11 @@ const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
   // Calculate Average Severity
   const avgSeverity = useMemo(() => {
     if (logs.length === 0) return 0;
-    const sum = logs.reduce((acc, log) => acc + getSeverity(log), 0);
+    // ⚡ Bolt: Standard for loop is significantly faster than .reduce() due to reduced function call overhead
+    let sum = 0;
+    for (let i = 0; i < logs.length; i++) {
+      sum += getSeverity(logs[i]);
+    }
     return (sum / logs.length).toFixed(1);
   }, [logs]);
 
