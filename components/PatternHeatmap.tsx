@@ -7,21 +7,28 @@ interface PatternHeatmapProps {
   logs: AbuseLogEntry[];
 }
 
+const TYPE_SEVERITY: Record<string, number> = {
+  'False Police Report': 5,
+  'Denied Access': 4,
+  'Harassment': 2
+};
+
+const REACTION_SEVERITY: Record<string, number> = {
+  'Crying': 3,
+  'Scared': 3,
+  'Withdrawn': 2
+};
+
 const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
   // Sort logs by date ascending
   const sortedLogs = useMemo(() => {
-    return [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    return [...logs].sort((a, b) => a.timestamp < b.timestamp ? -1 : (a.timestamp > b.timestamp ? 1 : 0));
   }, [logs]);
 
   const getSeverity = (log: AbuseLogEntry): number => {
     if (log.severity) return log.severity;
     // Heuristic calculation if severity is missing
-    let score = 3;
-    if (log.type === 'False Police Report') score += 5;
-    if (log.type === 'Denied Access') score += 4;
-    if (log.type === 'Harassment') score += 2;
-    if (log.childReaction === 'Crying' || log.childReaction === 'Scared') score += 3;
-    if (log.childReaction === 'Withdrawn') score += 2;
+    let score = 3 + (TYPE_SEVERITY[log.type] || 0) + (REACTION_SEVERITY[log.childReaction || ''] || 0);
     return Math.min(score, 10);
   };
 
