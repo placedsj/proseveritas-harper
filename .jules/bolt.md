@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-23 - Optimize PatternHeatmap sort and score logic
+**Learning:** Using string comparison for ISO dates instead of `Date` object allocation, and using static lookup objects instead of multiple `if` statements, significantly improves performance in React `useMemo` hooks. Also, standard `for` loops are faster than `.reduce()`.
+**Action:** Apply string comparison for date strings and static lookups for repeated score calculations in data-intensive components.
