@@ -6,11 +6,15 @@ import { HealthStatus } from '../types';
 const HealthRehab: React.FC = () => {
   const [statuses, setStatuses] = useState<HealthStatus[]>(() => {
     const saved = localStorage.getItem('healthStatus');
-    return saved ? JSON.parse(saved) : [
+    try { return saved ? JSON.parse(saved) : [
       { id: '1', condition: 'C5-C6 Spinal Injury', status: 'Pending Claim', nextStep: 'Submit WorkSafeNB Application for Compensation', lastReview: 'Jan 25' },
       { id: '2', condition: 'ADHD Management', status: 'Intake Required', nextStep: 'Call Mental Health / Social Dev for booking', lastReview: 'Jan 25' },
       { id: '3', condition: 'Gentle Path Counselling', status: 'Active (Ref: Andrea)', nextStep: 'Attend scheduled sessions', lastReview: 'Jan 25' },
-    ];
+    ]; } catch (e) { return [
+      { id: '1', condition: 'C5-C6 Spinal Injury', status: 'Pending Claim', nextStep: 'Submit WorkSafeNB Application for Compensation', lastReview: 'Jan 25' },
+      { id: '2', condition: 'ADHD Management', status: 'Intake Required', nextStep: 'Call Mental Health / Social Dev for booking', lastReview: 'Jan 25' },
+      { id: '3', condition: 'Gentle Path Counselling', status: 'Active (Ref: Andrea)', nextStep: 'Attend scheduled sessions', lastReview: 'Jan 25' },
+    ]; }
   });
 
   return (

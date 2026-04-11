@@ -6,7 +6,7 @@ import { getRealityCheck } from '../services/geminiService';
 const SpiralJournal: React.FC = () => {
   const [entries, setEntries] = useState<SpiralEntry[]>(() => {
     const saved = localStorage.getItem('spiralEntries');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
   const [currentThought, setCurrentThought] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);

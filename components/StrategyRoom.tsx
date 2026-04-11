@@ -13,7 +13,7 @@ const StrategyRoom: React.FC = () => {
   
   const [notes, setNotes] = useState<StrategyNote[]>(() => {
     const saved = localStorage.getItem('strategyNotes');
-    return saved ? JSON.parse(saved) : initialNotes;
+    try { return saved ? JSON.parse(saved) : initialNotes; } catch (e) { return initialNotes; }
   });
 
   const notesRef = useRef(notes);

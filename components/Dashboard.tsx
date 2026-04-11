@@ -41,17 +41,40 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     // Stats Logic
     const loadStats = () => {
       try {
-        const evidence: ProcessedEvidenceItem[] = JSON.parse(localStorage.getItem('evidence') || '[]');
+        let evidence: ProcessedEvidenceItem[] ;
+        try {
+            evidence = JSON.parse(localStorage.getItem('evidence') || '[]');
+        } catch (e) {
+            evidence = [];
+        }
         const verifiedExhibits = evidence.filter(e => e.verified).length;
 
-        const scottLogs: ScottLogEntry[] = JSON.parse(localStorage.getItem('scottLogs') || '[]');
+        let scottLogs: ScottLogEntry[] ;
+        try {
+            scottLogs = JSON.parse(localStorage.getItem('scottLogs') || '[]');
+        } catch (e) {
+            scottLogs = [];
+        }
         const daysDenied = scottLogs.filter(l => l.category === 'Denial of Parenting Time').length;
 
-        const auditLogs: SystemAuditLog[] = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
+        let auditLogs: SystemAuditLog[] ;
+        try {
+            auditLogs = JSON.parse(localStorage.getItem('systemAuditLogs') || '[]');
+        } catch (e) {
+            auditLogs = [];
+        }
         const auditTargets = auditLogs.length;
 
-        const medicalRecords: MedicalRecord[] = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
-        const sjrhPages = medicalRecords.reduce((sum, r) => sum + (r.pageCount || 0), 0);
+        let medicalRecords: MedicalRecord[] ;
+        try {
+            medicalRecords = JSON.parse(localStorage.getItem('medicalRecords') || '[]');
+        } catch (e) {
+            medicalRecords = [];
+        }
+        let sjrhPages = 0;
+        for (let i = 0; i < medicalRecords.length; i++) {
+          sjrhPages += medicalRecords[i].pageCount || 0;
+        }
 
         setStats({ verifiedExhibits, daysDenied, auditTargets, sjrhPages });
       } catch (error) {
