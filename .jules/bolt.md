@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-02-12 - Date Sorting Overhead
+**Learning:** Using `new Date(string).getTime()` in array sort comparators causes massive performance overhead due to object allocation and date parsing on every comparison.
+**Action:** Use fast string comparison operators (`<` and `>`) for ISO-formatted dates instead of instantiating `Date` objects during sorting.
