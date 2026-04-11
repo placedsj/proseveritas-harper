@@ -44,7 +44,10 @@ const PatternHeatmap: React.FC<PatternHeatmapProps> = ({ logs }) => {
   // Calculate Average Severity
   const avgSeverity = useMemo(() => {
     if (logs.length === 0) return 0;
-    const sum = logs.reduce((acc, log) => acc + getSeverity(log), 0);
+    let sum = 0;
+    for (let i = 0; i < logs.length; i++) {
+        sum += getSeverity(logs[i]);
+    }
     return (sum / logs.length).toFixed(1);
   }, [logs]);
 

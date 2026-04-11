@@ -6,7 +6,7 @@ import { Calculator, Clock, CheckCircle2, XCircle, AlertTriangle } from 'lucide-
 const CustodyMath: React.FC = () => {
   const [blocks, setBlocks] = useState<ParentingBlock[]>(() => {
     const saved = localStorage.getItem('custodyBlocks');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
 
   const [newBlock, setNewBlock] = useState({
@@ -53,19 +53,19 @@ const CustodyMath: React.FC = () => {
 
   // STATISTICS
   const stats = useMemo(() => {
-    const { totalScheduled, totalDenied, successHours } = blocks.reduce(
-      (acc, b) => {
-        const hours = calculateHours(b.scheduledStart, b.scheduledEnd);
-        acc.totalScheduled += hours;
-        if (b.status === 'Denied by Mother') {
-          acc.totalDenied += hours;
-        } else if (b.status === 'Success') {
-          acc.successHours += hours;
-        }
-        return acc;
-      },
-      { totalScheduled: 0, totalDenied: 0, successHours: 0 }
-    );
+    let totalScheduled = 0;
+    let totalDenied = 0;
+    let successHours = 0;
+    for (let i = 0; i < blocks.length; i++) {
+      const b = blocks[i];
+      const hours = calculateHours(b.scheduledStart, b.scheduledEnd);
+      totalScheduled += hours;
+      if (b.status === 'Denied by Mother') {
+        totalDenied += hours;
+      } else if (b.status === 'Success') {
+        successHours += hours;
+      }
+    }
 
     // Fix floating point precision issues after summation
     const result = {

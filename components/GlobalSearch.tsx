@@ -35,7 +35,7 @@ interface SearchData {
 const getLocalStorageItem = <T,>(key: string, defaultValue: T): T => {
   try {
     const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultValue;
+    try { return item ? JSON.parse(item) : defaultValue; } catch (e) { return defaultValue; }
   } catch (error: unknown) {
     console.error(`Error parsing localStorage item for key "${key}":`, error);
     return defaultValue;

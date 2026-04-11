@@ -11,7 +11,7 @@ const initialProjects: BusinessProject[] = [
 const BusinessCommand: React.FC = () => {
   const [projects, setProjects] = useState<BusinessProject[]>(() => {
     const saved = localStorage.getItem('bizProjects');
-    return saved ? JSON.parse(saved) : initialProjects;
+    try { return saved ? JSON.parse(saved) : initialProjects; } catch (e) { return initialProjects; }
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -39,7 +39,10 @@ const BusinessCommand: React.FC = () => {
     setNewProject({ name: '', type: 'PLACED', status: 'Lead', value: 0, nextAction: '' });
   };
 
-  const totalValue = projects.reduce((sum, p) => sum + p.value, 0);
+  let totalValue = 0;
+  for (let i = 0; i < projects.length; i++) {
+    totalValue += projects[i].value;
+  }
 
   return (
     <div className="space-y-6">

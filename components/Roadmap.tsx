@@ -91,7 +91,7 @@ const Column = React.memo(({ title, status, icon: Icon, tasks, onMoveTask }: Col
 const Roadmap: React.FC = () => {
   const [tasks, setTasks] = useState<RoadmapTask[]>(() => {
     const saved = localStorage.getItem('roadmapTasks');
-    return saved ? JSON.parse(saved) : initialTasks;
+    try { return saved ? JSON.parse(saved) : initialTasks; } catch (e) { return initialTasks; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

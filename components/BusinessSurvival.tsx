@@ -5,7 +5,7 @@ import { Briefcase, Plus, DollarSign, CheckSquare, Square, Trash2 } from 'lucide
 const BusinessSurvival: React.FC = () => {
   const [tasks, setTasks] = useState<BusinessTask[]>(() => {
     const saved = localStorage.getItem('bizTasks');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
 
   const [newTask, setNewTask] = useState<Partial<BusinessTask>>({
@@ -39,7 +39,12 @@ const BusinessSurvival: React.FC = () => {
     setTasks(tasks.filter(t => t.id !== id));
   };
 
-  const totalValue = tasks.filter(t => !t.completed).reduce((sum, t) => sum + t.dollarValue, 0);
+  let totalValue = 0;
+  for (let i = 0; i < tasks.length; i++) {
+    if (!tasks[i].completed) {
+      totalValue += tasks[i].dollarValue;
+    }
+  }
 
   return (
     <div className="space-y-6">

@@ -15,7 +15,7 @@ const initialEvents: TimelineEvent[] = [
 const Timeline: React.FC = () => {
   const [events, setEvents] = useState<TimelineEvent[]>(() => {
     const saved = localStorage.getItem('timelineEvents_v2');
-    return saved ? JSON.parse(saved) : initialEvents;
+    try { return saved ? JSON.parse(saved) : initialEvents; } catch (e) { return initialEvents; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

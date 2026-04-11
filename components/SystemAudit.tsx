@@ -12,7 +12,7 @@ const INITIAL_LOGS: SystemAuditLog[] = [
 const SystemAudit: React.FC = () => {
   const [logs, setLogs] = useState<SystemAuditLog[]>(() => {
     const saved = localStorage.getItem('systemAuditLogs');
-    return saved ? JSON.parse(saved) : INITIAL_LOGS;
+    try { return saved ? JSON.parse(saved) : INITIAL_LOGS; } catch (e) { return INITIAL_LOGS; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

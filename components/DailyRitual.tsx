@@ -56,7 +56,7 @@ DailyRitualItem.displayName = 'DailyRitualItem';
 const DailyRitual: React.FC<DailyRitualProps> = ({ audioEnabled }) => {
   const [checklist, setChecklist] = useState<DailyChecklist>(() => {
     const saved = localStorage.getItem('dailyChecklist');
-    return saved ? JSON.parse(saved) : {
+    try { return saved ? JSON.parse(saved) : {
       sleep: false,
       mental: false,
       food: false,
@@ -64,7 +64,15 @@ const DailyRitual: React.FC<DailyRitualProps> = ({ audioEnabled }) => {
       oneTask: false,
       noContact: false,
       progressMade: false
-    };
+    }; } catch (e) { return {
+      sleep: false,
+      mental: false,
+      food: false,
+      readReality: false,
+      oneTask: false,
+      noContact: false,
+      progressMade: false
+    }; }
   });
 
   useEffect(() => {
