@@ -55,14 +55,21 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
         inputRef.current.focus();
       }
       // Load all data into memory once when opened to avoid expensive localStorage reads/parsing on every keystroke
+      const rawEvidence = localStorage.getItem('evidence');
+      const rawMedical = localStorage.getItem('medicalRecords');
+      const rawScottLogs = localStorage.getItem('scottLogs');
+      const rawAbuseLogs = localStorage.getItem('abuseLogs');
+      const rawTimeline = localStorage.getItem('timelineEvents');
+      const rawCourt = localStorage.getItem('courtEvents');
+      const rawDailyMoves = localStorage.getItem('dailyMoves');
       setSearchData({
-        evidence: getLocalStorageItem<ProcessedEvidenceItem[]>('evidence', []),
-        medicalRecords: getLocalStorageItem<MedicalRecord[]>('medicalRecords', []),
-        scottLogs: getLocalStorageItem<ScottLogEntry[]>('scottLogs', []),
-        abuseLogs: getLocalStorageItem<AbuseLogEntry[]>('abuseLogs', []),
-        timelineEvents: getLocalStorageItem<TimelineEvent[]>('timelineEvents', []),
-        courtEvents: getLocalStorageItem<CourtEvent[]>('courtEvents', []),
-        dailyMoves: getLocalStorageItem<DailyMove[]>('dailyMoves', []),
+        evidence: rawEvidence ? JSON.parse(rawEvidence) : [],
+        medicalRecords: rawMedical ? JSON.parse(rawMedical) : [],
+        scottLogs: rawScottLogs ? JSON.parse(rawScottLogs) : [],
+        abuseLogs: rawAbuseLogs ? JSON.parse(rawAbuseLogs) : [],
+        timelineEvents: rawTimeline ? JSON.parse(rawTimeline) : [],
+        courtEvents: rawCourt ? JSON.parse(rawCourt) : [],
+        dailyMoves: rawDailyMoves ? JSON.parse(rawDailyMoves) : [],
       });
     } else {
       setQuery('');
