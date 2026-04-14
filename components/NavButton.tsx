@@ -12,13 +12,15 @@ interface NavButtonProps {
 export const NavButton: React.FC<NavButtonProps> = ({ target, icon: Icon, label, currentView, onNavigate }) => (
   <button
     onClick={() => onNavigate(target)}
-    className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ${
+    title={label}
+    aria-current={currentView === target ? 'page' : undefined}
+    className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none ${
       currentView === target
         ? 'bg-red-600 text-white shadow-lg shadow-red-200'
         : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
     }`}
   >
-    <Icon className="w-6 h-6 mb-1" />
+    <Icon className="w-6 h-6 mb-1" aria-hidden="true" />
     <span className="text-[10px] uppercase tracking-wider font-bold">{label}</span>
   </button>
 );
