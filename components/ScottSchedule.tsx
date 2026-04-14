@@ -105,11 +105,11 @@ const ScottSchedule: React.FC = () => {
       sanitizeCsvCell(log.statuteTag)
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + headers.join(",") + "\n" 
+    const csvPayload = headers.join(",") + "\n"
       + rows.map(e => e.join(",")).join("\n");
 
-    const encodedUri = encodeURI(csvContent);
+    // Security: Use encodeURIComponent on the payload only to prevent truncation from # or &
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvPayload);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `Scott_Schedule_${new Date().toISOString().split('T')[0]}.csv`);
