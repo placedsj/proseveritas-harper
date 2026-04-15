@@ -11,7 +11,7 @@ const initialProjects: BusinessProject[] = [
 const BusinessCommand: React.FC = () => {
   const [projects, setProjects] = useState<BusinessProject[]>(() => {
     const saved = localStorage.getItem('bizProjects');
-    return saved ? JSON.parse(saved) : initialProjects;
+    try { return saved ? JSON.parse(saved) : initialProjects; } catch (e) { return initialProjects; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

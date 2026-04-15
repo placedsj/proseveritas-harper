@@ -39,7 +39,7 @@ const initialLogs: ScottLogEntry[] = [
 const ScottSchedule: React.FC = () => {
   const [logs, setLogs] = useState<ScottLogEntry[]>(() => {
     const saved = localStorage.getItem('scottLogs');
-    return saved ? JSON.parse(saved) : initialLogs;
+    try { return saved ? JSON.parse(saved) : initialLogs; } catch (e) { return initialLogs; }
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -105,11 +105,8 @@ const ScottSchedule: React.FC = () => {
       sanitizeCsvCell(log.statuteTag)
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + headers.join(",") + "\n" 
-      + rows.map(e => e.join(",")).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
+    const csvData = headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+    const encodedUri = "data:text/csv;charset=utf-8," + encodeURIComponent(csvData);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", `Scott_Schedule_${new Date().toISOString().split('T')[0]}.csv`);

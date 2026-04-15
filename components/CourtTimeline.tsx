@@ -5,9 +5,11 @@ import { Gavel, Plus, CheckCircle2, Clock, Calendar } from 'lucide-react';
 const CourtTimeline: React.FC = () => {
   const [events, setEvents] = useState<CourtEvent[]>(() => {
     const saved = localStorage.getItem('courtEvents');
-    return saved ? JSON.parse(saved) : [
+    try { return saved ? JSON.parse(saved) : [
       { id: '1', date: '2026-02-03', caseName: 'Criminal Defense', judgeName: 'TBD', requiredAction: 'Sentencing Hearing - R v Schulz', status: 'Pending' }
-    ];
+    ]; } catch (e) { return [
+      { id: '1', date: '2026-02-03', caseName: 'Criminal Defense', judgeName: 'TBD', requiredAction: 'Sentencing Hearing - R v Schulz', status: 'Pending' }
+    ]; }
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -35,7 +37,7 @@ const CourtTimeline: React.FC = () => {
       status: 'Pending'
     };
 
-    setEvents([...events, event].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    setEvents([...events, event].sort((a, b) => a.date < b.date ? -1 : (a.date > b.date ? 1 : 0)));
     setIsAdding(false);
     setNewEvent({ date: '', caseName: 'Criminal Defense', judgeName: '', requiredAction: '', status: 'Pending' });
   };

@@ -6,7 +6,7 @@ import { HarperLogEntry } from '../types';
 const HarperLog: React.FC = () => {
   const [entries, setEntries] = useState<HarperLogEntry[]>(() => {
     const saved = localStorage.getItem('harperLog');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
 
   const [isAdding, setIsAdding] = useState(false);
