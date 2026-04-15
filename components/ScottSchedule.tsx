@@ -38,8 +38,13 @@ const initialLogs: ScottLogEntry[] = [
 
 const ScottSchedule: React.FC = () => {
   const [logs, setLogs] = useState<ScottLogEntry[]>(() => {
-    const saved = localStorage.getItem('scottLogs');
-    return saved ? JSON.parse(saved) : initialLogs;
+    try {
+      const saved = localStorage.getItem('scottLogs');
+      return saved ? JSON.parse(saved) : initialLogs;
+    } catch (e) {
+      console.error('Security/Data Error: Malformed scottLogs in localStorage', e);
+      return initialLogs;
+    }
   });
 
   const [isAdding, setIsAdding] = useState(false);
