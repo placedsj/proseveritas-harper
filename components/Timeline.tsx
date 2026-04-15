@@ -14,8 +14,13 @@ const initialEvents: TimelineEvent[] = [
 
 const Timeline: React.FC = () => {
   const [events, setEvents] = useState<TimelineEvent[]>(() => {
-    const saved = localStorage.getItem('timelineEvents_v2');
-    return saved ? JSON.parse(saved) : initialEvents;
+    try {
+      const saved = localStorage.getItem('timelineEvents_v2');
+      return saved ? JSON.parse(saved) : initialEvents;
+    } catch (e) {
+      console.error('Security/Data Error: Malformed timelineEvents_v2 in localStorage', e);
+      return initialEvents;
+    }
   });
 
   const [isAdding, setIsAdding] = useState(false);
