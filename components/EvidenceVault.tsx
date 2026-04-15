@@ -17,7 +17,7 @@ const initialEvidence: EvidenceItem[] = [
 const EvidenceVault: React.FC = () => {
   const [items, setItems] = useState<EvidenceItem[]>(() => {
     const saved = localStorage.getItem('evidenceItems');
-    return saved ? JSON.parse(saved) : initialEvidence;
+    try { return saved ? JSON.parse(saved) : initialEvidence; } catch (e) { return initialEvidence; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

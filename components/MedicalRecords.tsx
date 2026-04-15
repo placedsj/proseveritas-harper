@@ -30,7 +30,7 @@ const initialRecords: MedicalRecord[] = [
 const MedicalRecords: React.FC = () => {
   const [records, setRecords] = useState<MedicalRecord[]>(() => {
     const saved = localStorage.getItem('medicalRecords');
-    return saved ? JSON.parse(saved) : initialRecords;
+    try { return saved ? JSON.parse(saved) : initialRecords; } catch (e) { return initialRecords; }
   });
 
   const [isAdding, setIsAdding] = useState(false);

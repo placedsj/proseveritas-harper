@@ -12,7 +12,7 @@ const RAW_RECORDS: Omit<ProcessedEvidenceItem, 'wScore' | 'verified'>[] = [
 const EvidenceProcessor: React.FC = () => {
   const [evidence, setEvidence] = useState<ProcessedEvidenceItem[]>(() => {
     const saved = localStorage.getItem('evidence');
-    return saved ? JSON.parse(saved) : RAW_RECORDS.map(r => ({ ...r, wScore: (r.prio || 5) * 2, verified: false }));
+    try { return saved ? JSON.parse(saved) : RAW_RECORDS.map(r => ({ ...r, wScore: (r.prio || 5) * 2, verified: false })); } catch (e) { return RAW_RECORDS.map(r => ({ ...r, wScore: (r.prio || 5) * 2, verified: false })); }
   });
 
   useEffect(() => {

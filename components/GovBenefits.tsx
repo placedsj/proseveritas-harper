@@ -15,7 +15,7 @@ const initialBenefits: GovBenefit[] = [
 const GovBenefits: React.FC = () => {
   const [benefits, setBenefits] = useState<GovBenefit[]>(() => {
     const saved = localStorage.getItem('govBenefits');
-    return saved ? JSON.parse(saved) : initialBenefits;
+    try { return saved ? JSON.parse(saved) : initialBenefits; } catch (e) { return initialBenefits; }
   });
 
   useEffect(() => {

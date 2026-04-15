@@ -6,7 +6,7 @@ import { Calculator, Clock, CheckCircle2, XCircle, AlertTriangle } from 'lucide-
 const CustodyMath: React.FC = () => {
   const [blocks, setBlocks] = useState<ParentingBlock[]>(() => {
     const saved = localStorage.getItem('custodyBlocks');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
 
   const [newBlock, setNewBlock] = useState({
@@ -21,9 +21,13 @@ const CustodyMath: React.FC = () => {
     localStorage.setItem('custodyBlocks', JSON.stringify(blocks));
   }, [blocks]);
 
-  const calculateHours = (start: string, end: string): number => {
+  const calculateHoursRaw = (start: string, end: string): number => {
     const diff = new Date(end).getTime() - new Date(start).getTime();
-    return Number((diff / (1000 * 60 * 60)).toFixed(1));
+    return diff / (1000 * 60 * 60);
+  };
+
+  const calculateHours = (start: string, end: string): number => {
+    return Number(calculateHoursRaw(start, end).toFixed(1));
   };
 
   const addBlock = () => {
@@ -46,7 +50,7 @@ const CustodyMath: React.FC = () => {
       hoursLost: newBlock.status === 'Denied by Mother' ? hours : 0
     };
 
-    setBlocks([block, ...blocks].sort((a,b) => new Date(b.scheduledStart).getTime() - new Date(a.scheduledStart).getTime()));
+    setBlocks([block, ...blocks].sort((a, b) => b.scheduledStart < a.scheduledStart ? -1 : (b.scheduledStart > a.scheduledStart ? 1 : 0)));
     // Reset but keep dates for convenience
     setNewBlock({ ...newBlock, startTime: '', endTime: '' });
   };
@@ -55,7 +59,7 @@ const CustodyMath: React.FC = () => {
   const stats = useMemo(() => {
     const { totalScheduled, totalDenied, successHours } = blocks.reduce(
       (acc, b) => {
-        const hours = calculateHours(b.scheduledStart, b.scheduledEnd);
+        const hours = calculateHoursRaw(b.scheduledStart, b.scheduledEnd);
         acc.totalScheduled += hours;
         if (b.status === 'Denied by Mother') {
           acc.totalDenied += hours;

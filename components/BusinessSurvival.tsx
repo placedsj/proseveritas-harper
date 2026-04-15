@@ -5,7 +5,7 @@ import { Briefcase, Plus, DollarSign, CheckSquare, Square, Trash2 } from 'lucide
 const BusinessSurvival: React.FC = () => {
   const [tasks, setTasks] = useState<BusinessTask[]>(() => {
     const saved = localStorage.getItem('bizTasks');
-    return saved ? JSON.parse(saved) : [];
+    try { return saved ? JSON.parse(saved) : []; } catch (e) { return []; }
   });
 
   const [newTask, setNewTask] = useState<Partial<BusinessTask>>({

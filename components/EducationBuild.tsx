@@ -6,13 +6,19 @@ import { CAECProgress } from '../types';
 const EducationBuild: React.FC = () => {
   const [progress, setProgress] = useState<CAECProgress[]>(() => {
     const saved = localStorage.getItem('caecProgress');
-    return saved ? JSON.parse(saved) : [
+    try { return saved ? JSON.parse(saved) : [
       { subject: 'Reading', status: 'In Prep' },
       { subject: 'Writing', status: 'In Prep' },
       { subject: 'Math', status: 'In Prep' },
       { subject: 'Science', status: 'Not Started' },
       { subject: 'Social Studies', status: 'Not Started' },
-    ];
+    ]; } catch (e) { return [
+      { subject: 'Reading', status: 'In Prep' },
+      { subject: 'Writing', status: 'In Prep' },
+      { subject: 'Math', status: 'In Prep' },
+      { subject: 'Science', status: 'Not Started' },
+      { subject: 'Social Studies', status: 'Not Started' },
+    ]; }
   });
 
   useEffect(() => {
