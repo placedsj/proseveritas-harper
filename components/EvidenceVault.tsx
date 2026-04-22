@@ -22,7 +22,8 @@ const EvidenceVault: React.FC = () => {
 
   const [isAdding, setIsAdding] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  // ⚡ BOLT OPTIMIZATION: Replaced string[] with Set<string> for selectedIds to reduce lookup time from O(N) to O(1) during renders and bulk actions.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [newItem, setNewItem] = useState<{
     title: string;
     description: string;
@@ -42,39 +43,43 @@ const EvidenceVault: React.FC = () => {
   // --- SELECTION LOGIC ---
 
   const toggleSelect = (id: string) => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter(i => i !== id));
-    } else {
-      setSelectedIds([...selectedIds, id]);
-    }
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.length === items.length) {
-      setSelectedIds([]);
+    if (selectedIds.size === items.length) {
+      setSelectedIds(new Set());
     } else {
-      setSelectedIds(items.map(i => i.id));
+      setSelectedIds(new Set(items.map(i => i.id)));
     }
   };
 
   // --- BULK ACTIONS ---
 
   const bulkDelete = () => {
-    if (confirm(`Are you sure you want to delete ${selectedIds.length} items?`)) {
-      setItems(items.filter(i => !selectedIds.includes(i.id)));
-      setSelectedIds([]);
+    if (confirm(`Are you sure you want to delete ${selectedIds.size} items?`)) {
+      setItems(items.filter(i => !selectedIds.has(i.id)));
+      setSelectedIds(new Set());
     }
   };
 
   const bulkDownload = () => {
-    alert(`Simulating ZIP generation for ${selectedIds.length} files...\n\nIn a real app, this would bundle the attachments into a 'Evidence_Export_Jan25.zip'.`);
-    setSelectedIds([]);
+    alert(`Simulating ZIP generation for ${selectedIds.size} files...\n\nIn a real app, this would bundle the attachments into a 'Evidence_Export_Jan25.zip'.`);
+    setSelectedIds(new Set());
   };
 
   const bulkUpdateStatus = (newStatus: EvidenceItem['status']) => {
     const today = new Date().toLocaleDateString();
     setItems(items.map(i => {
-      if (selectedIds.includes(i.id)) {
+      if (selectedIds.has(i.id)) {
         const updates: Partial<EvidenceItem> = { status: newStatus };
         if (newStatus === 'requested') updates.dateRequested = today;
         if (newStatus === 'ready' && i.status !== 'ready') updates.dateReceived = today;
@@ -82,7 +87,7 @@ const EvidenceVault: React.FC = () => {
       }
       return i;
     }));
-    setSelectedIds([]);
+    setSelectedIds(new Set());
   };
 
   // --- INDIVIDUAL ACTIONS ---
@@ -175,8 +180,8 @@ const EvidenceVault: React.FC = () => {
               onClick={toggleSelectAll}
               className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded flex items-center gap-2 text-sm border border-slate-700 transition-colors"
             >
-              {selectedIds.length === items.length ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
-              {selectedIds.length === items.length ? "Deselect All" : "Select All"}
+              {selectedIds.size === items.length ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
+              {selectedIds.size === items.length ? "Deselect All" : "Select All"}
             </button>
           )}
           <button 
@@ -268,7 +273,7 @@ const EvidenceVault: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {items.map(item => {
-          const isSelected = selectedIds.includes(item.id);
+          const isSelected = selectedIds.has(item.id);
           return (
             <div 
               key={item.id} 
@@ -366,11 +371,11 @@ const EvidenceVault: React.FC = () => {
       </div>
 
       {/* FIXED BULK ACTION BAR */}
-      {selectedIds.length > 0 && (
+      {selectedIds.size > 0 && (
         <div className="fixed bottom-4 left-4 right-4 md:left-28 md:right-8 bg-slate-900 border border-slate-600 rounded-xl shadow-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 z-50 animate-fade-in">
           <div className="flex items-center gap-3">
              <div className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">
-                {selectedIds.length}
+                {selectedIds.size}
              </div>
              <span className="text-white font-semibold text-sm">Items Selected</span>
           </div>
@@ -406,7 +411,7 @@ const EvidenceVault: React.FC = () => {
             </button>
             
              <button 
-              onClick={() => setSelectedIds([])}
+              onClick={() => setSelectedIds(new Set())}
               className="text-slate-400 hover:text-white px-3 py-2 text-sm"
             >
               Cancel
