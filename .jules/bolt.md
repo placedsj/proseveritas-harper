@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2024-04-24 - Date Sorting Object Allocation
+**Learning:** Sorting arrays of ISO date strings using new Date(str).getTime() causes massive object allocation and GC pressure, particularly in React renders like PatternHeatmap.
+**Action:** Use standard string comparison (a < b ? -1 : 1) for ISO date strings, which is significantly faster and allocates no objects.
