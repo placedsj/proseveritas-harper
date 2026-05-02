@@ -85,6 +85,7 @@ const BusinessSurvival: React.FC = () => {
         <button 
           onClick={handleAdd}
           className="bg-green-600 hover:bg-green-700 text-white p-2 rounded"
+          aria-label="Add task"
         >
           <Plus className="w-6 h-6" />
         </button>
@@ -94,7 +95,11 @@ const BusinessSurvival: React.FC = () => {
         {tasks.map(task => (
           <div key={task.id} className={`flex items-center justify-between p-4 rounded-lg border ${task.completed ? 'bg-slate-900 border-slate-800 opacity-50' : 'bg-slate-800 border-slate-700'}`}>
             <div className="flex items-center gap-4">
-              <button onClick={() => toggleComplete(task.id)} className="text-slate-400 hover:text-green-500">
+              <button
+                onClick={() => toggleComplete(task.id)}
+                className="text-slate-400 hover:text-green-500"
+                aria-label={task.completed ? 'Mark task as incomplete' : 'Mark task as complete'}
+              >
                 {task.completed ? <CheckSquare className="w-6 h-6 text-green-500" /> : <Square className="w-6 h-6" />}
               </button>
               <div>
@@ -104,7 +109,11 @@ const BusinessSurvival: React.FC = () => {
             </div>
             <div className="flex items-center gap-4">
               <span className="font-mono text-green-400 font-bold">${task.dollarValue.toLocaleString()}</span>
-              <button onClick={() => deletetask(task.id)} className="text-slate-600 hover:text-red-500">
+              <button
+                onClick={() => deletetask(task.id)}
+                className="text-slate-600 hover:text-red-500"
+                aria-label="Delete task"
+              >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
