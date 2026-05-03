@@ -35,7 +35,8 @@ const CourtTimeline: React.FC = () => {
       status: 'Pending'
     };
 
-    setEvents([...events, event].sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
+    // ⚡ Bolt: Use direct string comparison for ISO dates to avoid Date object allocation overhead
+    setEvents([...events, event].sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
     setIsAdding(false);
     setNewEvent({ date: '', caseName: 'Criminal Defense', judgeName: '', requiredAction: '', status: 'Pending' });
   };
