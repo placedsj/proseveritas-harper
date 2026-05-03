@@ -5,3 +5,6 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+## 2024-05-15 - ISO 8601 Date Sorting Overhead
+**Learning:** Parsing ISO 8601 strings into Date objects solely for chronological sorting adds massive object allocation and garbage collection overhead. Since ISO 8601 strings sort lexicographically by design, string comparison achieves identical results much faster.
+**Action:** Use direct string comparison operators (<, >) for sorting ISO 8601 strings instead of new Date(val).getTime() to improve rendering performance on large lists.
