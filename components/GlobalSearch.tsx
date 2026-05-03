@@ -99,25 +99,35 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose, onNavigate
       }
     }
 
+    // Bolt: Pre-calculate numeric timestamps outside the loop to avoid redundant Date instantiations
+    let fromTime: number | null = null;
+    let toTime: number | null = null;
+    if (filters.from) {
+      const d = new Date(filters.from);
+      if (!isNaN(d.getTime())) fromTime = d.getTime();
+    }
+    if (filters.to) {
+      const d = new Date(filters.to);
+      if (!isNaN(d.getTime())) {
+        d.setHours(23, 59, 59, 999);
+        toTime = d.getTime();
+      }
+    }
+
     const matchesDateFilters = (itemDateStr?: string) => {
       if (!itemDateStr) return false;
-      const itemDate = new Date(itemDateStr);
-      if (isNaN(itemDate.getTime())) return false;
 
-      if (filters.date) {
-        if (!itemDateStr.toLowerCase().includes(filters.date)) return false;
+      const itemDate = new Date(itemDateStr);
+      const itemTime = itemDate.getTime();
+      if (isNaN(itemTime)) return false;
+
+      if (filters.date && !itemDateStr.toLowerCase().includes(filters.date)) {
+        return false;
       }
       
-      if (filters.from) {
-        const fromDate = new Date(filters.from);
-        if (isNaN(fromDate.getTime()) || itemDate < fromDate) return false;
-      }
+      if (fromTime !== null && itemTime < fromTime) return false;
+      if (toTime !== null && itemTime > toTime) return false;
 
-      if (filters.to) {
-        const toDate = new Date(filters.to);
-        toDate.setHours(23, 59, 59, 999); 
-        if (isNaN(toDate.getTime()) || itemDate > toDate) return false;
-      }
       return true;
     };
 
