@@ -72,7 +72,7 @@ const SpiralJournal: React.FC = () => {
           <div key={entry.id} className="bg-slate-800 p-4 rounded border border-slate-700">
             <div className="flex justify-between items-start mb-2">
               <span className="text-xs text-slate-500">{new Date(entry.timestamp).toLocaleString()}</span>
-              <button onClick={() => deleteEntry(entry.id)} className="text-slate-600 hover:text-red-400">
+              <button onClick={() => deleteEntry(entry.id)} className="text-slate-600 hover:text-red-400" aria-label="Delete entry">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
