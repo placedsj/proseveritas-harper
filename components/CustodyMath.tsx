@@ -46,7 +46,8 @@ const CustodyMath: React.FC = () => {
       hoursLost: newBlock.status === 'Denied by Mother' ? hours : 0
     };
 
-    setBlocks([block, ...blocks].sort((a,b) => new Date(b.scheduledStart).getTime() - new Date(a.scheduledStart).getTime()));
+    // Optimization: Direct string comparison for ISO 8601 dates avoids unnecessary object allocation and garbage collection overhead
+    setBlocks([block, ...blocks].sort((a, b) => (b.scheduledStart < a.scheduledStart ? -1 : b.scheduledStart > a.scheduledStart ? 1 : 0)));
     // Reset but keep dates for convenience
     setNewBlock({ ...newBlock, startTime: '', endTime: '' });
   };
@@ -67,12 +68,16 @@ const CustodyMath: React.FC = () => {
       { totalScheduled: 0, totalDenied: 0, successHours: 0 }
     );
 
-    // Fix floating point precision issues after summation
+    // Optimization: Consistent rounding math avoids inconsistencies where derived percentages are calculated off unrounded totals
+    const roundedScheduled = Math.round(totalScheduled * 10) / 10;
+    const roundedDenied = Math.round(totalDenied * 10) / 10;
+    const roundedSuccess = Math.round(successHours * 10) / 10;
+
     const result = {
-      totalScheduled: Number(totalScheduled.toFixed(1)),
-      totalDenied: Number(totalDenied.toFixed(1)),
-      successHours: Number(successHours.toFixed(1)),
-      denialRate: totalScheduled > 0 ? ((totalDenied / totalScheduled) * 100).toFixed(1) : "0.0"
+      totalScheduled: roundedScheduled,
+      totalDenied: roundedDenied,
+      successHours: roundedSuccess,
+      denialRate: roundedScheduled > 0 ? (Math.round((roundedDenied / roundedScheduled) * 1000) / 10).toFixed(1) : "0.0"
     };
     
     return result;
