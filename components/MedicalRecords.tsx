@@ -171,7 +171,12 @@ const MedicalRecords: React.FC = () => {
                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${record.status === 'reviewed' ? 'bg-green-50 text-green-600 border border-green-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
                   {record.status}
                 </span>
-                <button onClick={() => toggleExpand(record.id)} className="text-blue-600 hover:text-blue-800 p-1">
+                <button
+                  onClick={() => toggleExpand(record.id)}
+                  className="text-blue-600 hover:text-blue-800 p-1 focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+                  aria-label={expandedIds.has(record.id) ? "Collapse record details" : "Expand record details"}
+                  title={expandedIds.has(record.id) ? "Collapse record details" : "Expand record details"}
+                >
                   {expandedIds.has(record.id) ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
