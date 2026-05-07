@@ -46,7 +46,8 @@ const CustodyMath: React.FC = () => {
       hoursLost: newBlock.status === 'Denied by Mother' ? hours : 0
     };
 
-    setBlocks([block, ...blocks].sort((a,b) => new Date(b.scheduledStart).getTime() - new Date(a.scheduledStart).getTime()));
+    // Bolt: Optimized string date sorting instead of parsing Date objects
+    setBlocks([block, ...blocks].sort((a,b) => a.scheduledStart < b.scheduledStart ? 1 : a.scheduledStart > b.scheduledStart ? -1 : 0));
     // Reset but keep dates for convenience
     setNewBlock({ ...newBlock, startTime: '', endTime: '' });
   };
