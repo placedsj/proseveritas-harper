@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2025-05-07 - React.memo with derived boolean props
+**Learning:** Passing globally changing state (e.g., currentView) to list item components breaks memoization, causing all components to unnecessarily re-render on state change.
+**Action:** Pass derived boolean props (e.g., isActive) to memoized components instead.
