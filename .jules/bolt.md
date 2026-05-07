@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2024-05-18 - NavButton React.memo Optimization
+**Learning:** Passing global state (`currentView`) to child components (`NavButton`) breaks `React.memo` because the global state changes on every navigation, causing all 16 NavButtons to re-render even if they aren't the newly active or previously active button.
+**Action:** When memoizing list items or menu components, pass derived boolean props (e.g., `isActive={{view === 'dashboard'}}`) instead of the raw global state value.
