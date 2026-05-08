@@ -5,3 +5,7 @@
 ## 2025-02-12 - Synchronous Storage in Search
 **Learning:** `GlobalSearch` was reading and parsing multiple `localStorage` items on every keystroke, causing significant input lag.
 **Action:** Cache data in component state when the search modal opens (`isOpen` becomes true), and filter the cached data instead of reading from storage repeatedly.
+
+## 2026-05-08 - Optimized NavButton renders
+**Learning:** Passing globally changing state to every component breaks memoization and causes unnecessary re-renders.
+**Action:** Use derived boolean props rather than raw global state values to allow memoization.
