@@ -152,7 +152,7 @@ const ScottSchedule: React.FC = () => {
 
       {showGuide && (
         <div className="bg-amber-50 border border-amber-200 p-6 rounded-xl animate-fade-in relative text-left shadow-sm">
-          <button onClick={() => setShowGuide(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900"><X className="w-4 h-4" /></button>
+          <button onClick={() => setShowGuide(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-900" aria-label="Close guide"><X className="w-4 h-4" /></button>
           <h3 className="text-amber-700 font-bold uppercase tracking-widest text-sm mb-4 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4" /> The Strategy: Truth vs Allegation
           </h3>
