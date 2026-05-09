@@ -1,5 +1,5 @@
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useCallback } from 'react';
 import { ViewState } from './types';
 import Dashboard from './components/Dashboard';
 import { GlobalSearch } from './components/GlobalSearch';
@@ -34,6 +34,10 @@ const LoadingSpinner = () => (
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('dashboard');
+
+  const handleNavigate = useCallback((newView: ViewState) => {
+    setView(newView);
+  }, []);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const toggleSearch = () => {
@@ -50,22 +54,22 @@ const App: React.FC = () => {
         </div>
         
         <div className="space-y-4 w-full px-2">
-          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" currentView={view} onNavigate={setView} />
-          <NavButton target="discovery-archive" icon={Database} label="Archive" currentView={view} onNavigate={setView} />
-          <NavButton target="system-audit" icon={Fingerprint} label="Audit" currentView={view} onNavigate={setView} />
-          <NavButton target="harper-log" icon={Heart} label="Harper" currentView={view} onNavigate={setView} />
-          <NavButton target="education-build" icon={GraduationCap} label="Build" currentView={view} onNavigate={setView} />
-          <NavButton target="health-rehab" icon={Activity} label="Health" currentView={view} onNavigate={setView} />
-          <NavButton target="gov-benefits" icon={Landmark} label="Gov" currentView={view} onNavigate={setView} />
-          <NavButton target="scott-schedule" icon={Scale} label="Scott" currentView={view} onNavigate={setView} />
-          <NavButton target="custody-math" icon={Calculator} label="Math" currentView={view} onNavigate={setView} />
-          <NavButton target="business" icon={Briefcase} label="Biz" currentView={view} onNavigate={setView} />
-          <NavButton target="strategy" icon={Compass} label="Plan" currentView={view} onNavigate={setView} />
-          <NavButton target="roadmap" icon={Map} label="Map" currentView={view} onNavigate={setView} />
-          <NavButton target="products" icon={Package} label="Lab" currentView={view} onNavigate={setView} />
-          <NavButton target="power-monitor" icon={Activity} label="Pwr" currentView={view} onNavigate={setView} />
-          <NavButton target="processor" icon={Map} label="Evidence" currentView={view} onNavigate={setView} />
-          <NavButton target="medical-records" icon={Stethoscope} label="Med" currentView={view} onNavigate={setView} />
+          <NavButton target="dashboard" icon={LayoutDashboard} label="Cmd" isActive={view === 'dashboard'} onNavigate={handleNavigate} />
+          <NavButton target="discovery-archive" icon={Database} label="Archive" isActive={view === 'discovery-archive'} onNavigate={handleNavigate} />
+          <NavButton target="system-audit" icon={Fingerprint} label="Audit" isActive={view === 'system-audit'} onNavigate={handleNavigate} />
+          <NavButton target="harper-log" icon={Heart} label="Harper" isActive={view === 'harper-log'} onNavigate={handleNavigate} />
+          <NavButton target="education-build" icon={GraduationCap} label="Build" isActive={view === 'education-build'} onNavigate={handleNavigate} />
+          <NavButton target="health-rehab" icon={Activity} label="Health" isActive={view === 'health-rehab'} onNavigate={handleNavigate} />
+          <NavButton target="gov-benefits" icon={Landmark} label="Gov" isActive={view === 'gov-benefits'} onNavigate={handleNavigate} />
+          <NavButton target="scott-schedule" icon={Scale} label="Scott" isActive={view === 'scott-schedule'} onNavigate={handleNavigate} />
+          <NavButton target="custody-math" icon={Calculator} label="Math" isActive={view === 'custody-math'} onNavigate={handleNavigate} />
+          <NavButton target="business" icon={Briefcase} label="Biz" isActive={view === 'business'} onNavigate={handleNavigate} />
+          <NavButton target="strategy" icon={Compass} label="Plan" isActive={view === 'strategy'} onNavigate={handleNavigate} />
+          <NavButton target="roadmap" icon={Map} label="Map" isActive={view === 'roadmap'} onNavigate={handleNavigate} />
+          <NavButton target="products" icon={Package} label="Lab" isActive={view === 'products'} onNavigate={handleNavigate} />
+          <NavButton target="power-monitor" icon={Activity} label="Pwr" isActive={view === 'power-monitor'} onNavigate={handleNavigate} />
+          <NavButton target="processor" icon={Map} label="Evidence" isActive={view === 'processor'} onNavigate={handleNavigate} />
+          <NavButton target="medical-records" icon={Stethoscope} label="Med" isActive={view === 'medical-records'} onNavigate={handleNavigate} />
         </div>
         
         <div className="mt-auto py-6 space-y-4 flex flex-col items-center flex-shrink-0">
@@ -94,7 +98,7 @@ const App: React.FC = () => {
       <main className="flex-1 p-4 md:p-8 md:ml-24 max-w-6xl mx-auto w-full mb-20 md:mb-0">
         <div className="animate-fade-in">
           <Suspense fallback={<LoadingSpinner />}>
-            {view === 'dashboard' && <Dashboard onNavigate={setView} />}
+            {view === 'dashboard' && <Dashboard onNavigate={handleNavigate} />}
             {view === 'discovery-archive' && <DiscoveryArchive />}
             {view === 'system-audit' && <SystemAudit />}
             {view === 'moral-compass' && <MoralCompass />}
@@ -127,7 +131,7 @@ const App: React.FC = () => {
         <button onClick={() => setView('scott-schedule')} className={`p-2 min-w-[50px] ${view === 'scott-schedule' ? 'text-red-600' : 'text-slate-400'}`} aria-label="Scott Schedule"><Scale className="w-6 h-6 mx-auto" /></button>
       </nav>
 
-      <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={setView} />
+      <GlobalSearch isOpen={isSearchOpen} onClose={toggleSearch} onNavigate={handleNavigate} />
     </div>
   );
 };
