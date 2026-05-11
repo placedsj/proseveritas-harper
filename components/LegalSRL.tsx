@@ -48,7 +48,7 @@ const LegalSRL: React.FC = () => {
             key={i} 
             href={res.link} 
             target="_blank" 
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="bg-white p-6 rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group"
           >
             <div className="flex justify-between items-start mb-4">
