@@ -5,20 +5,20 @@ interface NavButtonProps {
   target: ViewState;
   icon: React.ElementType;
   label: string;
-  currentView: ViewState;
+  isActive: boolean;
   onNavigate: (view: ViewState) => void;
 }
 
-export const NavButton: React.FC<NavButtonProps> = ({ target, icon: Icon, label, currentView, onNavigate }) => (
+// Optimization: Memoize NavButton and use derived isActive boolean
+// to prevent re-rendering all 17 buttons when view state changes
+export const NavButton = React.memo<NavButtonProps>(({ target, icon: Icon, label, isActive, onNavigate }) => (
   <button
     onClick={() => onNavigate(target)}
-    className={`flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ${
-      currentView === target
-        ? 'bg-red-600 text-white shadow-lg shadow-red-200'
-        : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100'
-    }`}
+    className={'flex flex-col items-center justify-center p-3 rounded-xl transition-all w-full duration-200 ' + (isActive ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100')}
   >
-    <Icon className="w-6 h-6 mb-1" />
-    <span className="text-[10px] uppercase tracking-wider font-bold">{label}</span>
+    <Icon className='w-6 h-6 mb-1' />
+    <span className='text-[10px] uppercase tracking-wider font-bold'>{label}</span>
   </button>
-);
+));
+
+NavButton.displayName = 'NavButton';
