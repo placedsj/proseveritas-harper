@@ -46,7 +46,7 @@ const CustodyMath: React.FC = () => {
       hoursLost: newBlock.status === 'Denied by Mother' ? hours : 0
     };
 
-    setBlocks([block, ...blocks].sort((a,b) => new Date(b.scheduledStart).getTime() - new Date(a.scheduledStart).getTime()));
+    setBlocks([block, ...blocks].sort((a,b) => a.scheduledStart > b.scheduledStart ? -1 : (a.scheduledStart < b.scheduledStart ? 1 : 0))); // Optimization: Direct string comparison for ISO dates
     // Reset but keep dates for convenience
     setNewBlock({ ...newBlock, startTime: '', endTime: '' });
   };
@@ -72,7 +72,7 @@ const CustodyMath: React.FC = () => {
       totalScheduled: Number(totalScheduled.toFixed(1)),
       totalDenied: Number(totalDenied.toFixed(1)),
       successHours: Number(successHours.toFixed(1)),
-      denialRate: totalScheduled > 0 ? ((totalDenied / totalScheduled) * 100).toFixed(1) : "0.0"
+      denialRate: totalScheduled > 0 ? (Math.round((totalDenied / totalScheduled) * 1000) / 10).toFixed(1) : "0.0"
     };
     
     return result;
@@ -89,7 +89,7 @@ const CustodyMath: React.FC = () => {
         <div className="bg-white p-6 rounded-lg border border-slate-200 flex flex-col items-center shadow-sm">
              <h3 className="text-slate-400 text-xs uppercase font-bold tracking-widest mb-2">Success Rate</h3>
              <span className="text-3xl font-mono text-green-600">
-               {stats.totalScheduled > 0 ? ((stats.successHours / stats.totalScheduled) * 100).toFixed(1) : 0}%
+               {stats.totalScheduled > 0 ? (Math.round((stats.successHours / stats.totalScheduled) * 1000) / 10).toFixed(1) : 0}%
              </span>
         </div>
         <div className="bg-red-50 p-6 rounded-lg border border-red-200 flex flex-col items-center relative overflow-hidden shadow-sm">
