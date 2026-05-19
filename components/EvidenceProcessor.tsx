@@ -48,7 +48,9 @@ const EvidenceProcessor: React.FC = () => {
             <div className="flex md:flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-100 pt-3 md:pt-0 md:pl-4">
               <button 
                 onClick={() => toggleVerified(item.hash)}
-                className={`p-2 rounded-full transition-all ${item.verified ? 'bg-green-600 text-white shadow-md' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                className={`p-2 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:outline-none ${item.verified ? 'bg-green-600 text-white shadow-md' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                aria-label={item.verified ? "Mark as unverified" : "Mark as verified"}
+                title={item.verified ? "Mark as unverified" : "Mark as verified"}
               >
                 <CheckCircle className="w-4 h-4" />
               </button>
