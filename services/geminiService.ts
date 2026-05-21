@@ -7,6 +7,11 @@ const ai = new GoogleGenAI({ apiKey });
 export const getCoFounderResponse = async (userMessage: string, context: string): Promise<string> => {
   if (!apiKey) return "MOTION: Connect your API key to activate Co-Founder mode.";
 
+  // SECURITY: Defense in depth - Ensure token limits are enforced server-side before sending to LLM
+  if (userMessage.length > 500) {
+    return "CALM: Message too long. Please keep requests concise.";
+  }
+
   // Truncate context to save data/bandwidth
   const compressedContext = context.length > 1000 ? context.substring(0, 1000) + "..." : context;
 
@@ -34,6 +39,12 @@ export const getCoFounderResponse = async (userMessage: string, context: string)
 
 export const getRealityCheck = async (thought: string): Promise<string> => {
   if (!apiKey) return "API Key missing.";
+
+  // SECURITY: Defense in depth - Ensure token limits are enforced server-side before sending to LLM
+  if (thought.length > 1000) {
+    return "Thought too long. Please summarize.";
+  }
+
   try {
     const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
