@@ -116,6 +116,8 @@ const CoFounderChat: React.FC = () => {
           onKeyPress={e => e.key === 'Enter' && sendMessage()}
           placeholder="Ask for direction, copy review, or next moves..."
           className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-orange-500 focus:outline-none"
+          // SECURITY: Prevent API token exhaustion and excessive costs by limiting input length before sending to external LLM
+          maxLength={500}
         />
         <button 
           onClick={sendMessage}
